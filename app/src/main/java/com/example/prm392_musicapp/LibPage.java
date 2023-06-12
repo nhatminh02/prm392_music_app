@@ -76,13 +76,14 @@ public class LibPage extends Fragment {
         LibFunc f4 = new LibFunc("Following", ">");
         LibFunc f5 = new LibFunc("Station", ">");
 
+        //TODO: add library function to list
         lbf.add(f1);
         lbf.add(f2);
         lbf.add(f3);
         lbf.add(f4);
         lbf.add(f5);
 
-
+        //View
         FuncAdapter adt = new FuncAdapter(lbf);
         RecyclerView rec = rootView.findViewById(R.id.rec_lib1);
         RecyclerView.LayoutManager layout_manager =  new LinearLayoutManager(rootView.getContext());
