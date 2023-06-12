@@ -2,11 +2,18 @@ package com.example.prm392_musicapp;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -53,12 +60,35 @@ public class LibPage extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        View rootView = inflater.inflate(R.layout.fragment_lib_page, container, false);
+        List<LibFunc> lbf =new ArrayList<>();
+        LibFunc f1 = new LibFunc("Liked Tracks", ">");
+        LibFunc f2 = new LibFunc("Playlist", ">");
+        LibFunc f3 = new LibFunc("Albums", ">");
+        LibFunc f4 = new LibFunc("Following", ">");
+        LibFunc f5 = new LibFunc("Station", ">");
+
+        lbf.add(f1);
+        lbf.add(f2);
+        lbf.add(f3);
+        lbf.add(f4);
+        lbf.add(f5);
+
+
+        FuncAdapter adt = new FuncAdapter(lbf);
+        RecyclerView rec = rootView.findViewById(R.id.rec_lib1);
+        RecyclerView.LayoutManager layout_manager =  new LinearLayoutManager(rootView.getContext());
+        rec.setLayoutManager(layout_manager);
+        rec.setAdapter(adt);
+
         return inflater.inflate(R.layout.fragment_lib_page, container, false);
     }
 }
