@@ -7,6 +7,7 @@
     android:background="#FFFFFF"
     tools:context=".MainActivity">
 
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -84,4 +85,5 @@
             app:layout_constraintStart_toStartOf="parent"
             app:menu="@menu/bottom_nav_menu" />
     </androidx.constraintlayout.widget.ConstraintLayout>
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
