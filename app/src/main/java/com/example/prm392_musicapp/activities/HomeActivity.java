@@ -1,10 +1,14 @@
-package com.example.prm392_musicapp;
+package com.example.prm392_musicapp.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
+
+import com.example.prm392_musicapp.R;
+import com.example.prm392_musicapp.adapter.MusicAdapter;
+import com.example.prm392_musicapp.models.Music;
 
 import java.util.ArrayList;
 import java.util.List;

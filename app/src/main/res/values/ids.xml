@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="textView2" type="id" />
+    <item name="button2" type="id" />
+    <item name="button9" type="id" />
+    <item name="button11" type="id" />
+    <item name="button12" type="id" />
+    <item name="button13" type="id" />
+    <item name="imageView4" type="id" />
+    <item name="imageView5" type="id" />
+    <item name="imageView7" type="id" />
+    <item name="imageView8" type="id" />
+    <item name="imageView9" type="id" />
+</resources>

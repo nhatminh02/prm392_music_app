@@ -1,4 +1,4 @@
-package com.example.prm392_musicapp;
+package com.example.prm392_musicapp.adapter;
 
 import android.app.Activity;
 import android.view.LayoutInflater;
@@ -11,6 +11,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.prm392_musicapp.R;
+import com.example.prm392_musicapp.models.Music;
 
 import java.util.List;
 
