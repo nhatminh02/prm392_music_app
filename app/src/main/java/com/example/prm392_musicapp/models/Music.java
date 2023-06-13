@@ -1,4 +1,4 @@
-package com.example.prm392_musicapp;
+package com.example.prm392_musicapp.models;
 
 public class Music {
     private int thumbnail;
