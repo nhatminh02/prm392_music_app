@@ -12,10 +12,10 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.MusicViewHolder> {
-    private List<Music> mListMusic;
+public class Music_que_Adapter extends RecyclerView.Adapter<Music_que_Adapter.MusicViewHolder> {
+    private List<Music_que> mListMusic;
 
-    public MusicAdapter(List<Music> mListMusic) {
+    public Music_que_Adapter(List<Music_que> mListMusic) {
         this.mListMusic = mListMusic;
     }
 
@@ -28,7 +28,7 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.MusicViewHol
 
     @Override
     public void onBindViewHolder(@NonNull MusicViewHolder holder, int position) {
-        Music music = mListMusic.get(position);
+        Music_que music = mListMusic.get(position);
         if(music != null){
             return;
         }

@@ -1,11 +1,11 @@
 package com.example.prm392_musicapp;
 
-public class Music {
+public class Music_que {
     private int image;
     private String name;
     private String address;
 
-    public Music(int image, String name, String address) {
+    public Music_que(int image, String name, String address) {
         this.image = image;
         this.name = name;
         this.address = address;
