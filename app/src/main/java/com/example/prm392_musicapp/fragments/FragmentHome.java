@@ -72,8 +72,7 @@ public class FragmentHome extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        AppCompatActivity activity = (AppCompatActivity) getActivity();
-        activity.setContentView(R.layout.home_page);
+        View view = inflater.inflate(R.layout.home_page, container, false);
 
         List<Music> reccomends = new ArrayList<>();
         Music rm1 = new Music(R.drawable.atbe, "Am tham ben em", "Son Tung MTP");
@@ -82,24 +81,23 @@ public class FragmentHome extends Fragment {
         reccomends.add(rm1);
         reccomends.add(rm3);
         reccomends.add(rm2);
-        MusicAdapter adapterReccomnend = new MusicAdapter(reccomends, activity);
-        RecyclerView rec1 = activity.findViewById(R.id.rec_reccomend);
-        RecyclerView.LayoutManager layout_manager1 = new LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false);
+        MusicAdapter adapterReccomnend = new MusicAdapter(reccomends, getActivity());
+        RecyclerView rec1 = view.findViewById(R.id.rec_reccomend);
+        RecyclerView.LayoutManager layout_manager1 =
+                new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
         rec1.setLayoutManager(layout_manager1);
         rec1.setAdapter(adapterReccomnend);
 
         List<Music> recently = new ArrayList<>();
         Music recent1 = new Music(R.drawable.nnca, "Noi nay co anh", "Son Tung MTP");
         recently.add(recent1);
-        MusicAdapter adapterRecently = new MusicAdapter(recently, activity);
-        RecyclerView rec2 = activity.findViewById(R.id.rec_recently);
-        RecyclerView.LayoutManager layout_manager2 = new LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false);
+        MusicAdapter adapterRecently = new MusicAdapter(recently, getActivity());
+        RecyclerView rec2 = view.findViewById(R.id.rec_recently);
+        RecyclerView.LayoutManager layout_manager2 =
+                new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
         rec2.setLayoutManager(layout_manager2);
         rec2.setAdapter(adapterRecently);
 
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.home_page, container, false);
-
-
+        return view;
     }
 }

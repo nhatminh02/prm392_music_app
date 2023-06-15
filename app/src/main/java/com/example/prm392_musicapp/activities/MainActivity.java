@@ -40,19 +40,24 @@ public class MainActivity extends AppCompatActivity {
                 } else if (item.getItemId() == R.id.library) {
                     Log.i("frag", "lib");
                     fragmentTransaction = fragmentManager.beginTransaction();
-                    fragmentTransaction.add(R.id.fr_container, fragmentLibrary, "");
+                    fragmentTransaction.replace(R.id.fr_container, fragmentLibrary, "");
                     fragmentTransaction.commit();
                 } else if (item.getItemId() == R.id.search) {
                     Log.i("frag", "search");
                 } else if (item.getItemId() == R.id.home) {
                     Log.i("frag", "home");
                     fragmentTransaction = fragmentManager.beginTransaction();
-                    fragmentTransaction.add(R.id.fr_container, fragmentHome, "");
+                    fragmentTransaction.replace(R.id.fr_container, fragmentHome, "");
                     fragmentTransaction.commit();
                 }
                 return true;
             }
         });
+
+        //add homepage fragment khi app chạy
+        fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.add(R.id.fr_container, fragmentHome, "");
+        fragmentTransaction.commit();
     }
 
 
