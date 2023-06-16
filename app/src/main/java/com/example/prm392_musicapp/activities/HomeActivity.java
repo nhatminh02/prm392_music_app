@@ -51,6 +51,7 @@ public class HomeActivity extends AppCompatActivity {
         RecyclerView.LayoutManager layout_manager2 = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         rec2.setLayoutManager(layout_manager2);
         rec2.setAdapter(adapterRecently);
-
+        //hàm void sao lại return reccomnds.
+       // return reccomends;
     }
 }

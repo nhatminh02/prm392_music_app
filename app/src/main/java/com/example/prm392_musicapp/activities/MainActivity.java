@@ -58,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.add(R.id.fr_container, fragmentHome, "");
         fragmentTransaction.commit();
+        //return null;
     }
 
 
