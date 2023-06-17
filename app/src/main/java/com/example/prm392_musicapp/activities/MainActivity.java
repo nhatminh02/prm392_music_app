@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import com.example.prm392_musicapp.R;
 import com.example.prm392_musicapp.fragments.FragmentHome;
 import com.example.prm392_musicapp.fragments.FragmentLibrary;
+import com.example.prm392_musicapp.fragments.FragmentSearch;
 import com.example.prm392_musicapp.fragments.FragmentSetting;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -23,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
     FragmentHome fragmentHome;
     FragmentLibrary fragmentLibrary;
     FragmentSetting fragmentSetting;
+    FragmentSearch fragmentSearch;
     BottomNavigationView bottomNavigationView;
 
     @Override
@@ -34,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
         fragmentHome = FragmentHome.newInstance(null, null);
         fragmentLibrary = FragmentLibrary.newInstance(null, null);
         fragmentSetting = FragmentSetting.newInstance(null, null);
+        fragmentSearch = FragmentSearch.newInstance(null, null);
 
         bottomNavigationView = findViewById(R.id.bottom_nav);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -44,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
                 } else if (item.getItemId() == R.id.library) {
                     transactionFragment(R.id.fr_container, fragmentLibrary, "", "REPLACE");
                 } else if (item.getItemId() == R.id.search) {
-                    Log.i("frag", "search");
+                    transactionFragment(R.id.fr_container, fragmentSearch, "", "REPLACE");
                 } else if (item.getItemId() == R.id.home) {
                     transactionFragment(R.id.fr_container, fragmentHome, "", "REPLACE");
                 }
