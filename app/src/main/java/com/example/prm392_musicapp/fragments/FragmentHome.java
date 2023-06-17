@@ -3,7 +3,6 @@ package com.example.prm392_musicapp.fragments;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -12,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.prm392_musicapp.R;
-import com.example.prm392_musicapp.activities.HomeActivity;
 import com.example.prm392_musicapp.adapter.MusicAdapter;
 import com.example.prm392_musicapp.models.Music;
 
@@ -60,12 +58,10 @@ public class FragmentHome extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-
     }
 
     @Override

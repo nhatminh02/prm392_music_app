@@ -2,6 +2,7 @@ package com.example.prm392_musicapp.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -12,6 +13,7 @@ import android.view.MenuItem;
 import com.example.prm392_musicapp.R;
 import com.example.prm392_musicapp.fragments.FragmentHome;
 import com.example.prm392_musicapp.fragments.FragmentLibrary;
+import com.example.prm392_musicapp.fragments.FragmentSetting;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MainActivity extends AppCompatActivity {
@@ -20,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
     FragmentTransaction fragmentTransaction;
     FragmentHome fragmentHome;
     FragmentLibrary fragmentLibrary;
+    FragmentSetting fragmentSetting;
     BottomNavigationView bottomNavigationView;
 
     @Override
@@ -30,35 +33,39 @@ public class MainActivity extends AppCompatActivity {
         fragmentManager = getSupportFragmentManager();
         fragmentHome = FragmentHome.newInstance(null, null);
         fragmentLibrary = FragmentLibrary.newInstance(null, null);
+        fragmentSetting = FragmentSetting.newInstance(null, null);
 
         bottomNavigationView = findViewById(R.id.bottom_nav);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 if (item.getItemId() == R.id.setting) {
-                    Log.i("frag", "setting");
+                    transactionFragment(R.id.fr_container, fragmentSetting, "", "REPLACE");
                 } else if (item.getItemId() == R.id.library) {
-                    Log.i("frag", "lib");
-                    fragmentTransaction = fragmentManager.beginTransaction();
-                    fragmentTransaction.replace(R.id.fr_container, fragmentLibrary, "");
-                    fragmentTransaction.commit();
+                    transactionFragment(R.id.fr_container, fragmentLibrary, "", "REPLACE");
                 } else if (item.getItemId() == R.id.search) {
                     Log.i("frag", "search");
                 } else if (item.getItemId() == R.id.home) {
-                    Log.i("frag", "home");
-                    fragmentTransaction = fragmentManager.beginTransaction();
-                    fragmentTransaction.replace(R.id.fr_container, fragmentHome, "");
-                    fragmentTransaction.commit();
+                    transactionFragment(R.id.fr_container, fragmentHome, "", "REPLACE");
                 }
                 return true;
             }
         });
-
         //add homepage fragment khi app chạy
-        fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.add(R.id.fr_container, fragmentHome, "");
-        fragmentTransaction.commit();
-        //return null;
+        transactionFragment(R.id.fr_container, fragmentHome, "", "ADD");
+    }
+
+
+    public void transactionFragment(int containerViewId, Fragment fragment, String tag, String action) {
+        if (action.equalsIgnoreCase("add")) {
+            fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.add(containerViewId, fragment, tag);
+            fragmentTransaction.commit();
+        } else if (action.equalsIgnoreCase("replace")) {
+            fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(containerViewId, fragment, tag);
+            fragmentTransaction.commit();
+        }
     }
 
 
