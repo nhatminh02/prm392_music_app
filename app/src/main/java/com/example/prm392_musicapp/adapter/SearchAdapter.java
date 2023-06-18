@@ -1,5 +1,6 @@
 package com.example.prm392_musicapp.adapter;
 
+import android.app.Activity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,23 +22,24 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class SearchAdapter extends  RecyclerView.Adapter<SearchAdapter.MusicViewHolder> implements Filterable {
     private List<Music> mListMusic;
     private List<Music> mListMusicOld;
-    public SearchAdapter(List<Music> mListMusic) {
+    Activity activity;
+
+    public SearchAdapter(List<Music> mListMusic, Activity activity) {
         this.mListMusic = mListMusic;
-        this.mListMusicOld = mListMusic;
+        this.mListMusicOld = mListMusicOld;
+        this.activity = activity;
     }
+
     @NonNull
     @Override
     public MusicViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.search_page,parent,false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_search,parent,false);
         return new MusicViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull MusicViewHolder holder, int position) {
         Music music = mListMusic.get(position);
-        if(music != null){
-            return;
-        }
         holder.imgMusic.setImageResource(music.getThumbnail());
         holder.tvName.setText(music.getMusicName());
         holder.tvSinger.setText(music.getSinger());
@@ -55,16 +57,19 @@ public class SearchAdapter extends  RecyclerView.Adapter<SearchAdapter.MusicView
 
 
     public class MusicViewHolder extends RecyclerView.ViewHolder{
-        private CircleImageView imgMusic;
-        private TextView tvName;
-        private TextView tvSinger;
+        CircleImageView imgMusic;
+        TextView tvName;
+        TextView tvSinger;
+
         public MusicViewHolder(@NonNull View itemView) {
             super(itemView);
-            imgMusic = itemView.findViewById(R.id.atbe);
-            tvName = itemView.findViewById(R.id.music_name);
-            tvSinger = itemView.findViewById(R.id.singer_name);
+            imgMusic = itemView.findViewById(R.id.tv_search_thumb);
+            tvName = itemView.findViewById(R.id.tv_search_music);
+            tvSinger = itemView.findViewById(R.id.tv_search_singer);
         }
     }
+
+
     @Override
     public Filter getFilter() {
         return new Filter() {

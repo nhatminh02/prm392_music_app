@@ -27,13 +27,13 @@ public class SearchActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main_search);
+        setContentView(R.layout.search_page);
 
         revMusic = findViewById(R.id.rev_music);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
          revMusic.setLayoutManager(linearLayoutManager);
 
-         searchAdapter = new SearchAdapter(getListSong());
+         searchAdapter = new SearchAdapter(getListSong(),this);
          revMusic.setAdapter(searchAdapter);
 
          RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(this,DividerItemDecoration.VERTICAL);

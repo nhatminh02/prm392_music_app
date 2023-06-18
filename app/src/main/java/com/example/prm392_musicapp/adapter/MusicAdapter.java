@@ -36,7 +36,6 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.MusicHolder>
 
     @Override
     public void onBindViewHolder(@NonNull MusicHolder holder, int position) {
-//        holder.imv_thumb.setImageResource(recMusics.get(position).getThumbnail());
         Glide.with(activity).load(recMusics.get(position).getThumbnail()).centerCrop().into(holder.imv_thumb);
         holder.tv_musname.setText(recMusics.get(position).getMusicName());
         holder.tv_singer.setText(recMusics.get(position).getSinger());
@@ -48,11 +47,8 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.MusicHolder>
     }
 
     public class MusicHolder extends RecyclerView.ViewHolder {
-
         ImageView imv_thumb;
-
         TextView tv_musname;
-
         TextView tv_singer;
 
         public MusicHolder(@NonNull View itemView) {
