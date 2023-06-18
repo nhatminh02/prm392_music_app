@@ -5,12 +5,15 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +34,16 @@ public class LibPage extends Fragment {
     private String mParam1;
     private String mParam2;
 
+<<<<<<< Updated upstream:app/src/main/java/com/example/prm392_musicapp/LibPage.java
     public LibPage() {
+=======
+    FragmentManager fragmentManager;
+    FragmentTransaction fragmentTransaction;
+
+    FragmentLoveTrack fragmentLoveTrack;
+
+    public FragmentLibrary() {
+>>>>>>> Stashed changes:app/src/main/java/com/example/prm392_musicapp/fragments/FragmentLibrary.java
         // Required empty public constructor
     }
 
@@ -68,6 +80,7 @@ public class LibPage extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+<<<<<<< Updated upstream:app/src/main/java/com/example/prm392_musicapp/LibPage.java
         View rootView = inflater.inflate(R.layout.fragment_lib_page, container, false);
         List<LibFunc> lbf =new ArrayList<>();
         LibFunc f1 = new LibFunc("Liked Tracks", ">");
@@ -91,5 +104,23 @@ public class LibPage extends Fragment {
         rec.setAdapter(adt);
 
         return inflater.inflate(R.layout.fragment_lib_page, container, false);
+=======
+        View view = inflater.inflate(R.layout.library_page, container, false);
+
+        List<Music> recently = new ArrayList<>();
+        Music recent1 = new Music(R.drawable.nnca, "Noi nay co anh", "Son Tung MTP");
+        recently.add(recent1);
+        MusicAdapter adapterRecently = new MusicAdapter(recently, getActivity());
+        RecyclerView rec2 = view.findViewById(R.id.rec_recently);
+        RecyclerView.LayoutManager layout_manager2 = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
+        rec2.setLayoutManager(layout_manager2);
+        rec2.setAdapter(adapterRecently);
+
+        return view;
+>>>>>>> Stashed changes:app/src/main/java/com/example/prm392_musicapp/fragments/FragmentLibrary.java
     }
+
+
+
+
 }
