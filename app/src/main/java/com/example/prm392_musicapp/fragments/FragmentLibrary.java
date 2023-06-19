@@ -1,14 +1,21 @@
 package com.example.prm392_musicapp.fragments;
 
+import android.content.Context;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import com.example.prm392_musicapp.R;
 import com.example.prm392_musicapp.adapter.MusicAdapter;
@@ -23,6 +30,8 @@ import java.util.List;
  * create an instance of this fragment.
  */
 public class FragmentLibrary extends Fragment {
+
+    private MyButtonClickListener myButtonClickListener;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -78,6 +87,30 @@ public class FragmentLibrary extends Fragment {
         RecyclerView.LayoutManager layout_manager2 = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
         rec2.setLayoutManager(layout_manager2);
         rec2.setAdapter(adapterRecently);
+
+        ((Button)view.findViewById(R.id.btn_liked_tracks)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                myButtonClickListener.onMyButtonClick();
+            }
+        });
+
         return view;
     }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        if(context instanceof MyButtonClickListener){
+            myButtonClickListener = (MyButtonClickListener)context;
+        }
+        else{
+            throw new RuntimeException(context.toString()+"haha");
+        }
+    }
+
+    public interface MyButtonClickListener{
+        void onMyButtonClick();
+    }
+
 }

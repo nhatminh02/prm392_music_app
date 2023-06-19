@@ -45,11 +45,12 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/button10"
+        android:id="@+id/btn_liked_tracks"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:backgroundTint="#00FFFFFF"
+        android:drawableRight="@drawable/baseline_arrow_forward_ios_24"
         android:text="Liked tracks"
         android:textAlignment="textStart"
         android:textColor="#000000"
@@ -63,30 +64,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:backgroundTint="#00FFFFFF"
+        android:drawableRight="@drawable/baseline_arrow_forward_ios_24"
         android:text="Playlists"
         android:textAlignment="textStart"
         android:textColor="#000000"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button10" />
-
-    <ImageView
-        android:id="@+id/imageView3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/baseline_arrow_forward_ios_24"
-        app:layout_constraintBottom_toBottomOf="@+id/button3"
-        app:layout_constraintEnd_toEndOf="@+id/button3"
-        app:layout_constraintTop_toTopOf="@+id/button3" />
-
-    <ImageView
-        android:id="@+id/imageView6"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/baseline_arrow_forward_ios_24"
-        app:layout_constraintBottom_toBottomOf="@+id/button10"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/button10" />
+        app:layout_constraintTop_toBottomOf="@+id/btn_liked_tracks" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
