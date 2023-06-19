@@ -20,7 +20,7 @@ import com.example.prm392_musicapp.fragments.FragmentSearch;
 import com.example.prm392_musicapp.fragments.FragmentSetting;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-public class MainActivity extends AppCompatActivity implements FragmentLibrary.MyButtonClickListener {
+public class MainActivity extends AppCompatActivity {
 
     FragmentManager fragmentManager;
     FragmentTransaction fragmentTransaction;
@@ -76,7 +76,7 @@ public class MainActivity extends AppCompatActivity implements FragmentLibrary.M
         }
     }
 
-    @Override
+
     public void onMyButtonClick() {
         ((Button) findViewById(R.id.btn_liked_tracks)).setOnClickListener(new View.OnClickListener() {
             @Override

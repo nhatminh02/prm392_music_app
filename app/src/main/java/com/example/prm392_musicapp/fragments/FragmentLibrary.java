@@ -12,10 +12,12 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.example.prm392_musicapp.R;
 import com.example.prm392_musicapp.adapter.MusicAdapter;
@@ -30,8 +32,12 @@ import java.util.List;
  * create an instance of this fragment.
  */
 public class FragmentLibrary extends Fragment {
+    FragmentManager fragmentManager;
+    FragmentTransaction fragmentTransaction;
+    FragmentLikedTracks fragmentLikedTracks;
+    FragmentPlaylist fragmentPlaylist;
 
-    private MyButtonClickListener myButtonClickListener;
+//    private MyButtonClickListener myButtonClickListener;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -79,6 +85,8 @@ public class FragmentLibrary extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.library_page, container, false);
 
+
+
         List<Music> recently = new ArrayList<>();
         Music recent1 = new Music(R.drawable.nnca, "Noi nay co anh", "Son Tung MTP");
         recently.add(recent1);
@@ -88,29 +96,35 @@ public class FragmentLibrary extends Fragment {
         rec2.setLayoutManager(layout_manager2);
         rec2.setAdapter(adapterRecently);
 
-        ((Button)view.findViewById(R.id.btn_liked_tracks)).setOnClickListener(new View.OnClickListener() {
+        Button button = view.findViewById(R.id.btn_liked_tracks);
+
+        button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                myButtonClickListener.onMyButtonClick();
+                // Define behavior for when the button is clicked
+                fragmentManager = getActivity().getSupportFragmentManager();
+                fragmentLikedTracks = new FragmentLikedTracks();
+                fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.fr_container, fragmentLikedTracks, "");
+                fragmentTransaction.commit();
+            }
+        });
+
+        ((Button)view.findViewById(R.id.btn_playlist)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Define behavior for when the button is clicked
+                fragmentManager = getActivity().getSupportFragmentManager();
+                fragmentPlaylist = new FragmentPlaylist();
+                fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.fr_container, fragmentPlaylist, "");
+                fragmentTransaction.commit();
             }
         });
 
         return view;
     }
 
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        if(context instanceof MyButtonClickListener){
-            myButtonClickListener = (MyButtonClickListener)context;
-        }
-        else{
-            throw new RuntimeException(context.toString()+"haha");
-        }
-    }
 
-    public interface MyButtonClickListener{
-        void onMyButtonClick();
-    }
 
 }

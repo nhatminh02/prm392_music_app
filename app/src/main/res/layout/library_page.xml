@@ -29,7 +29,7 @@
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button3" />
+        app:layout_constraintTop_toBottomOf="@+id/btn_playlist" />
 
     <TextView
         android:id="@+id/textView"
@@ -60,7 +60,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textView" />
 
     <Button
-        android:id="@+id/button3"
+        android:id="@+id/btn_playlist"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:backgroundTint="#00FFFFFF"

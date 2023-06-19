@@ -1,12 +1,17 @@
 package com.example.prm392_musicapp.fragments;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
 
 import com.example.prm392_musicapp.R;
 
@@ -19,6 +24,11 @@ public class FragmentLikedTracks extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+    FragmentManager fragmentManager;
+    FragmentTransaction fragmentTransaction;
+    FragmentLikedTracks fragmentLikedTracks;
+
+    FragmentLibrary fragmentLibrary;
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
@@ -57,10 +67,23 @@ public class FragmentLikedTracks extends Fragment {
         }
     }
 
+    @SuppressLint("MissingInflatedId")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.liked_tracks_page, container, false);
+        View view = inflater.inflate(R.layout.liked_tracks_page, container, false);
+        fragmentManager = getActivity().getSupportFragmentManager();
+        fragmentLibrary = new FragmentLibrary();
+        ((ImageView)view.findViewById(R.id.btn_back)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.fr_container, fragmentLibrary, "");
+                fragmentTransaction.commit();
+            }
+        });
+
+        return view;
     }
 }

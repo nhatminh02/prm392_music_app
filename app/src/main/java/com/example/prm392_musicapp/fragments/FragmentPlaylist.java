@@ -3,19 +3,28 @@ package com.example.prm392_musicapp.fragments;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.example.prm392_musicapp.R;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link FragmentLoveTrack#newInstance} factory method to
+ * Use the {@link FragmentPlaylist#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class FragmentLoveTrack extends Fragment {
+public class FragmentPlaylist extends Fragment {
+
+    FragmentManager fragmentManager;
+    FragmentTransaction fragmentTransaction;
+    FragmentLikedTracks fragmentLikedTracks;
+
+    FragmentLibrary fragmentLibrary;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -26,7 +35,7 @@ public class FragmentLoveTrack extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    public FragmentLoveTrack() {
+    public FragmentPlaylist() {
         // Required empty public constructor
     }
 
@@ -36,11 +45,11 @@ public class FragmentLoveTrack extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment FragmentLoveTrack.
+     * @return A new instance of fragment FragmentPlaylist.
      */
     // TODO: Rename and change types and number of parameters
-    public static FragmentLoveTrack newInstance(String param1, String param2) {
-        FragmentLoveTrack fragment = new FragmentLoveTrack();
+    public static FragmentPlaylist newInstance(String param1, String param2) {
+        FragmentPlaylist fragment = new FragmentPlaylist();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -60,7 +69,18 @@ public class FragmentLoveTrack extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_love_track, container, false);
+        View view = inflater.inflate(R.layout.fragment_playlist, container, false);
+        fragmentManager = getActivity().getSupportFragmentManager();
+        fragmentLibrary = new FragmentLibrary();
+        ((ImageView)view.findViewById(R.id.btn_comeback)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.fr_container, fragmentLibrary, "");
+                fragmentTransaction.commit();
+            }
+        });
+
+        return view;
     }
 }
