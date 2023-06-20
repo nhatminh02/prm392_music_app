@@ -9,10 +9,13 @@ import androidx.fragment.app.FragmentTransaction;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 
 import com.example.prm392_musicapp.R;
 import com.example.prm392_musicapp.fragments.FragmentHome;
 import com.example.prm392_musicapp.fragments.FragmentLibrary;
+import com.example.prm392_musicapp.fragments.FragmentLikedTracks;
 import com.example.prm392_musicapp.fragments.FragmentSearch;
 import com.example.prm392_musicapp.fragments.FragmentSetting;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -25,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
     FragmentLibrary fragmentLibrary;
     FragmentSetting fragmentSetting;
     FragmentSearch fragmentSearch;
+    FragmentLikedTracks fragmentLikedTracks;
     BottomNavigationView bottomNavigationView;
 
     @Override
@@ -37,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
         fragmentLibrary = FragmentLibrary.newInstance(null, null);
         fragmentSetting = FragmentSetting.newInstance(null, null);
         fragmentSearch = FragmentSearch.newInstance(null, null);
+        fragmentLikedTracks = FragmentLikedTracks.newInstance(null, null);
 
         bottomNavigationView = findViewById(R.id.bottom_nav);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -69,6 +74,18 @@ public class MainActivity extends AppCompatActivity {
             fragmentTransaction.replace(containerViewId, fragment, tag);
             fragmentTransaction.commit();
         }
+    }
+
+
+    public void onMyButtonClick() {
+        ((Button) findViewById(R.id.btn_liked_tracks)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.fr_container, fragmentLikedTracks,"");
+                fragmentTransaction.commit();
+            }
+        });
     }
 
 
