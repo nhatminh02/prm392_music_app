@@ -19,17 +19,18 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class SearchAdapter extends  RecyclerView.Adapter<SearchAdapter.MusicViewHolder> implements Filterable {
+public class SearchAdapter extends  RecyclerView.Adapter<SearchAdapter.MusicViewHolder> {
     private List<Music> mListMusic;
-    private List<Music> mListMusicOld;
     Activity activity;
 
     public SearchAdapter(List<Music> mListMusic, Activity activity) {
         this.mListMusic = mListMusic;
-        this.mListMusicOld = mListMusicOld;
         this.activity = activity;
     }
-
+   public  void  setFilteredList(List<Music> filteredList){
+        this.mListMusic = filteredList;
+       notifyDataSetChanged();
+   }
     @NonNull
     @Override
     public MusicViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -40,6 +41,9 @@ public class SearchAdapter extends  RecyclerView.Adapter<SearchAdapter.MusicView
     @Override
     public void onBindViewHolder(@NonNull MusicViewHolder holder, int position) {
         Music music = mListMusic.get(position);
+        if (music == null) {
+            return;
+        }
         holder.imgMusic.setImageResource(music.getThumbnail());
         holder.tvName.setText(music.getMusicName());
         holder.tvSinger.setText(music.getSinger());
@@ -70,34 +74,34 @@ public class SearchAdapter extends  RecyclerView.Adapter<SearchAdapter.MusicView
     }
 
 
-    @Override
-    public Filter getFilter() {
-        return new Filter() {
-            @Override
-            protected FilterResults performFiltering(CharSequence constraint) {
-                String strSearch = constraint.toString();
-                if(strSearch.isEmpty()){
-                    mListMusic = mListMusicOld;
-                }else {
-                    List<Music> list = new ArrayList<>();
-                    for (Music music : mListMusicOld){
-                        if(music.getMusicName().toLowerCase().contains(strSearch.toLowerCase())){
-                            list.add(music);
-                        }
-                    }
-
-                    mListMusic = list;
-                }
-                FilterResults filterResults = new FilterResults();
-                filterResults.values = mListMusic;
-                return filterResults;
-            }
-
-            @Override
-            protected void publishResults(CharSequence constraint, FilterResults results) {
-                mListMusic = (List<Music>) results.values;
-                notifyDataSetChanged();
-            }
-        };
+//    @Override
+//    public Filter getFilter() {
+//        return new Filter() {
+//            @Override
+//            protected FilterResults performFiltering(CharSequence constraint) {
+//                String strSearch = constraint.toString();
+//                if(strSearch.isEmpty()){
+//                    mListMusic = mListMusicOld;
+//                }else {
+//                    List<Music> list = new ArrayList<>();
+//                    for (Music music : mListMusicOld){
+//                        if(music.getMusicName().toLowerCase().contains(strSearch.toLowerCase())){
+//                            list.add(music);
+//                        }
+//                    }
+//
+//                    mListMusic = list;
+//                }
+//                FilterResults filterResults = new FilterResults();
+//                filterResults.values = mListMusic;
+//                return filterResults;
+//            }
+//
+//            @Override
+//            protected void publishResults(CharSequence constraint, FilterResults results) {
+//                mListMusic = (List<Music>) results.values;
+//                notifyDataSetChanged();
+//            }
+//        };
     }
-}
+
