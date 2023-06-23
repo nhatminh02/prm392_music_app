@@ -15,6 +15,7 @@ import com.example.prm392_musicapp.R;
 import com.example.prm392_musicapp.fragments.FragmentHome;
 import com.example.prm392_musicapp.fragments.FragmentLibrary;
 import com.example.prm392_musicapp.fragments.FragmentLikedTracks;
+import com.example.prm392_musicapp.fragments.FragmentMusicPlayer;
 import com.example.prm392_musicapp.fragments.FragmentSearch;
 import com.example.prm392_musicapp.fragments.FragmentSetting;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -28,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
     FragmentSetting fragmentSetting;
     FragmentSearch fragmentSearch;
     FragmentLikedTracks fragmentLikedTracks;
+    FragmentMusicPlayer fragmentMusicPlayer;
     BottomNavigationView bottomNavigationView;
 
     @Override
@@ -41,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
         fragmentSetting = FragmentSetting.newInstance(null, null);
         fragmentSearch = FragmentSearch.newInstance(null, null);
         fragmentLikedTracks = FragmentLikedTracks.newInstance(null, null);
+        fragmentMusicPlayer = FragmentMusicPlayer.newInstance(null,null);
 
         bottomNavigationView = findViewById(R.id.bottom_nav);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -85,6 +88,12 @@ public class MainActivity extends AppCompatActivity {
                 fragmentTransaction.commit();
             }
         });
+    }
+
+    public void onMuicPlay(View v){
+        fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.fr_container,fragmentMusicPlayer ,"");
+        fragmentTransaction.commit();
     }
 
 

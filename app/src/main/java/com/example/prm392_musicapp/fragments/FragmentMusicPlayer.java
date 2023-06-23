@@ -3,6 +3,7 @@ package com.example.prm392_musicapp.fragments;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -10,23 +11,30 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.prm392_musicapp.R;
 import com.example.prm392_musicapp.adapter.MusicAdapter;
 import com.example.prm392_musicapp.api.VideoDataUtils;
 import com.example.prm392_musicapp.models.Item;
 import com.example.prm392_musicapp.models.Music;
+import com.google.android.youtube.player.YouTubeBaseActivity;
+import com.google.android.youtube.player.YouTubeInitializationResult;
+import com.google.android.youtube.player.YouTubePlayer;
+import com.google.android.youtube.player.YouTubePlayerFragment;
+import com.google.android.youtube.player.YouTubePlayerSupportFragment;
+import com.google.android.youtube.player.YouTubePlayerView;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link FragmentHome#newInstance} factory method to
+ * Use the  factory method to
  * create an instance of this fragment.
  */
-public class FragmentHome extends Fragment {
-
+public class FragmentMusicPlayer extends Fragment{
+    YouTubePlayerView youTubePlayerView;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -36,7 +44,7 @@ public class FragmentHome extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    public FragmentHome() {
+    public FragmentMusicPlayer() {
         // Required empty public constructor
     }
 
@@ -49,8 +57,8 @@ public class FragmentHome extends Fragment {
      * @return A new instance of fragment FragmentHome.
      */
     // TODO: Rename and change types and number of parameters
-    public static FragmentHome newInstance(String param1, String param2) {
-        FragmentHome fragment = new FragmentHome();
+    public static FragmentMusicPlayer newInstance(String param1, String param2) {
+        FragmentMusicPlayer fragment = new FragmentMusicPlayer();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -70,38 +78,30 @@ public class FragmentHome extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.music_player_page, container, false);
 
-        View view = inflater.inflate(R.layout.home_page, container, false);
+        youTubePlayerView = view.findViewById(R.id.youtube_player_view);
 
-        int thumbnail;
-        String musicName;
-        String singer;
-        int index = 0;
+        YouTubePlayer.OnInitializedListener listener = new YouTubePlayer.OnInitializedListener() {
+            @Override
+            public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer, boolean b) {
+                VideoDataUtils.searchVideoData("son tung").observe(getViewLifecycleOwner(), new Observer<List<Item>>() {
+                    @Override
+                    public void onChanged(List<Item> items) {
+                        youTubePlayer.loadVideo(items.get(0).getId().getVideoId());
+                    }
+                });
+                youTubePlayer.play();
+            }
 
-        List<Music> reccomends = new ArrayList<>();
-        Music rm1 = new Music(R.drawable.atbe, "Am tham ben em", "Son Tung MTP");
-        Music rm2 = new Music(R.drawable.cadsv, "Chac ai do se ve", "Son Tung MTP");
-        Music rm3 = new Music(R.drawable.ctktvn, "Chung ta khong thuoc ve nhau", "Son Tung MTP");
-        reccomends.add(rm1);
-        reccomends.add(rm3);
-        reccomends.add(rm2);
-        MusicAdapter adapterReccomnend = new MusicAdapter(reccomends, getActivity());
-        RecyclerView rec1 = view.findViewById(R.id.rec_reccomend);
-        RecyclerView.LayoutManager layout_manager1 =
-                new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
-        rec1.setLayoutManager(layout_manager1);
-        rec1.setAdapter(adapterReccomnend);
+            @Override
+            public void onInitializationFailure(YouTubePlayer.Provider provider, YouTubeInitializationResult youTubeInitializationResult) {
+                Toast.makeText(view.getContext(),"Failed",Toast.LENGTH_SHORT).show();
+            }
+        };
 
-        List<Music> recently = new ArrayList<>();
-        Music recent1 = new Music(R.drawable.nnca, "Noi nay co anh", "Son Tung MTP");
-        recently.add(recent1);
-        MusicAdapter adapterRecently = new MusicAdapter(recently, getActivity());
-        RecyclerView rec2 = view.findViewById(R.id.rec_recently);
-        RecyclerView.LayoutManager layout_manager2 =
-                new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
-        rec2.setLayoutManager(layout_manager2);
-        rec2.setAdapter(adapterRecently);
-
+        youTubePlayerView.initialize("AIzaSyDca6EiCASpFVwlvWFcbjj_ykdoWCNDevk",listener);
         return view;
     }
+
 }
