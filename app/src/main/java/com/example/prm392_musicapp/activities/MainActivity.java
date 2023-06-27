@@ -2,13 +2,23 @@ package com.example.prm392_musicapp.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.app.ActivityOptionsCompat;
+import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.app.SharedElementCallback;
+import android.content.Intent;
 import android.os.Bundle;
+import android.transition.ChangeBounds;
+import android.transition.Fade;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 
 import com.example.prm392_musicapp.R;
@@ -19,6 +29,9 @@ import com.example.prm392_musicapp.fragments.FragmentMusicPlayer;
 import com.example.prm392_musicapp.fragments.FragmentSearch;
 import com.example.prm392_musicapp.fragments.FragmentSetting;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import java.util.List;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -31,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
     FragmentLikedTracks fragmentLikedTracks;
     FragmentMusicPlayer fragmentMusicPlayer;
     BottomNavigationView bottomNavigationView;
+    ConstraintLayout miniBarPlayer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +77,19 @@ public class MainActivity extends AppCompatActivity {
         });
         //add homepage fragment khi app chạy
         transactionFragment(R.id.fr_container, fragmentHome, "", "ADD");
+        miniBarPlayer = findViewById(R.id.mini_player_bar);
+    }
+
+
+    public void onClickMini(View v){
+        Intent intent = new Intent(MainActivity.this, TestVideoPlay.class);
+        ActivityOptionsCompat optionsCompat = ActivityOptionsCompat
+                .makeSceneTransitionAnimation(MainActivity.this, miniBarPlayer,ViewCompat.getTransitionName(miniBarPlayer));
+        Animation slideDown = AnimationUtils.loadAnimation(this, R.anim.slide_down);
+
+        // Apply the animation to the parent layout
+        bottomNavigationView.startAnimation(slideDown);
+        startActivity(intent, optionsCompat.toBundle());
     }
 
 
@@ -78,6 +105,22 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//        Log.i("state", "onResume");
+//        Animation slideUp = AnimationUtils.loadAnimation(this, R.anim.slide_up);
+//
+//        // Apply the animation to the parent layout
+//        bottomNavigationView.startAnimation(slideUp);
+//    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.i("state", "onStart");
+
+    }
 
     public void onMyButtonClick() {
         ((Button) findViewById(R.id.btn_liked_tracks)).setOnClickListener(new View.OnClickListener() {

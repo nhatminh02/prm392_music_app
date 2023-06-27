@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFFFFF"
-    tools:context=".activities.HomeActivity">
+    tools:context=".activities.MainActivity">
 
     <FrameLayout
         android:id="@+id/fr_container"
@@ -22,6 +22,7 @@
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:onClick="onClickMini"
         android:id="@+id/constraintLayout2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -30,9 +31,10 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:transitionName="slide"
+            android:id="@+id/mini_player_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="onMuicPlay"
             android:paddingStart="20dp"
             android:paddingTop="3dp"
             android:paddingEnd="20dp"
@@ -101,4 +103,4 @@
             app:menu="@menu/bottom_nav_menu" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
