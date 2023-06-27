@@ -74,34 +74,6 @@ public class SearchAdapter extends  RecyclerView.Adapter<SearchAdapter.MusicView
     }
 
 
-//    @Override
-//    public Filter getFilter() {
-//        return new Filter() {
-//            @Override
-//            protected FilterResults performFiltering(CharSequence constraint) {
-//                String strSearch = constraint.toString();
-//                if(strSearch.isEmpty()){
-//                    mListMusic = mListMusicOld;
-//                }else {
-//                    List<Music> list = new ArrayList<>();
-//                    for (Music music : mListMusicOld){
-//                        if(music.getMusicName().toLowerCase().contains(strSearch.toLowerCase())){
-//                            list.add(music);
-//                        }
-//                    }
-//
-//                    mListMusic = list;
-//                }
-//                FilterResults filterResults = new FilterResults();
-//                filterResults.values = mListMusic;
-//                return filterResults;
-//            }
-//
-//            @Override
-//            protected void publishResults(CharSequence constraint, FilterResults results) {
-//                mListMusic = (List<Music>) results.values;
-//                notifyDataSetChanged();
-//            }
-//        };
+
     }
 
