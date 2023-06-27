@@ -6,11 +6,13 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
+import com.example.prm392_musicapp.LikeTrackDB.MySQLiteOpenHelper;
 import com.example.prm392_musicapp.R;
 import com.example.prm392_musicapp.fragments.FragmentHome;
 import com.example.prm392_musicapp.fragments.FragmentLibrary;
@@ -29,11 +31,16 @@ public class MainActivity extends AppCompatActivity {
     FragmentSearch fragmentSearch;
     FragmentLikedTracks fragmentLikedTracks;
     BottomNavigationView bottomNavigationView;
+    MySQLiteOpenHelper mySQLiteOpenHelper;
+    SQLiteDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+        mySQLiteOpenHelper = new MySQLiteOpenHelper(this, "musicdb", null, 11);
 
         fragmentManager = getSupportFragmentManager();
         fragmentHome = FragmentHome.newInstance(null, null);
