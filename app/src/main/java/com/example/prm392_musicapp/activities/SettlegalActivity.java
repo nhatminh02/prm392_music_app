@@ -1,14 +1,16 @@
-package com.example.prm392_musicapp;
+package com.example.prm392_musicapp.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 
-public class Settnoti extends AppCompatActivity {
+import com.example.prm392_musicapp.R;
+
+public class SettlegalActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.settnoti);
+        setContentView(R.layout.settlegal);
     }
 }

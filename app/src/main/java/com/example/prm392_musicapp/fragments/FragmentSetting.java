@@ -1,5 +1,6 @@
 package com.example.prm392_musicapp.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -7,8 +8,13 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import com.example.prm392_musicapp.R;
+import com.example.prm392_musicapp.activities.SettlegalActivity;
+import com.example.prm392_musicapp.activities.Settnoti;
+import com.example.prm392_musicapp.activities.Themesett;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -62,6 +68,33 @@ public class FragmentSetting extends Fragment {
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.setting_page, container, false);
+        Button button2 = view.findViewById(R.id.Legali); // Replace "button" with your button ID
+        button2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Perform your desired action here
+                Intent intent = new Intent(getActivity(), Themesett.class);
+                startActivity(intent);
+            }
+        });
+        Button notifica = view.findViewById(R.id.Notib); // Replace "button" with your button ID
+        notifica.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Perform your desired action here
+                Intent intent = new Intent(getActivity(), Settnoti.class);
+                startActivity(intent);
+            }
+        });
+        Button legal = view.findViewById(R.id.legal); // Replace "button" with your button ID
+        legal.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Perform your desired action here
+                Intent intent = new Intent(getActivity(), SettlegalActivity.class);
+                startActivity(intent);
+            }
+        });
         return view;
     }
 }

@@ -15,13 +15,13 @@
         android:theme="@style/Theme.PRM392_MusicApp"
         tools:targetApi="31" >
         <activity
-            android:name=".Settnoti"
+            android:name=".activities.Settnoti"
             android:exported="false" />
         <activity
-            android:name=".SettlegalActivity"
+            android:name=".activities.SettlegalActivity"
             android:exported="false" />
         <activity
-            android:name=".themesett"
+            android:name=".activities.Themesett"
             android:exported="false" />
         <activity
             android:name=".activities.MainActivity"

@@ -1,10 +1,12 @@
-package com.example.prm392_musicapp;
+package com.example.prm392_musicapp.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 
-public class themesett extends AppCompatActivity {
+import com.example.prm392_musicapp.R;
+
+public class Themesett extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
