@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
     FragmentSearch fragmentSearch;
     FragmentLikedTracks fragmentLikedTracks;
     BottomNavigationView bottomNavigationView;
-    ConstraintLayout miniBarPlayer;
+    ConstraintLayout miniBarPlayer, homePage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
         //add homepage fragment khi app chạy
         transactionFragment(R.id.fr_container, fragmentHome, "", "ADD");
         miniBarPlayer = findViewById(R.id.mini_player_bar);
+        homePage = findViewById(R.id.homePage);
     }
 
 
@@ -77,8 +78,10 @@ public class MainActivity extends AppCompatActivity {
         ActivityOptionsCompat optionsCompat = ActivityOptionsCompat
                 .makeSceneTransitionAnimation(MainActivity.this, miniBarPlayer,ViewCompat.getTransitionName(miniBarPlayer));
         Animation slideDown = AnimationUtils.loadAnimation(this, R.anim.slide_down);
+        Animation slideUp = AnimationUtils.loadAnimation(this, R.anim.slide_up);
 
         // Apply the animation to the parent layout
+        homePage.startAnimation(slideUp);
         bottomNavigationView.startAnimation(slideDown);
         startActivity(intent, optionsCompat.toBundle());
     }

@@ -2,10 +2,10 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/frameLayout3"
+    android:id="@+id/layout_video_play"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.FragmentMusicPlayer">
+    tools:context=".activities.VideoPlayActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/cL_top"
@@ -16,9 +16,10 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
-            android:id="@+id/imageView"
+            android:id="@+id/imv_back"
             android:layout_width="50dp"
             android:layout_height="50dp"
+            android:onClick="onBack"
             android:src="@android:drawable/arrow_down_float"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -28,7 +29,6 @@
         android:id="@+id/cL_video_des"
         android:layout_width="match_parent"
         android:layout_height="100dp"
-        android:layout_marginTop="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/youtube_player_view">
@@ -59,15 +59,14 @@
             app:layout_constraintTop_toBottomOf="@+id/tv_title" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <com.google.android.youtube.player.YouTubePlayerView
+    <com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
         android:id="@+id/youtube_player_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
+
+        app:enableAutomaticInitialization="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cL_top" >
-
-    </com.google.android.youtube.player.YouTubePlayerView>
+        app:layout_constraintTop_toBottomOf="@+id/cL_top" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

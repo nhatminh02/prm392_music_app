@@ -3,6 +3,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/homePage"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFFFFF"
@@ -22,16 +23,15 @@
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:onClick="onClickMini"
         android:id="@+id/constraintLayout2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:onClick="onClickMini"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:transitionName="slide"
             android:id="@+id/mini_player_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -39,6 +39,7 @@
             android:paddingTop="3dp"
             android:paddingEnd="20dp"
             android:paddingBottom="3dp"
+            android:transitionName="slide"
             app:layout_constraintBottom_toTopOf="@+id/bottom_nav"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
