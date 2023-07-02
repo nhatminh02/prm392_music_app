@@ -13,6 +13,7 @@ import android.widget.Switch;
 
 import com.example.prm392_musicapp.R;
 
+//sang file activity_theme_setting.xml chuyển sang dạng code để xem
 public class SettingThemeActivity extends AppCompatActivity {
     Switch switchThemeBtn;
     boolean darkMode;
@@ -22,7 +23,6 @@ public class SettingThemeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_theme_setting);
-//        getSupportActionBar().hide();
         switchThemeBtn = findViewById(R.id.switch_theme);
 
         sharedPreferences = getSharedPreferences("mode", Context.MODE_PRIVATE);

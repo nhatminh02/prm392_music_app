@@ -6,6 +6,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+<!--Thêm thuộc tính style cho chữ, layout, nút nếu muốn đổi theo theme. Nhìn TextView bên dưới vs ConstraintLayout bên trên đều
+có thuộc tính style
+Xem màu theo theme ở values/themes
+-->
     <TextView
         android:id="@+id/textView2"
         style="@style/text"
