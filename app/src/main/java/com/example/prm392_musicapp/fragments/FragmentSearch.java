@@ -4,6 +4,7 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.os.Bundle;
 
+import androidx.annotation.UiThread;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
@@ -19,6 +20,7 @@ import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.prm392_musicapp.R;
@@ -38,6 +40,8 @@ import java.util.List;
 public class FragmentSearch extends Fragment {
     List<Item> searchList;
     ProgressBar progressBar;
+    TextView startTitleSearch;
+    TextView startSubtitleSearch;
 
     AppCompatActivity appCompatActivity = new AppCompatActivity();
 
@@ -93,21 +97,34 @@ public class FragmentSearch extends Fragment {
         searchAdapter = new SearchAdapter(searchList, getActivity());
         RecyclerView revMusic = view.findViewById(R.id.rev_music);
         searchView = view.findViewById(R.id.searchView);
+        startTitleSearch = view.findViewById(R.id.start_title_search);
+        startSubtitleSearch = view.findViewById(R.id.start_subtitle_search);
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 //khi người dùng nhấn enter trên bàn phím sẽ xử lý trong này
-//                if(query.length() == 0) return false;
                 //set loading khi call API
+                displaySearchTitle(false, getResources().getString(R.string.start_title_search),
+                        getResources().getString(R.string.start_subtitle_search));
                 progressBar.setVisibility(View.VISIBLE);
+                revMusic.setVisibility(View.INVISIBLE);
                 VideoDataUtils.searchVideoData(query).observe(getViewLifecycleOwner(), new Observer<List<Item>>() {
                     @Override
                     public void onChanged(List<Item> items) {
+                        if(items.size() == 0){
+                            displaySearchTitle(true, getResources().getString(R.string.not_found_title),
+                                    getResources().getString(R.string.not_found_subtitle));
+                            progressBar.setVisibility(View.GONE);
+                            return;
+                        }
                         //tắt loading khi đã nhận data
                         progressBar.setVisibility(View.GONE);
+                        revMusic.setVisibility(View.VISIBLE);
+
                         searchList = items;
                         searchAdapter.setSearchList(searchList);
+
                     }
                 });
 
@@ -117,7 +134,9 @@ public class FragmentSearch extends Fragment {
             @Override
             public boolean onQueryTextChange(String newText) {
                 //khi người dùng đang nhập sẽ xử lý trong này
-                if(newText.length() == 0) return true;
+                if(newText.length() == 0) {
+                    return true;
+                }
                 // delay goi API lại 1s khi người dùng thay đổi giá trị search (tránh gọi API liên tục)
                 handler.removeCallbacksAndMessages(null);
                 handler.postDelayed(new Runnable() {
@@ -126,8 +145,19 @@ public class FragmentSearch extends Fragment {
                        VideoDataUtils.searchVideoData(newText).observe(getViewLifecycleOwner(), new Observer<List<Item>>() {
                            @Override
                            public void onChanged(List<Item> items) {
+                               if(items.size() == 0){
+                                   displaySearchTitle(true, getResources().getString(R.string.not_found_title),
+                                           getResources().getString(R.string.not_found_subtitle));
+                                   progressBar.setVisibility(View.GONE);
+                                   revMusic.setVisibility(View.INVISIBLE);
+                                   return;
+                               }
+                               displaySearchTitle(false, getResources().getString(R.string.start_title_search),
+                                       getResources().getString(R.string.start_subtitle_search));
                                searchList = items;
                                searchAdapter.setSearchList(searchList);
+                               revMusic.setVisibility(View.VISIBLE);
+
                            }
                        });
                     }
@@ -142,8 +172,15 @@ public class FragmentSearch extends Fragment {
         return view;
     }
 
-
-
-
-
+    public void displaySearchTitle(boolean isDisplay, String title, String subTitle){
+        startTitleSearch.setText(title);
+        startSubtitleSearch.setText(subTitle);
+        if(isDisplay){
+            startTitleSearch.setVisibility(View.VISIBLE);
+            startSubtitleSearch.setVisibility(View.VISIBLE);
+        }else{
+            startTitleSearch.setVisibility(View.GONE);
+            startSubtitleSearch.setVisibility(View.GONE);
+        }
+    }
 }
