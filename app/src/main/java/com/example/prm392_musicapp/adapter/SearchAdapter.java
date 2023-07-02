@@ -51,8 +51,9 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.MusicViewH
         Glide.with(holder.imgMusic.getContext())
                 .load(music.getSnippet().getThumbnails().getMedium().getUrl())
                 .into(holder.imgMusic);
-        if(music.getSnippet().getTitle().trim().length() > 40){
-            holder.tvName.setText(music.getSnippet().getTitle().substring(0,35) + "...");
+        //tiêu đề mà dài quá thì cắt bớt thay phần còn lại thành "..."
+        if(music.getSnippet().getTitle().trim().length() > 30){
+            holder.tvName.setText(music.getSnippet().getTitle().substring(0,27) + "...");
         }else{
             holder.tvName.setText(music.getSnippet().getTitle());
         }
