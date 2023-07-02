@@ -13,6 +13,8 @@ public interface GetVideoDataService {
             @Query("q") String searchValue,
             @Query("key") String key,
             @Query("maxResults") String maxResults,
-            @Query("regionCode") String regionCode
+            @Query("regionCode") String regionCode,
+            @Query("type") String type,
+            @Query("topicId") String topicId
     );
 }

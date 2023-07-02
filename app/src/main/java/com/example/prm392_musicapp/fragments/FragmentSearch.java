@@ -98,6 +98,7 @@ public class FragmentSearch extends Fragment {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 //khi người dùng nhấn enter trên bàn phím sẽ xử lý trong này
+//                if(query.length() == 0) return false;
                 //set loading khi call API
                 progressBar.setVisibility(View.VISIBLE);
                 VideoDataUtils.searchVideoData(query).observe(getViewLifecycleOwner(), new Observer<List<Item>>() {
@@ -116,6 +117,7 @@ public class FragmentSearch extends Fragment {
             @Override
             public boolean onQueryTextChange(String newText) {
                 //khi người dùng đang nhập sẽ xử lý trong này
+                if(newText.length() == 0) return true;
                 // delay goi API lại 1s khi người dùng thay đổi giá trị search (tránh gọi API liên tục)
                 handler.removeCallbacksAndMessages(null);
                 handler.postDelayed(new Runnable() {
@@ -124,7 +126,6 @@ public class FragmentSearch extends Fragment {
                        VideoDataUtils.searchVideoData(newText).observe(getViewLifecycleOwner(), new Observer<List<Item>>() {
                            @Override
                            public void onChanged(List<Item> items) {
-                               //data o trong cai items
                                searchList = items;
                                searchAdapter.setSearchList(searchList);
                            }

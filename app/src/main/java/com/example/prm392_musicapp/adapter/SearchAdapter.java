@@ -21,7 +21,7 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class SearchAdapter extends  RecyclerView.Adapter<SearchAdapter.MusicViewHolder> {
+public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.MusicViewHolder> {
     private List<Item> mListMusic;
     Activity activity;
 
@@ -29,14 +29,16 @@ public class SearchAdapter extends  RecyclerView.Adapter<SearchAdapter.MusicView
         this.mListMusic = mListMusic;
         this.activity = activity;
     }
-   public  void  setSearchList(List<Item> filteredList){
+
+    public void setSearchList(List<Item> filteredList) {
         this.mListMusic = filteredList;
-       notifyDataSetChanged();
-   }
+        notifyDataSetChanged();
+    }
+
     @NonNull
     @Override
     public MusicViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_search,parent,false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_search, parent, false);
         return new MusicViewHolder(view);
     }
 
@@ -55,15 +57,14 @@ public class SearchAdapter extends  RecyclerView.Adapter<SearchAdapter.MusicView
 
     @Override
     public int getItemCount() {
-        if(mListMusic != null){
+        if (mListMusic != null) {
             return mListMusic.size();
         }
         return 0;
     }
 
 
-
-    public class MusicViewHolder extends RecyclerView.ViewHolder{
+    public class MusicViewHolder extends RecyclerView.ViewHolder {
         CircleImageView imgMusic;
         TextView tvName;
         TextView tvSinger;
@@ -77,6 +78,5 @@ public class SearchAdapter extends  RecyclerView.Adapter<SearchAdapter.MusicView
     }
 
 
-
-    }
+}
 
