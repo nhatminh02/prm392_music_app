@@ -12,11 +12,13 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.prm392_musicapp.R;
@@ -34,6 +36,8 @@ import java.util.List;
  * create an instance of this fragment.
  */
 public class FragmentSearch extends Fragment {
+    List<Item> searchList;
+    ProgressBar progressBar;
 
     AppCompatActivity appCompatActivity = new AppCompatActivity();
 
@@ -46,8 +50,8 @@ public class FragmentSearch extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    private  SearchAdapter searchAdapter;
-    private  SearchView  searchView;
+    private SearchAdapter searchAdapter;
+    private SearchView searchView;
 
     public FragmentSearch() {
         // Required empty public constructor
@@ -71,8 +75,8 @@ public class FragmentSearch extends Fragment {
         return fragment;
     }
 
-     @Override
-   public void onCreate(Bundle savedInstanceState) {
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
@@ -84,33 +88,49 @@ public class FragmentSearch extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.search_page, container, false);
-
-//          VideoDataUtils.searchVideoData("bac").observe(getViewLifecycleOwner(), new Observer<List<Item>>() {
-//      @Override
-//      public void onChanged(List<Item> items) {
-//              //data ở trong cái items
-//          Log.i("data",items.toString());
-//      }
-//  });
-
-       searchAdapter = new SearchAdapter(getListSong(),getActivity());
+        final Handler handler = new Handler();
+        progressBar = view.findViewById(R.id.search_progress_bar);
+        searchAdapter = new SearchAdapter(searchList, getActivity());
         RecyclerView revMusic = view.findViewById(R.id.rev_music);
-       searchView = view.findViewById(R.id.searchView);
+        searchView = view.findViewById(R.id.searchView);
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                // Called when the user submits the search query
-                // You can perform your search operation here
+                //khi người dùng nhấn enter trên bàn phím sẽ xử lý trong này
+                //set loading khi call API
+                progressBar.setVisibility(View.VISIBLE);
+                VideoDataUtils.searchVideoData(query).observe(getViewLifecycleOwner(), new Observer<List<Item>>() {
+                    @Override
+                    public void onChanged(List<Item> items) {
+                        //tắt loading khi đã nhận data
+                        progressBar.setVisibility(View.GONE);
+                        searchList = items;
+                        searchAdapter.setSearchList(searchList);
+                    }
+                });
 
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                // Called when the user changes the query text
-                // You can perform real-time filtering or suggestions here
-                filterList(newText);
+                //khi người dùng đang nhập sẽ xử lý trong này
+                // delay goi API lại 1s khi người dùng thay đổi giá trị search (tránh gọi API liên tục)
+                handler.removeCallbacksAndMessages(null);
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                       VideoDataUtils.searchVideoData(newText).observe(getViewLifecycleOwner(), new Observer<List<Item>>() {
+                           @Override
+                           public void onChanged(List<Item> items) {
+                               //data o trong cai items
+                               searchList = items;
+                               searchAdapter.setSearchList(searchList);
+                           }
+                       });
+                    }
+                },1000);
                 return true;
             }
         });
@@ -124,51 +144,8 @@ public class FragmentSearch extends Fragment {
         return view;
     }
 
-    private List<Music> getListSong() {
-        List<Music> list = new ArrayList<>();
-        list.add(new Music(R.drawable.nnca,"Nơi này có anh","Sơn Tùng"));
-        list.add(new Music(R.drawable.cadsv,"Chắc ai đó sẽ về","Sơn Tùng"));
-        list.add(new Music(R.drawable.ctktvn,"Chúng ta không thuộc về nhau","Sơn Tùng"));
-        list.add(new Music(R.drawable.atbe,"Âm thầm bên em","Sơn Tùng"));
-        list.add(new Music(R.drawable.atbe,"Tình em là đại dương","Duy Mạnh"));
-        list.add(new Music(R.drawable.atbe,"Kiếp đỏ den","Duy Mạnh"));
-        list.add(new Music(R.drawable.atbe,"Phê","Duy Mạnh"));
-        list.add(new Music(R.drawable.atbe,"Lời xin lỗi của một dân chơi","Duy Mạnh"));
-        list.add(new Music(R.drawable.atbe,"Em của ngày hôm qua","Sơn Tùng"));
-        list.add(new Music(R.drawable.atbe,"Chiếc khăn gió ấm","KHánh Phương"));
-        list.add(new Music(R.drawable.atbe,"Ta còn yêu nhau","Đức Phúc"));
-        list.add(new Music(R.drawable.atbe,"Không phải dạng vừa đâu","Sơn Tùng"));
-        list.add(new Music(R.drawable.atbe,"Thái Bình mồ hôi rơi","Sơn Tùng"));
-        list.add(new Music(R.drawable.atbe,"Lệ anh vẫn rơi","Sơn Tùng"));
-        list.add(new Music(R.drawable.atbe,"Ấn nút nhớ thả giấc mơ","Sơn Tùng"));
-        list.add(new Music(R.drawable.atbe,"Đừng về trễ","Sơn Tùng"));
-        list.add(new Music(R.drawable.atbe,"Lạc trôi","Sơn Tùng"));
-        list.add(new Music(R.drawable.atbe,"Run now","Sơn Tùng"));
-        list.add(new Music(R.drawable.atbe,"Nắng âm xa dần","Sơn Tùng"));
-        list.add(new Music(R.drawable.atbe,"Tình em là đại dương","Sơn Tùng"));
-        list.add(new Music(R.drawable.atbe,"Cơn mưa ngang qua","Sơn Tùng"));
-        list.add(new Music(R.drawable.atbe,"Mãi như ngày hôm qua","Sơn Tùng"));
-        list.add(new Music(R.drawable.atbe,"Hãy trao cho anh","Sơn Tùng"));
-        list.add(new Music(R.drawable.atbe,"Anh sai rồi","Sơn Tùng"));
-        list.add(new Music(R.drawable.atbe,"Muộn rồi mà sao còn","Sơn Tùng"));
-        list.add(new Music(R.drawable.atbe,"Có chắc yêu là đây","Sơn Tùng"));
-        list.add(new Music(R.drawable.atbe,"KHuôn mặt đáng thương","Sơn Tùng"));
-        list.add(new Music(R.drawable.atbe,"Một chút quên em thôi","Sơn Tùng"));
 
-        return list;
-    }
 
-    private  void filterList(String text){
-        List<Music> filteredList = new ArrayList<>();
-        List<Music> songList = getListSong();
-        for (Music music : songList){
-            if(music.getMusicName().toLowerCase().contains(text.toLowerCase())){
-                filteredList.add(music);
-            }
-        }
-        if(!filteredList.isEmpty()){
-            searchAdapter.setFilteredList(filteredList);
-        }
-    }
+
 
 }

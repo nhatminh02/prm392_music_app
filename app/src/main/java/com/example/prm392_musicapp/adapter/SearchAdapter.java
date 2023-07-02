@@ -11,7 +11,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.prm392_musicapp.R;
+import com.example.prm392_musicapp.models.Item;
 import com.example.prm392_musicapp.models.Music;
 
 import java.util.ArrayList;
@@ -20,14 +22,14 @@ import java.util.List;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class SearchAdapter extends  RecyclerView.Adapter<SearchAdapter.MusicViewHolder> {
-    private List<Music> mListMusic;
+    private List<Item> mListMusic;
     Activity activity;
 
-    public SearchAdapter(List<Music> mListMusic, Activity activity) {
+    public SearchAdapter(List<Item> mListMusic, Activity activity) {
         this.mListMusic = mListMusic;
         this.activity = activity;
     }
-   public  void  setFilteredList(List<Music> filteredList){
+   public  void  setSearchList(List<Item> filteredList){
         this.mListMusic = filteredList;
        notifyDataSetChanged();
    }
@@ -40,14 +42,15 @@ public class SearchAdapter extends  RecyclerView.Adapter<SearchAdapter.MusicView
 
     @Override
     public void onBindViewHolder(@NonNull MusicViewHolder holder, int position) {
-        Music music = mListMusic.get(position);
+        Item music = mListMusic.get(position);
         if (music == null) {
             return;
         }
-        holder.imgMusic.setImageResource(music.getThumbnail());
-        holder.tvName.setText(music.getMusicName());
-        holder.tvSinger.setText(music.getSinger());
-
+        Glide.with(holder.imgMusic.getContext())
+                .load(music.getSnippet().getThumbnails().getMedium().getUrl())
+                .into(holder.imgMusic);
+        holder.tvName.setText(music.getSnippet().getTitle());
+        holder.tvSinger.setText(music.getSnippet().getChannelTitle());
     }
 
     @Override
