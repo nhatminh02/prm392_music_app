@@ -139,9 +139,6 @@ public class FragmentSearch extends Fragment {
         revMusic.setLayoutManager(linearLayoutManager);
         revMusic.setAdapter(searchAdapter);
 
-        RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL);
-        revMusic.addItemDecoration(itemDecoration);
-
         return view;
     }
 
