@@ -3,6 +3,7 @@ package com.example.prm392_musicapp.fragments;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -12,6 +13,8 @@ import android.view.ViewGroup;
 
 import com.example.prm392_musicapp.R;
 import com.example.prm392_musicapp.adapter.MusicAdapter;
+import com.example.prm392_musicapp.api.VideoDataUtils;
+import com.example.prm392_musicapp.models.Item;
 import com.example.prm392_musicapp.models.Music;
 
 import java.util.ArrayList;
@@ -69,6 +72,11 @@ public class FragmentHome extends Fragment {
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.home_page, container, false);
+
+        int thumbnail;
+        String musicName;
+        String singer;
+        int index = 0;
 
         List<Music> reccomends = new ArrayList<>();
         Music rm1 = new Music(R.drawable.atbe, "Am tham ben em", "Son Tung MTP");
