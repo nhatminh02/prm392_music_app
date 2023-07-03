@@ -186,4 +186,19 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cL_top" />
 
+    <com.pierfrancescosoffritti.androidyoutubeplayer.core.customui.views.YouTubePlayerSeekBar
+        android:id="@+id/youtube_player_seekbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        app:color="@color/black"
+        app:fontSize="12sp"
+
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cL_volume" />
+
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

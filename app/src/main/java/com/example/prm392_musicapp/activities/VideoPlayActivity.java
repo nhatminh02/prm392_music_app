@@ -3,15 +3,9 @@ package com.example.prm392_musicapp.activities;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.app.ActivityOptionsCompat;
-import androidx.core.view.ViewCompat;
-import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.LifecycleRegistry;
 import androidx.lifecycle.Observer;
 
-import android.animation.ObjectAnimator;
-import android.animation.ValueAnimator;
+
 import android.content.Intent;
 import android.graphics.drawable.AnimatedVectorDrawable;
 import android.media.AudioManager;
@@ -19,8 +13,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.animation.LinearInterpolator;
-import android.widget.Button;
+
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -28,12 +21,13 @@ import android.widget.TextView;
 import com.example.prm392_musicapp.R;
 import com.example.prm392_musicapp.api.VideoDataUtils;
 import com.example.prm392_musicapp.models.Item;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.customui.DefaultPlayerUiController;
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.customui.views.YouTubePlayerSeekBar;
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.customui.views.YouTubePlayerSeekBarListener;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.YouTubePlayerListener;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.options.IFramePlayerOptions;
-import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.utils.YouTubePlayerUtils;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView;
 
 import java.util.List;
@@ -101,18 +95,23 @@ public class VideoPlayActivity extends AppCompatActivity {
         });
 
         youTubePlayerView.enableBackgroundPlayback(true);
-
-        View videoPlayer = youTubePlayerView.inflateCustomPlayerUi(R.layout.video_page);
-        ImageView plause = videoPlayer.findViewById(R.id.imv_plause);
-
-
         YouTubePlayerListener listener = new AbstractYouTubePlayerListener() {
             @Override
             public void onReady(@NonNull YouTubePlayer youTubePlayer) {
+                DefaultPlayerUiController defaultPlayerUiController = new DefaultPlayerUiController(youTubePlayerView, youTubePlayer);
+                defaultPlayerUiController.showUi(false);
 
-                CustomPlayerUiController customPlayerUiController = new CustomPlayerUiController(VideoPlayActivity.this, videoPlayer, youTubePlayer, youTubePlayerView);
+                //thanh chỉnh thời gian chạy của video
+                YouTubePlayerSeekBar youTubePlayerSeekBar = findViewById(R.id.youtube_player_seekbar);
+                youTubePlayerSeekBar.setYoutubePlayerSeekBarListener(new YouTubePlayerSeekBarListener() {
+                    @Override
+                    public void seekTo(float time) {
+                        youTubePlayer.seekTo(time);
+                    }
+                });
+                youTubePlayer.addListener(youTubePlayerSeekBar);
 
-                youTubePlayer.addListener(customPlayerUiController);
+                youTubePlayerView.setCustomPlayerUi(defaultPlayerUiController.getRootView());
 
                 youTubePlayer.loadVideo(videoId, 0);
 
@@ -123,12 +122,10 @@ public class VideoPlayActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         if (checkControl) {
                             youTubePlayer.pause();
-                            plause.setImageResource(R.drawable.baseline_play_arrow_24);
                             volumeControl.setImageResource(R.drawable.baseline_play_arrow_24_dark);
                             checkControl = !checkControl;
                         } else {
                             youTubePlayer.play();
-                            plause.setImageResource(R.drawable.baseline_pause_24);
                             volumeControl.setImageResource(R.drawable.baseline_pause_24_dark);
                             checkControl = !checkControl;
                         }
@@ -160,22 +157,19 @@ public class VideoPlayActivity extends AppCompatActivity {
                         if (checkRepeat) {
                             //todo: tat chuc nang repeat
                             repeat.setImageResource(R.drawable.baseline_repeat_24);
-                            checkRepeat = ! checkRepeat;
+                            checkRepeat = !checkRepeat;
                         } else {
                             //todo: bat chuc nang repeat
                             repeat.setImageResource(R.drawable.baseline_repeat_on_24);
-                            checkRepeat = ! checkRepeat;
+                            checkRepeat = !checkRepeat;
                         }
                     }
                 });
             }
         };
 
-        IFramePlayerOptions options = new IFramePlayerOptions.Builder().controls(0).build();
-
+        IFramePlayerOptions options = new IFramePlayerOptions.Builder().controls(0).fullscreen(1).build();
         youTubePlayerView.initialize(listener, options);
-
-
     }
 
     //heart icon
