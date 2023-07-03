@@ -46,6 +46,11 @@ class CustomPlayerUiController extends AbstractYouTubePlayerListener {
         boolean check = false;
         panel = playerUi.findViewById(R.id.panel);
         ImageView plause = playerUi.findViewById(R.id.imv_plause);
+        if (playerTracker.getState() == PlayerConstants.PlayerState.PLAYING) {
+            plause.setImageResource(R.drawable.baseline_play_arrow_24);
+        } else {
+            plause.setImageResource(R.drawable.baseline_pause_24);
+        }
         ImageView fullScreen = playerUi.findViewById(R.id.imv_fullscreen);
         panel.setOnClickListener((view) -> {
             plause.setVisibility(View.VISIBLE);
@@ -60,7 +65,7 @@ class CustomPlayerUiController extends AbstractYouTubePlayerListener {
                 public void run() {
                     fullScreen.setVisibility(View.GONE);
                 }
-            }, 5000);
+            }, 7000);
         });
 
         plause.setOnClickListener((view) -> {
@@ -76,7 +81,6 @@ class CustomPlayerUiController extends AbstractYouTubePlayerListener {
         fullScreen.setOnClickListener((view) -> {
             if (fullscreen) youTubePlayerView.wrapContent();
             else youTubePlayerView.matchParent();
-
             fullscreen = !fullscreen;
         });
     }

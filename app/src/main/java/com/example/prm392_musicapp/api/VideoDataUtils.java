@@ -21,7 +21,7 @@ public class VideoDataUtils {
 
         GetVideoDataService dataService = RetrofitInstance.getRetrofit().create(GetVideoDataService.class);
         Call<VideoDetails> videoDetailsRequest = dataService
-                .getSearchVideoData("snippet", searchQuery, "date", "AIzaSyDca6EiCASpFVwlvWFcbjj_ykdoWCNDevk");
+                .getSearchVideoData("snippet", searchQuery, "date", "AIzaSyBWbE-QBqsT8EqX35fyAQ7ZyNc3ZEAVQH4");
         videoDetailsRequest.enqueue(new Callback<VideoDetails>() {
             @Override
             public void onResponse(Call<VideoDetails> call, Response<VideoDetails> response) {
