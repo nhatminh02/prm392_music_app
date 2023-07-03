@@ -11,7 +11,10 @@ public interface GetVideoDataService {
     Call<VideoDetails> getSearchVideoData(
             @Query("part") String part,
             @Query("q") String searchValue,
-            @Query("order") String order,
-            @Query("key") String key
+            @Query("key") String key,
+            @Query("maxResults") String maxResults,
+            @Query("regionCode") String regionCode,
+            @Query("type") String type,
+            @Query("topicId") String topicId
     );
 }
