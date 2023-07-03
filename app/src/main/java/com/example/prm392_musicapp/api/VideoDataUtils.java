@@ -24,7 +24,7 @@ public class VideoDataUtils {
         //AIzaSyDca6EiCASpFVwlvWFcbjj_ykdoWCNDevk
         //AIzaSyBZDg-87in5IzNFeBo9PeRC_kFrcN4jjnE
         Call<VideoDetails> videoDetailsRequest = dataService
-                .getSearchVideoData("snippet", searchQuery, "AIzaSyBZDg-87in5IzNFeBo9PeRC_kFrcN4jjnE", "100", "VN","video","/m/04rlf");
+                .getSearchVideoData("snippet", searchQuery, "AIzaSyDca6EiCASpFVwlvWFcbjj_ykdoWCNDevk", "100", "VN","video","/m/04rlf");
         videoDetailsRequest.enqueue(new Callback<VideoDetails>() {
             @Override
             public void onResponse(Call<VideoDetails> call, Response<VideoDetails> response) {
