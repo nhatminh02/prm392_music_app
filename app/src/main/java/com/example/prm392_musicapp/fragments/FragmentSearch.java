@@ -1,35 +1,29 @@
 package com.example.prm392_musicapp.fragments;
 
-import android.app.SearchManager;
-import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 
-import androidx.annotation.UiThread;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
-import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.prm392_musicapp.R;
+import com.example.prm392_musicapp.activities.VideoPlayActivity;
 import com.example.prm392_musicapp.adapter.SearchAdapter;
 import com.example.prm392_musicapp.api.VideoDataUtils;
-import com.example.prm392_musicapp.models.Item;
-import com.example.prm392_musicapp.models.Music;
+import com.example.prm392_musicapp.models.SearchItem;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -38,7 +32,7 @@ import java.util.List;
  * create an instance of this fragment.
  */
 public class FragmentSearch extends Fragment {
-    List<Item> searchList;
+    List<SearchItem> searchList;
     ProgressBar progressBar;
     TextView startTitleSearch;
     TextView startSubtitleSearch;
@@ -100,6 +94,17 @@ public class FragmentSearch extends Fragment {
         startTitleSearch = view.findViewById(R.id.start_title_search);
         startSubtitleSearch = view.findViewById(R.id.start_subtitle_search);
 
+        //Lấy ra id của video khi click vào
+        searchAdapter.setOnItemClickListener(new SearchAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(String itemId) {
+                Log.i("itemId", itemId);
+                Intent intent = new Intent(getActivity(), VideoPlayActivity.class);
+                intent.putExtra("itemId", itemId);
+                startActivity(intent);
+            }
+        });
+
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -109,10 +114,10 @@ public class FragmentSearch extends Fragment {
                         getResources().getString(R.string.start_subtitle_search));
                 progressBar.setVisibility(View.VISIBLE);
                 revMusic.setVisibility(View.INVISIBLE);
-                VideoDataUtils.searchVideoData(query).observe(getViewLifecycleOwner(), new Observer<List<Item>>() {
+                VideoDataUtils.searchVideoData(query).observe(getViewLifecycleOwner(), new Observer<List<SearchItem>>() {
                     @Override
-                    public void onChanged(List<Item> items) {
-                        if(items.size() == 0){
+                    public void onChanged(List<SearchItem> searchItems) {
+                        if(searchItems.size() == 0){
                             displaySearchTitle(true, getResources().getString(R.string.not_found_title),
                                     getResources().getString(R.string.not_found_subtitle));
                             progressBar.setVisibility(View.GONE);
@@ -122,7 +127,7 @@ public class FragmentSearch extends Fragment {
                         progressBar.setVisibility(View.GONE);
                         revMusic.setVisibility(View.VISIBLE);
 
-                        searchList = items;
+                        searchList = searchItems;
                         searchAdapter.setSearchList(searchList);
 
                     }
@@ -142,10 +147,10 @@ public class FragmentSearch extends Fragment {
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                       VideoDataUtils.searchVideoData(newText).observe(getViewLifecycleOwner(), new Observer<List<Item>>() {
+                       VideoDataUtils.searchVideoData(newText).observe(getViewLifecycleOwner(), new Observer<List<SearchItem>>() {
                            @Override
-                           public void onChanged(List<Item> items) {
-                               if(items.size() == 0){
+                           public void onChanged(List<SearchItem> searchItems) {
+                               if(searchItems.size() == 0){
                                    displaySearchTitle(true, getResources().getString(R.string.not_found_title),
                                            getResources().getString(R.string.not_found_subtitle));
                                    progressBar.setVisibility(View.GONE);
@@ -154,7 +159,7 @@ public class FragmentSearch extends Fragment {
                                }
                                displaySearchTitle(false, getResources().getString(R.string.start_title_search),
                                        getResources().getString(R.string.start_subtitle_search));
-                               searchList = items;
+                               searchList = searchItems;
                                searchAdapter.setSearchList(searchList);
                                revMusic.setVisibility(View.VISIBLE);
 

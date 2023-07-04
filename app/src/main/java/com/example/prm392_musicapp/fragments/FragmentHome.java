@@ -3,7 +3,6 @@ package com.example.prm392_musicapp.fragments;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -13,8 +12,6 @@ import android.view.ViewGroup;
 
 import com.example.prm392_musicapp.R;
 import com.example.prm392_musicapp.adapter.MusicAdapter;
-import com.example.prm392_musicapp.api.VideoDataUtils;
-import com.example.prm392_musicapp.models.Item;
 import com.example.prm392_musicapp.models.Music;
 
 import java.util.ArrayList;
