@@ -21,7 +21,8 @@ import android.widget.TextView;
 
 import com.example.prm392_musicapp.R;
 import com.example.prm392_musicapp.api.VideoDataUtils;
-import com.example.prm392_musicapp.models.Item;
+import com.example.prm392_musicapp.models.Id;
+import com.example.prm392_musicapp.models.SingleItem;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.customui.DefaultPlayerUiController;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.customui.views.YouTubePlayerSeekBar;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.customui.views.YouTubePlayerSeekBarListener;
@@ -35,7 +36,6 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTube
 import java.util.List;
 
 public class VideoPlayActivity extends AppCompatActivity {
-    String videoId = "";
     private TextView tv_title;
     private TextView tv_channel;
     private ImageView heart;
@@ -47,11 +47,14 @@ public class VideoPlayActivity extends AppCompatActivity {
     private SeekBar seekBar;
     private AudioManager audioManager;
     private boolean checkControl, checkSuffle, checkRepeat;
+    String itemId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.video_play_page);
+        Log.i("on1", "onCreate");
+
 
         tv_title = findViewById(R.id.tv_title);
         tv_channel = findViewById(R.id.tv_channel);
@@ -87,14 +90,28 @@ public class VideoPlayActivity extends AppCompatActivity {
 
 
         youTubePlayerView = findViewById(R.id.youtube_player_view);
-        VideoDataUtils.searchVideoData("chung ta khong thuoc ve nhau").observe(this, new Observer<List<Item>>() {
+
+        itemId = getIntent().getStringExtra("itemId");
+        Id id = new Id();
+
+        VideoDataUtils.getVideoById(itemId).observe(this, new Observer<List<SingleItem>>() {
             @Override
-            public void onChanged(List<Item> items) {
-                videoId = items.get(0).getId().getVideoId();
-                tv_title.setText(items.get(0).getSnippet().getTitle());
-                tv_channel.setText(items.get(0).getSnippet().getChannelTitle());
+            public void onChanged(List<SingleItem> singleItems) {
+                tv_title.setText(singleItems.get(0).getSnippet().getTitle());
+                tv_channel.setText(singleItems.get(0).getSnippet().getChannelTitle());
             }
         });
+
+//        VideoDataUtils.searchVideoData("noi nay co anh").observe(this, new Observer<List<SearchItem>>() {
+//            @Override
+//            public void onChanged(List<SearchItem> searchItems) {
+//                videoId = searchItems.get(0).getId().getVideoId();
+//                tv_title.setText(searchItems.get(0).getSnippet().getTitle());
+//                tv_channel.setText(searchItems.get(0).getSnippet().getChannelTitle());
+//                Log.i("which", "searchVideoData");
+//
+//            }
+//        });
 
         youTubePlayerView.enableBackgroundPlayback(true);
         YouTubePlayerListener listener = new AbstractYouTubePlayerListener() {
@@ -115,7 +132,7 @@ public class VideoPlayActivity extends AppCompatActivity {
 
                 youTubePlayerView.setCustomPlayerUi(defaultPlayerUiController.getRootView());
 
-                youTubePlayer.loadVideo(videoId, 0);
+                youTubePlayer.loadVideo(itemId, 0);
 
                 ImageView volumeControl = findViewById(R.id.imv_volumeControl);
                 checkControl = true;
@@ -174,8 +191,8 @@ public class VideoPlayActivity extends AppCompatActivity {
                 super.onStateChange(youTubePlayer, state);
 
                 //xử lý chức năng repeat
-                if(state.equals(PlayerConstants.PlayerState.ENDED) && checkRepeat){
-                    youTubePlayer.loadVideo(videoId, 0);
+                if (state.equals(PlayerConstants.PlayerState.ENDED) && checkRepeat) {
+                    youTubePlayer.loadVideo(itemId, 0);
                 }
             }
         };
@@ -198,6 +215,7 @@ public class VideoPlayActivity extends AppCompatActivity {
         Animation slideDown = AnimationUtils.loadAnimation(this, R.anim.slide_down);
 
         videoPage.startAnimation(slideDown);
+        moveTaskToBack(true);
         startActivity(intent);
     }
 }
