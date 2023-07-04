@@ -1,26 +1,29 @@
 package com.example.prm392_musicapp.fragments;
 
-import android.app.SearchManager;
-import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.example.prm392_musicapp.R;
+import com.example.prm392_musicapp.activities.VideoPlayActivity;
 import com.example.prm392_musicapp.adapter.SearchAdapter;
-import com.example.prm392_musicapp.models.Music;
+import com.example.prm392_musicapp.api.VideoDataUtils;
+import com.example.prm392_musicapp.models.SearchItem;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -29,6 +32,10 @@ import java.util.List;
  * create an instance of this fragment.
  */
 public class FragmentSearch extends Fragment {
+    List<SearchItem> searchList;
+    ProgressBar progressBar;
+    TextView startTitleSearch;
+    TextView startSubtitleSearch;
 
     AppCompatActivity appCompatActivity = new AppCompatActivity();
 
@@ -40,6 +47,9 @@ public class FragmentSearch extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+    private SearchAdapter searchAdapter;
+    private SearchView searchView;
 
     public FragmentSearch() {
         // Required empty public constructor
@@ -76,63 +86,106 @@ public class FragmentSearch extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.search_page, container, false);
-
-        SearchAdapter searchAdapter = new SearchAdapter(getListSong(),getActivity());
+        final Handler handler = new Handler();
+        progressBar = view.findViewById(R.id.search_progress_bar);
+        searchAdapter = new SearchAdapter(searchList, getActivity());
         RecyclerView revMusic = view.findViewById(R.id.rev_music);
-        RecyclerView.LayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
-        revMusic.setLayoutManager(linearLayoutManager);
-        revMusic.setAdapter(searchAdapter);
+        searchView = view.findViewById(R.id.searchView);
+        startTitleSearch = view.findViewById(R.id.start_title_search);
+        startSubtitleSearch = view.findViewById(R.id.start_subtitle_search);
 
-        RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL);
-        revMusic.addItemDecoration(itemDecoration);
-
-        return view;
-    }
-
-    private List<Music> getListSong() {
-        List<Music> list = new ArrayList<>();
-        list.add(new Music(R.drawable.nnca,  "Nơi này có anh", "Sơn Tùng"));
-        list.add(new Music(R.drawable.cadsv, "Chắc ai đó sẽ về", "Sơn Tùng"));
-        list.add(new Music(R.drawable.ctktvn, "Chúng ta không thuộc về nhau", "Sơn Tùng"));
-        list.add(new Music(R.drawable.atbe, "Âm thầm bên em", "Sơn Tùng"));
-        return list;
-    }
-
-    public boolean onCreateOptionsMenu(Menu menu) {
-
-        SearchAdapter searchAdapter = new SearchAdapter(getListSong(),getActivity());
-        appCompatActivity.getMenuInflater().inflate(R.menu.search_song_menu, menu);
-
-        SearchManager searchManager = (SearchManager) appCompatActivity.getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(appCompatActivity.getComponentName()));
-        searchView.setMaxWidth(Integer.MAX_VALUE);
+        //Lấy ra id của video khi click vào
+        searchAdapter.setOnItemClickListener(new SearchAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(String itemId) {
+                Log.i("itemId", itemId);
+                Intent intent = new Intent(getActivity(), VideoPlayActivity.class);
+                intent.putExtra("itemId", itemId);
+                startActivity(intent);
+            }
+        });
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                searchAdapter.getFilter().filter(query);
+                //khi người dùng nhấn enter trên bàn phím sẽ xử lý trong này
+                //set loading khi call API
+                displaySearchTitle(false, getResources().getString(R.string.start_title_search),
+                        getResources().getString(R.string.start_subtitle_search));
+                progressBar.setVisibility(View.VISIBLE);
+                revMusic.setVisibility(View.INVISIBLE);
+                VideoDataUtils.searchVideoData(query).observe(getViewLifecycleOwner(), new Observer<List<SearchItem>>() {
+                    @Override
+                    public void onChanged(List<SearchItem> searchItems) {
+                        if(searchItems.size() == 0){
+                            displaySearchTitle(true, getResources().getString(R.string.not_found_title),
+                                    getResources().getString(R.string.not_found_subtitle));
+                            progressBar.setVisibility(View.GONE);
+                            return;
+                        }
+                        //tắt loading khi đã nhận data
+                        progressBar.setVisibility(View.GONE);
+                        revMusic.setVisibility(View.VISIBLE);
+
+                        searchList = searchItems;
+                        searchAdapter.setSearchList(searchList);
+
+                    }
+                });
+
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                searchAdapter.getFilter().filter(newText);
-                return false;
+                //khi người dùng đang nhập sẽ xử lý trong này
+                if(newText.length() == 0) {
+                    return true;
+                }
+                // delay goi API lại 1s khi người dùng thay đổi giá trị search (tránh gọi API liên tục)
+                handler.removeCallbacksAndMessages(null);
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                       VideoDataUtils.searchVideoData(newText).observe(getViewLifecycleOwner(), new Observer<List<SearchItem>>() {
+                           @Override
+                           public void onChanged(List<SearchItem> searchItems) {
+                               if(searchItems.size() == 0){
+                                   displaySearchTitle(true, getResources().getString(R.string.not_found_title),
+                                           getResources().getString(R.string.not_found_subtitle));
+                                   progressBar.setVisibility(View.GONE);
+                                   revMusic.setVisibility(View.INVISIBLE);
+                                   return;
+                               }
+                               displaySearchTitle(false, getResources().getString(R.string.start_title_search),
+                                       getResources().getString(R.string.start_subtitle_search));
+                               searchList = searchItems;
+                               searchAdapter.setSearchList(searchList);
+                               revMusic.setVisibility(View.VISIBLE);
+
+                           }
+                       });
+                    }
+                },1000);
+                return true;
             }
         });
-        return true;
+        RecyclerView.LayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+        revMusic.setLayoutManager(linearLayoutManager);
+        revMusic.setAdapter(searchAdapter);
+
+        return view;
     }
 
-//    SearchView searchView;
-
-//    public void onBackPressed() {
-//        ComponentActivity componentActivity = new ComponentActivity();
-//        if (!searchView.isIconified()) {
-//            searchView.setIconified(true);
-//            return;
-//        }
-//        super.onBackPressed();
-//    }
-
+    public void displaySearchTitle(boolean isDisplay, String title, String subTitle){
+        startTitleSearch.setText(title);
+        startSubtitleSearch.setText(subTitle);
+        if(isDisplay){
+            startTitleSearch.setVisibility(View.VISIBLE);
+            startSubtitleSearch.setVisibility(View.VISIBLE);
+        }else{
+            startTitleSearch.setVisibility(View.GONE);
+            startSubtitleSearch.setVisibility(View.GONE);
+        }
+    }
 }
