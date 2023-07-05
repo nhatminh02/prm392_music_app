@@ -121,7 +121,7 @@ public class VideoPlayActivity extends AppCompatActivity {
         heart.setImageDrawable(emptyHeart);
         while (c.moveToNext()) {
             String vId = c.getString(1);
-            if (vId.equals(videoId)) {
+            if (vId.equals(itemId)) {
                 heart.setImageDrawable(fillHeart);
                 break;
             }
@@ -133,12 +133,12 @@ public class VideoPlayActivity extends AppCompatActivity {
                 AnimatedVectorDrawable drawable = full ? emptyHeart : fillHeart;
                 if (drawable == emptyHeart) {
                     db = openHelper.getWritableDatabase();
-                    db.delete("LikedTracks", "videoId=?", new String[]{videoId});
+                    db.delete("LikedTracks", "videoId=?", new String[]{itemId});
                     db.close();
                 } else {
                     db = openHelper.getWritableDatabase();
                     String sql = "insert into LikedTracks(videoId,title,thumbnails,channelTitle) values(?,?,?,?)";
-                    db.execSQL(sql, new String[]{videoId, tv_title.getText().toString(), thumbnails.toString(), tv_channel.getText().toString()});
+                    db.execSQL(sql, new String[]{itemId, tv_title.getText().toString(), thumbnails.toString(), tv_channel.getText().toString()});
                     db.close();
                 }
                 heart.setImageDrawable(drawable);
