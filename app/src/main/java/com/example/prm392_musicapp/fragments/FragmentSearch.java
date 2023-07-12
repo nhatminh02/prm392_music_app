@@ -1,7 +1,12 @@
 package com.example.prm392_musicapp.fragments;
 
+<<<<<<< Updated upstream
 import android.app.SearchManager;
 import android.content.Context;
+=======
+import android.annotation.SuppressLint;
+import android.content.Intent;
+>>>>>>> Stashed changes
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,7 +23,9 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ProgressBar;
+<<<<<<< Updated upstream
 import android.widget.Toast;
 
 import com.example.prm392_musicapp.R;
@@ -26,6 +33,21 @@ import com.example.prm392_musicapp.adapter.SearchAdapter;
 import com.example.prm392_musicapp.api.VideoDataUtils;
 import com.example.prm392_musicapp.models.Item;
 import com.example.prm392_musicapp.models.Music;
+=======
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.example.prm392_musicapp.R;
+import com.example.prm392_musicapp.activities.MainActivity;
+import com.example.prm392_musicapp.activities.VideoPlayActivity;
+import com.example.prm392_musicapp.adapter.IClickBottomSheetListener;
+import com.example.prm392_musicapp.adapter.SearchAdapter;
+import com.example.prm392_musicapp.api.VideoDataUtils;
+import com.example.prm392_musicapp.models.Item_model_bottom_sheet;
+import com.example.prm392_musicapp.models.SearchItem;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
+>>>>>>> Stashed changes
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,9 +57,17 @@ import java.util.List;
  * Use the {@link FragmentSearch#newInstance} factory method to
  * create an instance of this fragment.
  */
+<<<<<<< Updated upstream
 public class FragmentSearch extends Fragment {
     List<Item> searchList;
+=======
+public class FragmentSearch extends Fragment  {
+    List<SearchItem> searchList;
+>>>>>>> Stashed changes
     ProgressBar progressBar;
+
+    private BottomSheetBehavior bottomSheetBehavior;
+
 
     AppCompatActivity appCompatActivity = new AppCompatActivity();
 
@@ -82,17 +112,45 @@ public class FragmentSearch extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
     }
 
+    @SuppressLint("MissingInflatedId")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.search_page, container, false);
         final Handler handler = new Handler();
         progressBar = view.findViewById(R.id.search_progress_bar);
-        searchAdapter = new SearchAdapter(searchList, getActivity());
+        searchAdapter = new SearchAdapter(searchList, getActivity(), appCompatActivity.getSupportFragmentManager());
         RecyclerView revMusic = view.findViewById(R.id.rev_music);
         searchView = view.findViewById(R.id.searchView);
+<<<<<<< Updated upstream
+=======
+        startTitleSearch = view.findViewById(R.id.start_title_search);
+        startSubtitleSearch = view.findViewById(R.id.start_subtitle_search);
+//        Button btnOpenModelSheet = view.findViewById(R.id.bottomSheetButton);
+//        btnOpenModelSheet.setOnClickListener(this);
+////
+//        btnOpenModelSheet.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                clickOpenBottomSheetFragment();
+//            }
+//        });
+        //Lấy ra id của video khi click vào
+        searchAdapter.setOnItemClickListener(new SearchAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(String itemId) {
+                Log.i("itemId", itemId);
+                Intent intent = new Intent(getActivity(), VideoPlayActivity.class);
+                intent.putExtra("itemId", itemId);
+                startActivity(intent);
+            }
+
+        });
+>>>>>>> Stashed changes
+
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -144,8 +202,31 @@ public class FragmentSearch extends Fragment {
         return view;
     }
 
+<<<<<<< Updated upstream
 
 
 
 
+=======
+    public void displaySearchTitle(boolean isDisplay, String title, String subTitle){
+        startTitleSearch.setText(title);
+        startSubtitleSearch.setText(subTitle);
+        if(isDisplay){
+            startTitleSearch.setVisibility(View.VISIBLE);
+            startSubtitleSearch.setVisibility(View.VISIBLE);
+        }else{
+            startTitleSearch.setVisibility(View.GONE);
+            startSubtitleSearch.setVisibility(View.GONE);
+        }
+    }
+
+
+//    @Override
+//    public void onClick(View v) {
+//        int viewId = v.getId();
+//        if (viewId == R.id.bottomSheetButton) {
+//            clickOpenBottomSheetFragment();
+//        }
+//    }
+>>>>>>> Stashed changes
 }

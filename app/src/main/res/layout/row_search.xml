@@ -40,8 +40,21 @@
             android:layout_height="wrap_content"
             android:text="Singer" />
 
+<<<<<<< Updated upstream
 
     </LinearLayout>
 
 </RelativeLayout>
+=======
+            <Button
+                android:id="@+id/bottomSheetButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Button"/>
+        </LinearLayout>
+
+
+
+    </RelativeLayout>
+>>>>>>> Stashed changes
 </androidx.cardview.widget.CardView>
