@@ -1,39 +1,47 @@
 package com.example.prm392_musicapp.fragments;
 
-<<<<<<< Updated upstream
+ thanhnt3
+ Updated upstream
 import android.app.SearchManager;
 import android.content.Context;
-=======
+
 import android.annotation.SuppressLint;
 import android.content.Intent;
->>>>>>> Stashed changes
+Stashed changes
+
+import android.content.Intent;
+main
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
-import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ProgressBar;
-<<<<<<< Updated upstream
+ thanhnt3
+ Updated upstream
 import android.widget.Toast;
 
+import android.widget.TextView;
+ main
+
 import com.example.prm392_musicapp.R;
+import com.example.prm392_musicapp.activities.VideoPlayActivity;
 import com.example.prm392_musicapp.adapter.SearchAdapter;
 import com.example.prm392_musicapp.api.VideoDataUtils;
+ thanhnt3
 import com.example.prm392_musicapp.models.Item;
 import com.example.prm392_musicapp.models.Music;
-=======
+
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -47,9 +55,10 @@ import com.example.prm392_musicapp.api.VideoDataUtils;
 import com.example.prm392_musicapp.models.Item_model_bottom_sheet;
 import com.example.prm392_musicapp.models.SearchItem;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
->>>>>>> Stashed changes
+ Stashed changes
+import com.example.prm392_musicapp.models.SearchItem;
+ main
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -57,14 +66,20 @@ import java.util.List;
  * Use the {@link FragmentSearch#newInstance} factory method to
  * create an instance of this fragment.
  */
-<<<<<<< Updated upstream
+ Updated upstream
 public class FragmentSearch extends Fragment {
+ thanhnt3
     List<Item> searchList;
-=======
+
 public class FragmentSearch extends Fragment  {
     List<SearchItem> searchList;
->>>>>>> Stashed changes
+Stashed changes
+
+    List<SearchItem> searchList;
+ main
     ProgressBar progressBar;
+    TextView startTitleSearch;
+    TextView startSubtitleSearch;
 
     private BottomSheetBehavior bottomSheetBehavior;
 
@@ -125,8 +140,9 @@ public class FragmentSearch extends Fragment  {
         searchAdapter = new SearchAdapter(searchList, getActivity(), appCompatActivity.getSupportFragmentManager());
         RecyclerView revMusic = view.findViewById(R.id.rev_music);
         searchView = view.findViewById(R.id.searchView);
-<<<<<<< Updated upstream
-=======
+thanhnt3
+ Updated upstream
+
         startTitleSearch = view.findViewById(R.id.start_title_search);
         startSubtitleSearch = view.findViewById(R.id.start_subtitle_search);
 //        Button btnOpenModelSheet = view.findViewById(R.id.bottomSheetButton);
@@ -138,6 +154,11 @@ public class FragmentSearch extends Fragment  {
 //                clickOpenBottomSheetFragment();
 //            }
 //        });
+
+        startTitleSearch = view.findViewById(R.id.start_title_search);
+        startSubtitleSearch = view.findViewById(R.id.start_subtitle_search);
+
+ main
         //Lấy ra id của video khi click vào
         searchAdapter.setOnItemClickListener(new SearchAdapter.OnItemClickListener() {
             @Override
@@ -147,24 +168,40 @@ public class FragmentSearch extends Fragment  {
                 intent.putExtra("itemId", itemId);
                 startActivity(intent);
             }
+thanhnt3
 
         });
->>>>>>> Stashed changes
+Stashed changes
 
+
+        });
+ main
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 //khi người dùng nhấn enter trên bàn phím sẽ xử lý trong này
                 //set loading khi call API
+                displaySearchTitle(false, getResources().getString(R.string.start_title_search),
+                        getResources().getString(R.string.start_subtitle_search));
                 progressBar.setVisibility(View.VISIBLE);
-                VideoDataUtils.searchVideoData(query).observe(getViewLifecycleOwner(), new Observer<List<Item>>() {
+                revMusic.setVisibility(View.INVISIBLE);
+                VideoDataUtils.searchVideoData(query).observe(getViewLifecycleOwner(), new Observer<List<SearchItem>>() {
                     @Override
-                    public void onChanged(List<Item> items) {
+                    public void onChanged(List<SearchItem> searchItems) {
+                        if(searchItems.size() == 0){
+                            displaySearchTitle(true, getResources().getString(R.string.not_found_title),
+                                    getResources().getString(R.string.not_found_subtitle));
+                            progressBar.setVisibility(View.GONE);
+                            return;
+                        }
                         //tắt loading khi đã nhận data
                         progressBar.setVisibility(View.GONE);
-                        searchList = items;
+                        revMusic.setVisibility(View.VISIBLE);
+
+                        searchList = searchItems;
                         searchAdapter.setSearchList(searchList);
+
                     }
                 });
 
@@ -174,17 +211,30 @@ public class FragmentSearch extends Fragment  {
             @Override
             public boolean onQueryTextChange(String newText) {
                 //khi người dùng đang nhập sẽ xử lý trong này
+                if(newText.length() == 0) {
+                    return true;
+                }
                 // delay goi API lại 1s khi người dùng thay đổi giá trị search (tránh gọi API liên tục)
                 handler.removeCallbacksAndMessages(null);
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                       VideoDataUtils.searchVideoData(newText).observe(getViewLifecycleOwner(), new Observer<List<Item>>() {
+                       VideoDataUtils.searchVideoData(newText).observe(getViewLifecycleOwner(), new Observer<List<SearchItem>>() {
                            @Override
-                           public void onChanged(List<Item> items) {
-                               //data o trong cai items
-                               searchList = items;
+                           public void onChanged(List<SearchItem> searchItems) {
+                               if(searchItems.size() == 0){
+                                   displaySearchTitle(true, getResources().getString(R.string.not_found_title),
+                                           getResources().getString(R.string.not_found_subtitle));
+                                   progressBar.setVisibility(View.GONE);
+                                   revMusic.setVisibility(View.INVISIBLE);
+                                   return;
+                               }
+                               displaySearchTitle(false, getResources().getString(R.string.start_title_search),
+                                       getResources().getString(R.string.start_subtitle_search));
+                               searchList = searchItems;
                                searchAdapter.setSearchList(searchList);
+                               revMusic.setVisibility(View.VISIBLE);
+
                            }
                        });
                     }
@@ -196,18 +246,18 @@ public class FragmentSearch extends Fragment  {
         revMusic.setLayoutManager(linearLayoutManager);
         revMusic.setAdapter(searchAdapter);
 
-        RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL);
-        revMusic.addItemDecoration(itemDecoration);
-
         return view;
     }
 
-<<<<<<< Updated upstream
+thanhnt3
+Updated upstream
 
 
 
 
-=======
+
+
+ main
     public void displaySearchTitle(boolean isDisplay, String title, String subTitle){
         startTitleSearch.setText(title);
         startSubtitleSearch.setText(subTitle);
@@ -219,6 +269,7 @@ public class FragmentSearch extends Fragment  {
             startSubtitleSearch.setVisibility(View.GONE);
         }
     }
+thanhnt3
 
 
 //    @Override
@@ -228,5 +279,7 @@ public class FragmentSearch extends Fragment  {
 //            clickOpenBottomSheetFragment();
 //        }
 //    }
->>>>>>> Stashed changes
+Stashed changes
+
+ main
 }

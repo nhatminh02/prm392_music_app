@@ -19,7 +19,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/button2"
+        android:id="@+id/btn_theme"
         android:layout_width="409dp"
         android:layout_height="wrap_content"
         android:height="60dp"
@@ -33,7 +33,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textView2" />
 
     <Button
-        android:id="@+id/button9"
+        android:id="@+id/legal"
         android:layout_width="409dp"
         android:layout_height="wrap_content"
         android:height="60dp"
@@ -58,10 +58,10 @@
         app:cornerRadius="0dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button11" />
+        app:layout_constraintTop_toBottomOf="@+id/advert" />
 
     <Button
-        android:id="@+id/button11"
+        android:id="@+id/advert"
         android:layout_width="409dp"
         android:layout_height="wrap_content"
         android:height="60dp"
@@ -72,10 +72,10 @@
         app:cornerRadius="0dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button12" />
+        app:layout_constraintTop_toBottomOf="@+id/tellaf" />
 
     <Button
-        android:id="@+id/button12"
+        android:id="@+id/tellaf"
         android:layout_width="409dp"
         android:layout_height="wrap_content"
         android:height="60dp"
@@ -86,10 +86,10 @@
         app:cornerRadius="0dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button13" />
+        app:layout_constraintTop_toBottomOf="@+id/btn_notification" />
 
     <Button
-        android:id="@+id/button13"
+        android:id="@+id/btn_notification"
         android:layout_width="409dp"
         android:layout_height="wrap_content"
         android:height="60dp"
@@ -100,7 +100,7 @@
         app:cornerRadius="0dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button2" />
+        app:layout_constraintTop_toBottomOf="@+id/btn_theme" />
 
     <ImageView
         android:id="@+id/imageView3"
@@ -108,7 +108,7 @@
         android:layout_height="20dp"
         android:layout_marginTop="20dp"
         android:layout_marginEnd="12dp"
-        app:layout_constraintEnd_toEndOf="@+id/button2"
+        app:layout_constraintEnd_toEndOf="@+id/btn_theme"
         app:layout_constraintTop_toBottomOf="@+id/textView2"
         app:srcCompat="@drawable/right_arrow" />
 
@@ -118,8 +118,8 @@
         android:layout_height="20dp"
         android:layout_marginTop="20dp"
         android:layout_marginEnd="12dp"
-        app:layout_constraintEnd_toEndOf="@+id/button13"
-        app:layout_constraintTop_toBottomOf="@+id/button2"
+        app:layout_constraintEnd_toEndOf="@+id/btn_notification"
+        app:layout_constraintTop_toBottomOf="@+id/btn_theme"
         app:srcCompat="@drawable/right_arrow" />
 
     <ImageView
@@ -128,8 +128,8 @@
         android:layout_height="20dp"
         android:layout_marginTop="20dp"
         android:layout_marginEnd="12dp"
-        app:layout_constraintEnd_toEndOf="@+id/button12"
-        app:layout_constraintTop_toBottomOf="@+id/button13"
+        app:layout_constraintEnd_toEndOf="@+id/tellaf"
+        app:layout_constraintTop_toBottomOf="@+id/btn_notification"
         app:srcCompat="@drawable/right_arrow" />
 
     <ImageView
@@ -138,8 +138,8 @@
         android:layout_height="20dp"
         android:layout_marginTop="20dp"
         android:layout_marginEnd="12dp"
-        app:layout_constraintEnd_toEndOf="@+id/button11"
-        app:layout_constraintTop_toTopOf="@+id/button11"
+        app:layout_constraintEnd_toEndOf="@+id/advert"
+        app:layout_constraintTop_toTopOf="@+id/advert"
         app:srcCompat="@drawable/right_arrow" />
 
     <ImageView
@@ -158,8 +158,8 @@
         android:layout_height="20dp"
         android:layout_marginTop="20dp"
         android:layout_marginEnd="12dp"
-        app:layout_constraintEnd_toEndOf="@+id/button9"
-        app:layout_constraintTop_toTopOf="@+id/button9"
+        app:layout_constraintEnd_toEndOf="@+id/legal"
+        app:layout_constraintTop_toTopOf="@+id/legal"
         app:srcCompat="@drawable/right_arrow" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
