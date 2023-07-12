@@ -25,7 +25,9 @@
         android:id="@+id/constraintLayout2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/player_bar_gradient_backgroud"
         android:onClick="onClickMini"
+
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
@@ -49,6 +51,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Noi nay co anh"
+                android:textColor="@color/white"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
@@ -56,48 +59,25 @@
 
             <TextView
                 android:id="@+id/song_author"
+
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Son Tung MTP"
+                android:textColor="@color/white"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/song_name" />
 
-            <ImageButton
-                android:id="@+id/imageButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:backgroundTint="#D5D6D6"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/imageButton2"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/baseline_pause_24_dark" />
-
-            <ImageButton
-                android:id="@+id/imageButton2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/baseline_skip_next_24_dark" />
-
-            <ImageButton
-                android:id="@+id/imageButton3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/imageButton"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/baseline_skip_previous_24_dark" />
-
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottom_nav"
+            style="@style/backGround"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            app:itemActiveIndicatorStyle="@style/App.Custom.Indicator"
+            app:itemIconTint="@color/bottom_nav_icon_color_light"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
