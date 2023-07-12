@@ -2,13 +2,20 @@ package com.example.prm392_musicapp.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.app.ActivityOptionsCompat;
+import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 
 import com.example.prm392_musicapp.R;
@@ -29,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
     FragmentSearch fragmentSearch;
     FragmentLikedTracks fragmentLikedTracks;
     BottomNavigationView bottomNavigationView;
+    ConstraintLayout miniBarPlayer, homePage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +68,22 @@ public class MainActivity extends AppCompatActivity {
         });
         //add homepage fragment khi app chạy
         transactionFragment(R.id.fr_container, fragmentHome, "", "ADD");
+        miniBarPlayer = findViewById(R.id.mini_player_bar);
+        homePage = findViewById(R.id.homePage);
+    }
+
+
+    public void onClickMini(View v){
+        Intent intent = new Intent(MainActivity.this, VideoPlayActivity.class);
+        ActivityOptionsCompat optionsCompat = ActivityOptionsCompat
+                .makeSceneTransitionAnimation(MainActivity.this, miniBarPlayer,ViewCompat.getTransitionName(miniBarPlayer));
+        Animation slideDown = AnimationUtils.loadAnimation(this, R.anim.slide_down);
+        Animation slideUp = AnimationUtils.loadAnimation(this, R.anim.slide_up);
+
+        // Apply the animation to the parent layout
+        homePage.startAnimation(slideUp);
+        bottomNavigationView.startAnimation(slideDown);
+        startActivity(intent, optionsCompat.toBundle());
     }
 
 
@@ -75,6 +99,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.i("state", "onStart");
+
+    }
 
     public void onMyButtonClick() {
         ((Button) findViewById(R.id.btn_liked_tracks)).setOnClickListener(new View.OnClickListener() {
@@ -86,6 +116,5 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
 
 }

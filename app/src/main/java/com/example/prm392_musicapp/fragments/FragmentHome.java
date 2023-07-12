@@ -70,6 +70,11 @@ public class FragmentHome extends Fragment {
 
         View view = inflater.inflate(R.layout.home_page, container, false);
 
+        int thumbnail;
+        String musicName;
+        String singer;
+        int index = 0;
+
         List<Music> reccomends = new ArrayList<>();
         Music rm1 = new Music(R.drawable.atbe, "Am tham ben em", "Son Tung MTP");
         Music rm2 = new Music(R.drawable.cadsv, "Chac ai do se ve", "Son Tung MTP");
