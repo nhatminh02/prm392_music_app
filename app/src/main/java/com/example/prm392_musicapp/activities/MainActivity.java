@@ -4,12 +4,16 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityOptionsCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -37,6 +41,9 @@ public class MainActivity extends AppCompatActivity {
     FragmentLikedTracks fragmentLikedTracks;
     BottomNavigationView bottomNavigationView;
     ConstraintLayout miniBarPlayer, homePage;
+    boolean darkMode;
+    SharedPreferences sharedPreferences;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +58,8 @@ public class MainActivity extends AppCompatActivity {
         fragmentLikedTracks = FragmentLikedTracks.newInstance(null, null);
 
         bottomNavigationView = findViewById(R.id.bottom_nav);
+        handleSwitchTheme();
+
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -72,11 +81,25 @@ public class MainActivity extends AppCompatActivity {
         homePage = findViewById(R.id.homePage);
     }
 
+    public void handleSwitchTheme() {
+        sharedPreferences = getSharedPreferences("mode", Context.MODE_PRIVATE);
+        darkMode = sharedPreferences.getBoolean("dark", false);
 
-    public void onClickMini(View v){
+        if (darkMode) {
+            bottomNavigationView.setItemTextColor(getResources().getColorStateList(R.color.colorBottomNavTextLight));
+            bottomNavigationView.setItemIconTintList(getResources().getColorStateList(R.color.bottom_nav_icon_color_dark));
+
+        } else {
+            bottomNavigationView.setItemTextColor(getResources().getColorStateList(R.color.colorBottomNavTextDark));
+            bottomNavigationView.setItemIconTintList(getResources().getColorStateList(R.color.bottom_nav_icon_color_light));
+
+        }
+    }
+
+    public void onClickMini(View v) {
         Intent intent = new Intent(MainActivity.this, VideoPlayActivity.class);
         ActivityOptionsCompat optionsCompat = ActivityOptionsCompat
-                .makeSceneTransitionAnimation(MainActivity.this, miniBarPlayer,ViewCompat.getTransitionName(miniBarPlayer));
+                .makeSceneTransitionAnimation(MainActivity.this, miniBarPlayer, ViewCompat.getTransitionName(miniBarPlayer));
         Animation slideDown = AnimationUtils.loadAnimation(this, R.anim.slide_down);
         Animation slideUp = AnimationUtils.loadAnimation(this, R.anim.slide_up);
 
@@ -111,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.replace(R.id.fr_container, fragmentLikedTracks,"");
+                fragmentTransaction.replace(R.id.fr_container, fragmentLikedTracks, "");
                 fragmentTransaction.commit();
             }
         });

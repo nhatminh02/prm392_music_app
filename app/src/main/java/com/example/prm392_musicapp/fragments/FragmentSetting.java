@@ -1,5 +1,6 @@
 package com.example.prm392_musicapp.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -7,8 +8,10 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import com.example.prm392_musicapp.R;
+import com.example.prm392_musicapp.activities.SettingThemeActivity;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -17,6 +20,7 @@ import com.example.prm392_musicapp.R;
  */
 public class FragmentSetting extends Fragment {
 
+    Button themeSettingBtn;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -62,6 +66,14 @@ public class FragmentSetting extends Fragment {
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.setting_page, container, false);
+        themeSettingBtn = view.findViewById(R.id.btn_theme);
+        themeSettingBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), SettingThemeActivity.class);
+                startActivity(intent);
+            }
+        });
         return view;
     }
 }

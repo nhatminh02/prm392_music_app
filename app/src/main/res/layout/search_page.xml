@@ -4,9 +4,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/relativeLayout"
+    style="@style/backGround"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
     tools:context=".activities.MainActivity">
 
 
@@ -27,13 +27,14 @@
         android:layout_width="0dp"
         android:layout_height="40dp"
         android:layout_margin="8dp"
-        android:background="@drawable/btn_search_round"
+        android:background="@drawable/btn_search_round_light"
+        android:focusableInTouchMode="true"
         app:iconifiedByDefault="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:queryHint="Search"></androidx.appcompat.widget.SearchView>
+        app:queryHint="Search" />
 
     <ProgressBar
         android:id="@+id/search_progress_bar"

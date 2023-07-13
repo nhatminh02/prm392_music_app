@@ -2,5 +2,11 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="bg_dark_gray">#495057</color>
+    <color name="transparent">#00000000</color>
+    <color name="bg_dark_gray">#232323</color>
+    <color name="bg_ligt_gray2">#ced4da</color>
+    <color name="bg_light_gray">#f1f3f5</color>
+    <color name="colorBottomNavTextLight">#FFFFFF</color>
+    <color name="colorBottomNavTextDark">#000000</color>
+    <color name="colorBottomNavActiveBg">#ced4da</color>
 </resources>

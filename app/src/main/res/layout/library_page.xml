@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/frameLayout"
+    style="@style/backGround"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activities.MainActivity">
@@ -21,6 +22,7 @@
 
     <TextView
         android:id="@+id/tv_recent_played2"
+        style="@style/text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="15dp"
@@ -33,6 +35,7 @@
 
     <TextView
         android:id="@+id/textView"
+        style="@style/text"
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:gravity="center"
@@ -46,14 +49,16 @@
 
     <Button
         android:id="@+id/btn_liked_tracks"
+        style="@style/text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:backgroundTint="#00FFFFFF"
+        android:backgroundTint="@color/transparent"
+        android:clickable="true"
         android:drawableRight="@drawable/baseline_arrow_forward_ios_24"
+        android:foreground="?attr/selectableItemBackground"
         android:text="Liked tracks"
         android:textAlignment="textStart"
-        android:textColor="#000000"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -61,13 +66,15 @@
 
     <Button
         android:id="@+id/btn_playlist"
+        style="@style/text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:backgroundTint="#00FFFFFF"
+        android:backgroundTint="@color/transparent"
+        android:clickable="true"
         android:drawableRight="@drawable/baseline_arrow_forward_ios_24"
+        android:foreground="?attr/selectableItemBackground"
         android:text="Playlists"
         android:textAlignment="textStart"
-        android:textColor="#000000"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
