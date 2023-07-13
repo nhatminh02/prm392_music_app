@@ -109,18 +109,19 @@ public class FragmentLikedTracks extends Fragment {
         SQLiteDatabase db = mySQLiteOpenHelper.getReadableDatabase();
         Cursor cursor = db.rawQuery("SELECT * FROM LikedTracks", null);
             while (cursor.moveToNext()) {
-                Thumbnails thumbnail;
+                //Thumbnails thumbnail;
                 String id;
                 String videoId;
                 String title;
                 String channelTitle;
+                String thumbnail;
 
                 id = cursor.getString(cursor.getColumnIndex("LTid"));
                 videoId = cursor.getString(cursor.getColumnIndex("videoId"));
                 title = cursor.getString(cursor.getColumnIndex("title"));
-                String thumbnailJson = cursor.getString(cursor.getColumnIndex("thumbnails"));
+                thumbnail = cursor.getString(cursor.getColumnIndex("thumbnails"));
                 channelTitle = cursor.getString(cursor.getColumnIndex("channelTitle"));
-                thumbnail = deserializeThumbnail(thumbnailJson);
+                //thumbnail = deserializeThumbnail(thumbnailJson);
                 Video data = new Video(videoId, title, thumbnail, channelTitle);
                 dataList.add(data);
             }

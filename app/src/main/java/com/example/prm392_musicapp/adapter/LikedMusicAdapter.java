@@ -19,7 +19,7 @@ import java.util.List;
 public class LikedMusicAdapter extends RecyclerView.Adapter<LikedMusicAdapter.MusicHolder> {
 
     private final List<Video> dataList;
-    List<Video> recMusics;
+    //List<Video> recMusics;
     Activity activity;
 
     public LikedMusicAdapter(List<Video> dataList) {
@@ -36,14 +36,16 @@ public class LikedMusicAdapter extends RecyclerView.Adapter<LikedMusicAdapter.Mu
 
     @Override
     public void onBindViewHolder(@NonNull MusicHolder holder, int position) {
-        Glide.with(activity).load(recMusics.get(position).getThumbnails()).centerCrop().into(holder.imv_thumb);
-        holder.tv_musname.setText(recMusics.get(position).getTitle());
-        holder.tv_singer.setText(recMusics.get(position).getChannelTitle());
+        Glide.with(holder.imv_thumb.getContext())
+                .load(dataList.get(position).getThumbnails())
+                .into(holder.imv_thumb);
+        holder.tv_musname.setText(dataList.get(position).getTitle());
+        holder.tv_singer.setText(dataList.get(position).getChannelTitle());
     }
 
     @Override
     public int getItemCount() {
-        return recMusics.size();
+        return dataList.size();
     }
 
     public class MusicHolder extends RecyclerView.ViewHolder {
