@@ -7,7 +7,7 @@
     tools:context=".fragments.FragmentLikedTracks">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayout"
+        android:id="@+id/layout_liked_track"
         android:layout_width="419dp"
         android:layout_height="660dp"
         android:visibility="invisible"
@@ -36,6 +36,7 @@
         </SearchView>
 
         <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rec_liked_track"
             android:layout_width="match_parent"
             android:layout_height="593dp"
             android:layout_marginTop="16dp"

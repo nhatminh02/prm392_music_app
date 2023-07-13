@@ -7,7 +7,6 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.prm392_musicapp.models.SearchItem;
 import com.example.prm392_musicapp.models.SingleItem;
 import com.example.prm392_musicapp.models.SearchItemDetails;
-import com.example.prm392_musicapp.models.SingleItemDetail;
 
 import java.util.List;
 
@@ -53,11 +52,11 @@ public class VideoDataUtils {
         //AIzaSyCxnM_yUk7Rw8xAQxwaYoDHan0Rx71FOQY
         //AIzaSyDca6EiCASpFVwlvWFcbjj_ykdoWCNDevk
         //AIzaSyBZDg-87in5IzNFeBo9PeRC_kFrcN4jjnE
-        Call<SingleItemDetail> videoDetailsRequest = dataService
+        Call<SingleItem.SingleItemDetail> videoDetailsRequest = dataService
                 .getVideoById("snippet", id, "AIzaSyCxnM_yUk7Rw8xAQxwaYoDHan0Rx71FOQY");
-        videoDetailsRequest.enqueue(new Callback<SingleItemDetail>() {
+        videoDetailsRequest.enqueue(new Callback<SingleItem.SingleItemDetail>() {
             @Override
-            public void onResponse(Call<SingleItemDetail> call, Response<SingleItemDetail> response) {
+            public void onResponse(Call<SingleItem.SingleItemDetail> call, Response<SingleItem.SingleItemDetail> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
                         List<SingleItem> singleItemList = response.body().getSingleItems();
@@ -68,7 +67,7 @@ public class VideoDataUtils {
             }
 
             @Override
-            public void onFailure(Call<SingleItemDetail> call, Throwable t) {
+            public void onFailure(Call<SingleItem.SingleItemDetail> call, Throwable t) {
                 Log.i("failed", t.getMessage());
             }
         });

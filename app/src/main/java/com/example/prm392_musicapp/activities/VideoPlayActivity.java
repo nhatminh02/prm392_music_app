@@ -26,7 +26,6 @@ import com.example.prm392_musicapp.R;
 import com.example.prm392_musicapp.SQLite.MySQLiteOpenHelper;
 import com.example.prm392_musicapp.api.VideoDataUtils;
 import com.example.prm392_musicapp.models.Thumbnails;
-import com.example.prm392_musicapp.models.Video;
 import com.example.prm392_musicapp.models.Id;
 import com.example.prm392_musicapp.models.SingleItem;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.customui.DefaultPlayerUiController;
@@ -39,7 +38,6 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.You
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.options.IFramePlayerOptions;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class VideoPlayActivity extends AppCompatActivity {
