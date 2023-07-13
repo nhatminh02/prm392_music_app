@@ -1,18 +1,25 @@
 package com.example.prm392_musicapp.adapter;
 
 import android.app.Activity;
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.prm392_musicapp.R;
+import com.example.prm392_musicapp.models.ItemOption;
 import com.example.prm392_musicapp.models.SearchItem;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -21,6 +28,9 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.MusicViewH
     private List<SearchItem> mListMusic;
     Activity activity;
     private OnItemClickListener listener;
+    private BottomSheetDialog bottomSheetDialog;
+    private Context context;
+
 
     public interface OnItemClickListener {
         void onItemClick(String itemId);
@@ -33,6 +43,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.MusicViewH
     public SearchAdapter(List<SearchItem> mListMusic, Activity activity) {
         this.mListMusic = mListMusic;
         this.activity = activity;
+        bottomSheetDialog = new BottomSheetDialog(activity);
     }
 
     public void setSearchList(List<SearchItem> filteredList) {
@@ -63,6 +74,13 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.MusicViewH
             holder.tvName.setText(music.getSnippet().getTitle());
         }
         holder.tvSinger.setText(music.getSnippet().getChannelTitle());
+        holder.buttonOption.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showButtonSheet();
+                //Toast.makeText(v.getContext(), "Add to playlist",Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override
@@ -78,6 +96,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.MusicViewH
         CircleImageView imgMusic;
         TextView tvName;
         TextView tvSinger;
+        Button buttonOption;
 
         public MusicViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -85,6 +104,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.MusicViewH
             imgMusic = itemView.findViewById(R.id.tv_search_thumb);
             tvName = itemView.findViewById(R.id.tv_search_music);
             tvSinger = itemView.findViewById(R.id.tv_search_singer);
+            buttonOption=itemView.findViewById(R.id.button_option);
         }
 
         @Override
@@ -96,8 +116,21 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.MusicViewH
                 listener.onItemClick(itemId); // Callback the listener with the item ID
             }
         }
+
     }
 
+    private void showButtonSheet(){
+        View bottomSheetView = LayoutInflater.from(activity).inflate(R.layout.layout_bottom_sheet,null);
+        RecyclerView recyclerView = bottomSheetView.findViewById(R.id.rev_data);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(activity);
+        recyclerView.setLayoutManager(layoutManager);
+        List<ItemOption> listOption = new ArrayList<>();
+        listOption.add(new ItemOption("Add to playlist"));
+        listOption.add(new ItemOption("Like"));
+        OptionAdapter optionAdapter = new OptionAdapter(listOption);
+        bottomSheetDialog.setContentView(bottomSheetView);
+        bottomSheetDialog.show();
 
+    }
 }
 
