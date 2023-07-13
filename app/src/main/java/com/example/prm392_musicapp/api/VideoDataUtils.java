@@ -53,8 +53,9 @@ public class VideoDataUtils {
         //AIzaSyCxnM_yUk7Rw8xAQxwaYoDHan0Rx71FOQY
         //AIzaSyDca6EiCASpFVwlvWFcbjj_ykdoWCNDevk
         //AIzaSyBZDg-87in5IzNFeBo9PeRC_kFrcN4jjnE
+        //AIzaSyAZOWsclTyfmZH8bhxlP3HYVQV6KzrPbwE
         Call<SingleItemDetail> videoDetailsRequest = dataService
-                .getVideoById("snippet", id, "AIzaSyDca6EiCASpFVwlvWFcbjj_ykdoWCNDevk");
+                .getVideoById("snippet", id, "AIzaSyCxnM_yUk7Rw8xAQxwaYoDHan0Rx71FOQY");
         videoDetailsRequest.enqueue(new Callback<SingleItemDetail>() {
             @Override
             public void onResponse(Call<SingleItemDetail> call, Response<SingleItemDetail> response) {

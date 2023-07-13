@@ -9,8 +9,10 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -84,7 +86,7 @@ public class FragmentLikedTracks extends Fragment {
         }
     }
 
-    @SuppressLint("MissingInflatedId")
+    @SuppressLint({"MissingInflatedId", "Range"})
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -102,36 +104,11 @@ public class FragmentLikedTracks extends Fragment {
             }
         });
 
-        List<Video> dataList = getAllData();
-        if (dataList.size() > 0) {
-            // Hiển thị dữ liệu trong RecyclerView
-            RecyclerView recyclerView = view.findViewById(R.id.rec_liked_track);
-            LikedMusicAdapter adapter = new LikedMusicAdapter(dataList); // Đây là adapter của RecyclerView
-            recyclerView.setAdapter(adapter);
-            ((ConstraintLayout) view.findViewById(R.id.layout_liked_track)).setVisibility(View.VISIBLE);
-            ((ConstraintLayout) view.findViewById(R.id.layout_noLikeTrack)).setVisibility(View.INVISIBLE);
-        } else {
-            ((ConstraintLayout) view.findViewById(R.id.layout_liked_track)).setVisibility(View.INVISIBLE);
-            ((ConstraintLayout) view.findViewById(R.id.layout_noLikeTrack)).setVisibility(View.VISIBLE);
-        }
-
-
-
-        return view;
-    }
-
-    public void setSQLiteOpenHelper(MySQLiteOpenHelper mySQLiteOpenHelper) {
-        this.mySQLiteOpenHelper = mySQLiteOpenHelper;
-    }
-
-    @SuppressLint("Range")
-    public List<Video> getAllData() {
         List<Video> dataList = new ArrayList<>();
-        mySQLiteOpenHelper = new MySQLiteOpenHelper(getActivity(), "musicdb", null, 11);
+        mySQLiteOpenHelper = new MySQLiteOpenHelper(getActivity(), "ProjectDB", null, 1);
         SQLiteDatabase db = mySQLiteOpenHelper.getReadableDatabase();
         Cursor cursor = db.rawQuery("SELECT * FROM LikedTracks", null);
-        if (cursor.moveToFirst()) {
-            do {
+            while (cursor.moveToNext()) {
                 Thumbnails thumbnail;
                 String id;
                 String videoId;
@@ -143,28 +120,39 @@ public class FragmentLikedTracks extends Fragment {
                 title = cursor.getString(cursor.getColumnIndex("title"));
                 String thumbnailJson = cursor.getString(cursor.getColumnIndex("thumbnails"));
                 channelTitle = cursor.getString(cursor.getColumnIndex("channelTitle"));
-
                 thumbnail = deserializeThumbnail(thumbnailJson);
-
                 Video data = new Video(videoId, title, thumbnail, channelTitle);
                 dataList.add(data);
-            } while (cursor.moveToNext());
-        }
+            }
         cursor.close();
-        return dataList;
+        if (dataList.size() > 0) {
+            // Hiển thị dữ liệu trong RecyclerView
+            RecyclerView recyclerView = view.findViewById(R.id.rec_liked_track);
+            LikedMusicAdapter adapter = new LikedMusicAdapter(dataList);
+            RecyclerView.LayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+            recyclerView.setLayoutManager(linearLayoutManager);
+            recyclerView.setAdapter(adapter);
+            Log.d("geted data", dataList.size() + "");
+            ((ConstraintLayout) view.findViewById(R.id.layout_liked_track)).setVisibility(View.VISIBLE);
+            ((ConstraintLayout) view.findViewById(R.id.layout_noLikeTrack)).setVisibility(View.INVISIBLE);
+        } else {
+            Log.d(" not geted data", dataList.size() + "");
+            ((ConstraintLayout) view.findViewById(R.id.layout_liked_track)).setVisibility(View.INVISIBLE);
+            ((ConstraintLayout) view.findViewById(R.id.layout_noLikeTrack)).setVisibility(View.VISIBLE);
+        }
+
+
+        return view;
     }
 
-    private Thumbnails deserializeThumbnail(String thumbnailJson) {
-        // Sử dụng thư viện Gson để chuyển đổi chuỗi JSON thành đối tượng Thumbnails
-        // Đảm bảo rằng thư viện Gson đã được thêm vào dependencies trong file build.gradle
+    public void setSQLiteOpenHelper(MySQLiteOpenHelper mySQLiteOpenHelper) {
+        this.mySQLiteOpenHelper = mySQLiteOpenHelper;
+    }
 
-        // Ví dụ:
+
+    private Thumbnails deserializeThumbnail(String thumbnailJson) {
         Gson gson = new Gson();
         return gson.fromJson(thumbnailJson, Thumbnails.class);
-
-        // Bạn cần triển khai phương thức trên dựa trên cấu trúc JSON của đối tượng Thumbnails trong project của bạn.
-
-        // Trả về null nếu bạn chưa triển khai deserializeThumbnail
     }
 
 
