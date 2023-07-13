@@ -2,19 +2,27 @@ package com.example.prm392_musicapp.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.app.ActivityOptionsCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import android.database.sqlite.SQLiteDatabase;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 
-import com.example.prm392_musicapp.SQLite.MySQLiteOpenHelper;
 import com.example.prm392_musicapp.R;
-import com.example.prm392_musicapp.SQLite.MySQLiteOpenHelper;
 import com.example.prm392_musicapp.fragments.FragmentHome;
 import com.example.prm392_musicapp.fragments.FragmentLibrary;
 import com.example.prm392_musicapp.fragments.FragmentLikedTracks;
@@ -32,16 +40,15 @@ public class MainActivity extends AppCompatActivity {
     FragmentSearch fragmentSearch;
     FragmentLikedTracks fragmentLikedTracks;
     BottomNavigationView bottomNavigationView;
-    MySQLiteOpenHelper mySQLiteOpenHelper;
-    SQLiteDatabase db;
+    ConstraintLayout miniBarPlayer, homePage;
+    boolean darkMode;
+    SharedPreferences sharedPreferences;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
-        mySQLiteOpenHelper = new MySQLiteOpenHelper(this, "musicdb", null, 11);
 
         fragmentManager = getSupportFragmentManager();
         fragmentHome = FragmentHome.newInstance(null, null);
@@ -51,6 +58,8 @@ public class MainActivity extends AppCompatActivity {
         fragmentLikedTracks = FragmentLikedTracks.newInstance(null, null);
 
         bottomNavigationView = findViewById(R.id.bottom_nav);
+        handleSwitchTheme();
+
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -68,6 +77,36 @@ public class MainActivity extends AppCompatActivity {
         });
         //add homepage fragment khi app chạy
         transactionFragment(R.id.fr_container, fragmentHome, "", "ADD");
+        miniBarPlayer = findViewById(R.id.mini_player_bar);
+        homePage = findViewById(R.id.homePage);
+    }
+
+    public void handleSwitchTheme() {
+        sharedPreferences = getSharedPreferences("mode", Context.MODE_PRIVATE);
+        darkMode = sharedPreferences.getBoolean("dark", false);
+
+        if (darkMode) {
+            bottomNavigationView.setItemTextColor(getResources().getColorStateList(R.color.colorBottomNavTextLight));
+            bottomNavigationView.setItemIconTintList(getResources().getColorStateList(R.color.bottom_nav_icon_color_dark));
+
+        } else {
+            bottomNavigationView.setItemTextColor(getResources().getColorStateList(R.color.colorBottomNavTextDark));
+            bottomNavigationView.setItemIconTintList(getResources().getColorStateList(R.color.bottom_nav_icon_color_light));
+
+        }
+    }
+
+    public void onClickMini(View v) {
+        Intent intent = new Intent(MainActivity.this, VideoPlayActivity.class);
+        ActivityOptionsCompat optionsCompat = ActivityOptionsCompat
+                .makeSceneTransitionAnimation(MainActivity.this, miniBarPlayer, ViewCompat.getTransitionName(miniBarPlayer));
+        Animation slideDown = AnimationUtils.loadAnimation(this, R.anim.slide_down);
+        Animation slideUp = AnimationUtils.loadAnimation(this, R.anim.slide_up);
+
+        // Apply the animation to the parent layout
+        homePage.startAnimation(slideUp);
+        bottomNavigationView.startAnimation(slideDown);
+        startActivity(intent, optionsCompat.toBundle());
     }
 
 
@@ -83,17 +122,22 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.i("state", "onStart");
+
+    }
 
     public void onMyButtonClick() {
         ((Button) findViewById(R.id.btn_liked_tracks)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.replace(R.id.fr_container, fragmentLikedTracks,"");
+                fragmentTransaction.replace(R.id.fr_container, fragmentLikedTracks, "");
                 fragmentTransaction.commit();
             }
         });
     }
-
 
 }

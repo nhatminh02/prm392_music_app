@@ -17,15 +17,15 @@
         <activity
             android:name=".activities.VideoPlayActivity"
             android:exported="false" />
-      <activity
-            android:name=".Settnoti"
+        <activity
+            android:name=".activities.SettingNotificationActivity"
             android:exported="false" />
         <activity
-            android:name=".SettlegalActivity"
+            android:name=".activities.SettingLegalActivity"
             android:exported="false" />
         <activity
-            android:name=".themesett"
-            android:exported="false" />
+            android:name=".activities.SettingThemeActivity"
+            android:exported="false"/>
         <activity
             android:name=".activities.MainActivity"
             android:exported="true"

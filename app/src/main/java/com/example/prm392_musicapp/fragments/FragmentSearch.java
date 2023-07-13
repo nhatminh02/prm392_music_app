@@ -1,6 +1,8 @@
 package com.example.prm392_musicapp.fragments;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -36,9 +38,8 @@ public class FragmentSearch extends Fragment {
     ProgressBar progressBar;
     TextView startTitleSearch;
     TextView startSubtitleSearch;
-
-    AppCompatActivity appCompatActivity = new AppCompatActivity();
-
+    SharedPreferences sharedPreferences;
+    boolean darkMode;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -93,7 +94,7 @@ public class FragmentSearch extends Fragment {
         searchView = view.findViewById(R.id.searchView);
         startTitleSearch = view.findViewById(R.id.start_title_search);
         startSubtitleSearch = view.findViewById(R.id.start_subtitle_search);
-
+        handleSwitchTheme();
         //Lấy ra id của video khi click vào
         searchAdapter.setOnItemClickListener(new SearchAdapter.OnItemClickListener() {
             @Override
@@ -117,7 +118,7 @@ public class FragmentSearch extends Fragment {
                 VideoDataUtils.searchVideoData(query).observe(getViewLifecycleOwner(), new Observer<List<SearchItem>>() {
                     @Override
                     public void onChanged(List<SearchItem> searchItems) {
-                        if(searchItems.size() == 0){
+                        if (searchItems.size() == 0) {
                             displaySearchTitle(true, getResources().getString(R.string.not_found_title),
                                     getResources().getString(R.string.not_found_subtitle));
                             progressBar.setVisibility(View.GONE);
@@ -139,7 +140,7 @@ public class FragmentSearch extends Fragment {
             @Override
             public boolean onQueryTextChange(String newText) {
                 //khi người dùng đang nhập sẽ xử lý trong này
-                if(newText.length() == 0) {
+                if (newText.length() == 0) {
                     return true;
                 }
                 // delay goi API lại 1s khi người dùng thay đổi giá trị search (tránh gọi API liên tục)
@@ -147,26 +148,26 @@ public class FragmentSearch extends Fragment {
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                       VideoDataUtils.searchVideoData(newText).observe(getViewLifecycleOwner(), new Observer<List<SearchItem>>() {
-                           @Override
-                           public void onChanged(List<SearchItem> searchItems) {
-                               if(searchItems.size() == 0){
-                                   displaySearchTitle(true, getResources().getString(R.string.not_found_title),
-                                           getResources().getString(R.string.not_found_subtitle));
-                                   progressBar.setVisibility(View.GONE);
-                                   revMusic.setVisibility(View.INVISIBLE);
-                                   return;
-                               }
-                               displaySearchTitle(false, getResources().getString(R.string.start_title_search),
-                                       getResources().getString(R.string.start_subtitle_search));
-                               searchList = searchItems;
-                               searchAdapter.setSearchList(searchList);
-                               revMusic.setVisibility(View.VISIBLE);
+                        VideoDataUtils.searchVideoData(newText).observe(getViewLifecycleOwner(), new Observer<List<SearchItem>>() {
+                            @Override
+                            public void onChanged(List<SearchItem> searchItems) {
+                                if (searchItems.size() == 0) {
+                                    displaySearchTitle(true, getResources().getString(R.string.not_found_title),
+                                            getResources().getString(R.string.not_found_subtitle));
+                                    progressBar.setVisibility(View.GONE);
+                                    revMusic.setVisibility(View.INVISIBLE);
+                                    return;
+                                }
+                                displaySearchTitle(false, getResources().getString(R.string.start_title_search),
+                                        getResources().getString(R.string.start_subtitle_search));
+                                searchList = searchItems;
+                                searchAdapter.setSearchList(searchList);
+                                revMusic.setVisibility(View.VISIBLE);
 
-                           }
-                       });
+                            }
+                        });
                     }
-                },1000);
+                }, 1000);
                 return true;
             }
         });
@@ -177,13 +178,24 @@ public class FragmentSearch extends Fragment {
         return view;
     }
 
-    public void displaySearchTitle(boolean isDisplay, String title, String subTitle){
+    public void handleSwitchTheme() {
+        //chỉnh theme thanh search
+        sharedPreferences = getActivity().getSharedPreferences("mode", Context.MODE_PRIVATE);
+        darkMode = sharedPreferences.getBoolean("dark", false);
+        if (darkMode) {
+            searchView.setBackgroundResource(R.drawable.btn_search_round_dark);
+        } else {
+            searchView.setBackgroundResource(R.drawable.btn_search_round_light);
+        }
+    }
+
+    public void displaySearchTitle(boolean isDisplay, String title, String subTitle) {
         startTitleSearch.setText(title);
         startSubtitleSearch.setText(subTitle);
-        if(isDisplay){
+        if (isDisplay) {
             startTitleSearch.setVisibility(View.VISIBLE);
             startSubtitleSearch.setVisibility(View.VISIBLE);
-        }else{
+        } else {
             startTitleSearch.setVisibility(View.GONE);
             startSubtitleSearch.setVisibility(View.GONE);
         }

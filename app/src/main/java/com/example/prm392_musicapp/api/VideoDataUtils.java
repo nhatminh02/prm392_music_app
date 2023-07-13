@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.prm392_musicapp.models.SearchItem;
 import com.example.prm392_musicapp.models.SingleItem;
 import com.example.prm392_musicapp.models.SearchItemDetails;
+import com.example.prm392_musicapp.models.SingleItemDetail;
 
 import java.util.List;
 
@@ -25,7 +26,7 @@ public class VideoDataUtils {
         //AIzaSyDca6EiCASpFVwlvWFcbjj_ykdoWCNDevk
         //AIzaSyBZDg-87in5IzNFeBo9PeRC_kFrcN4jjnE
         Call<SearchItemDetails> videoDetailsRequest = dataService
-                .getSearchVideoData("snippet", searchQuery, "AIzaSyCxnM_yUk7Rw8xAQxwaYoDHan0Rx71FOQY", "100", "VN","video","/m/04rlf");
+                .getSearchVideoData("snippet", searchQuery, "AIzaSyDca6EiCASpFVwlvWFcbjj_ykdoWCNDevk", "100", "VN","video","/m/04rlf");
         videoDetailsRequest.enqueue(new Callback<SearchItemDetails>() {
             @Override
             public void onResponse(Call<SearchItemDetails> call, Response<SearchItemDetails> response) {
@@ -52,11 +53,11 @@ public class VideoDataUtils {
         //AIzaSyCxnM_yUk7Rw8xAQxwaYoDHan0Rx71FOQY
         //AIzaSyDca6EiCASpFVwlvWFcbjj_ykdoWCNDevk
         //AIzaSyBZDg-87in5IzNFeBo9PeRC_kFrcN4jjnE
-        Call<SingleItem.SingleItemDetail> videoDetailsRequest = dataService
-                .getVideoById("snippet", id, "AIzaSyCxnM_yUk7Rw8xAQxwaYoDHan0Rx71FOQY");
-        videoDetailsRequest.enqueue(new Callback<SingleItem.SingleItemDetail>() {
+        Call<SingleItemDetail> videoDetailsRequest = dataService
+                .getVideoById("snippet", id, "AIzaSyDca6EiCASpFVwlvWFcbjj_ykdoWCNDevk");
+        videoDetailsRequest.enqueue(new Callback<SingleItemDetail>() {
             @Override
-            public void onResponse(Call<SingleItem.SingleItemDetail> call, Response<SingleItem.SingleItemDetail> response) {
+            public void onResponse(Call<SingleItemDetail> call, Response<SingleItemDetail> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
                         List<SingleItem> singleItemList = response.body().getSingleItems();
@@ -67,7 +68,7 @@ public class VideoDataUtils {
             }
 
             @Override
-            public void onFailure(Call<SingleItem.SingleItemDetail> call, Throwable t) {
+            public void onFailure(Call<SingleItemDetail> call, Throwable t) {
                 Log.i("failed", t.getMessage());
             }
         });
