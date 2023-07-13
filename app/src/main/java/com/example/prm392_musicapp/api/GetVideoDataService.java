@@ -2,6 +2,7 @@ package com.example.prm392_musicapp.api;
 
 import com.example.prm392_musicapp.models.SearchItemDetails;
 import com.example.prm392_musicapp.models.SingleItem;
+import com.example.prm392_musicapp.models.SingleItemDetail;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -20,7 +21,7 @@ public interface GetVideoDataService {
     );
 
     @GET("videos")
-    Call<SingleItem.SingleItemDetail> getVideoById(
+    Call<SingleItemDetail> getVideoById(
             @Query("part") String part,
             @Query("id") String id,
             @Query("key") String key
