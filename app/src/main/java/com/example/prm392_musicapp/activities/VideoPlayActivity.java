@@ -108,6 +108,7 @@ public class VideoPlayActivity extends AppCompatActivity {
             public void onChanged(List<SingleItem> singleItems) {
                 tv_title.setText(singleItems.get(0).getSnippet().getTitle());
                 tv_channel.setText(singleItems.get(0).getSnippet().getChannelTitle());
+                thumbnails = singleItems.get(0).getSnippet().getThumbnails();
             }
         });
 
