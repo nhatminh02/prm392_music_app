@@ -93,7 +93,7 @@ public class FragmentPlaylist extends Fragment {
         ((Button) view.findViewById(R.id.btn_ctrPlaylist)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                    
             }
         });
 
