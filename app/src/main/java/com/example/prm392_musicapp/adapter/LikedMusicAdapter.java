@@ -81,11 +81,15 @@ public class LikedMusicAdapter extends RecyclerView.Adapter<LikedMusicAdapter.Mu
             ((FloatingActionButton)itemView.findViewById(R.id.delete_liked_track)).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    int position = getBindingAdapterPosition();
                     mySQLiteOpenHelper = new MySQLiteOpenHelper(itemView.getContext(), "ProjectDB", null, 1);
                     SQLiteDatabase db = mySQLiteOpenHelper.getReadableDatabase();
                     db = mySQLiteOpenHelper.getWritableDatabase();
                     db.delete("LikedTracks", "title=?", new String[]{tv_musname.getText().toString()});
                     db.close();
+
+                    dataList.remove(position);
+                    notifyItemRemoved(position);
                 }
             });
         }

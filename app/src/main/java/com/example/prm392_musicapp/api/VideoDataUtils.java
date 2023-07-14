@@ -26,7 +26,36 @@ public class VideoDataUtils {
         //AIzaSyDca6EiCASpFVwlvWFcbjj_ykdoWCNDevk
         //AIzaSyBZDg-87in5IzNFeBo9PeRC_kFrcN4jjnE
         Call<SearchItemDetails> videoDetailsRequest = dataService
-                .getSearchVideoData("snippet", searchQuery, "AIzaSyBZDg-87in5IzNFeBo9PeRC_kFrcN4jjnE", "100", "VN","video","/m/04rlf");
+                .getSearchVideoData("snippet", searchQuery, "AIzaSyCxnM_yUk7Rw8xAQxwaYoDHan0Rx71FOQY", "100", "VN","video","/m/04rlf");
+        videoDetailsRequest.enqueue(new Callback<SearchItemDetails>() {
+            @Override
+            public void onResponse(Call<SearchItemDetails> call, Response<SearchItemDetails> response) {
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        List<SearchItem> itemsList = response.body().getItems();
+                        itemsLiveData.setValue(itemsList);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<SearchItemDetails> call, Throwable t) {
+                Log.i("failed", t.getMessage());
+            }
+        });
+
+        return itemsLiveData;
+    }
+
+    public static MutableLiveData<List<SearchItem>> getRelatedVideoData(String videoId) {
+        MutableLiveData<List<SearchItem>> itemsLiveData = new MutableLiveData<>();
+
+        GetVideoDataService dataService = RetrofitInstance.getRetrofit().create(GetVideoDataService.class);
+        //AIzaSyCxnM_yUk7Rw8xAQxwaYoDHan0Rx71FOQY
+        //AIzaSyDca6EiCASpFVwlvWFcbjj_ykdoWCNDevk
+        //AIzaSyBZDg-87in5IzNFeBo9PeRC_kFrcN4jjnE
+        Call<SearchItemDetails> videoDetailsRequest = dataService
+                .getSearchRelatedVideoData("snippet", "AIzaSyCxnM_yUk7Rw8xAQxwaYoDHan0Rx71FOQY", "100", "VN","video",videoId);
         videoDetailsRequest.enqueue(new Callback<SearchItemDetails>() {
             @Override
             public void onResponse(Call<SearchItemDetails> call, Response<SearchItemDetails> response) {
