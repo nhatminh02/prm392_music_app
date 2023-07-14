@@ -18,6 +18,15 @@ public interface GetVideoDataService {
             @Query("type") String type,
             @Query("topicId") String topicId
     );
+    @GET("search")
+    Call<SearchItemDetails> getSearchRelatedVideoData(
+            @Query("part") String part,
+            @Query("key") String key,
+            @Query("maxResults") String maxResults,
+            @Query("regionCode") String regionCode,
+            @Query("type") String type,
+            @Query("relatedToVideoId") String relatedToVideoId
+    );
 
     @GET("videos")
     Call<SingleItemDetail> getVideoById(
