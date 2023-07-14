@@ -10,6 +10,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -29,7 +30,6 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.MusicViewH
     Activity activity;
     private OnItemClickListener listener;
     private BottomSheetDialog bottomSheetDialog;
-    private Context context;
 
 
     public interface OnItemClickListener {
@@ -78,7 +78,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.MusicViewH
             @Override
             public void onClick(View v) {
                 showButtonSheet();
-                //Toast.makeText(v.getContext(), "Add to playlist",Toast.LENGTH_SHORT).show();
+               // Toast.makeText(v.getContext(), "Add to playlist",Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -129,6 +129,8 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.MusicViewH
         listOption.add(new ItemOption("Like"));
         OptionAdapter optionAdapter = new OptionAdapter(listOption);
         recyclerView.setAdapter(optionAdapter);
+        RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(activity,DividerItemDecoration.HORIZONTAL);
+        recyclerView.addItemDecoration(itemDecoration);
         bottomSheetDialog.setContentView(bottomSheetView);
         bottomSheetDialog.show();
 

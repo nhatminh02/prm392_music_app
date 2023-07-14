@@ -25,7 +25,7 @@ public class OptionAdapter extends RecyclerView.Adapter<OptionAdapter.OptionView
 
     public OptionViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.row_search, parent, false);
+                .inflate(R.layout.layout_item, parent, false);
         return new OptionViewHolder(itemView);
     }
 
