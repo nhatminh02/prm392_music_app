@@ -3,10 +3,10 @@ package com.example.prm392_musicapp.models;
 public class Video {
     private String videoId;
     private String title;
-    private Thumbnails thumbnails;
+    private String thumbnails;
     private String channelTitle;
 
-    public Video(String videoId, String title, Thumbnails thumbnails, String channelTitle) {
+    public Video(String videoId, String title, String thumbnails, String channelTitle) {
         this.videoId = videoId;
         this.title = title;
         this.thumbnails = thumbnails;
@@ -29,11 +29,11 @@ public class Video {
         this.title = title;
     }
 
-    public Thumbnails getThumbnails() {
+    public String getThumbnails() {
         return thumbnails;
     }
 
-    public void setThumbnails(Thumbnails thumbnails) {
+    public void setThumbnails(String thumbnails) {
         this.thumbnails = thumbnails;
     }
 

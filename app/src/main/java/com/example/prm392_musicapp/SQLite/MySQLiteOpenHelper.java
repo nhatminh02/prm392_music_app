@@ -1,10 +1,20 @@
 package com.example.prm392_musicapp.SQLite;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import androidx.annotation.Nullable;
+
+
+import com.example.prm392_musicapp.models.Thumbnails;
+import com.example.prm392_musicapp.models.Video;
+import com.google.gson.Gson;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MySQLiteOpenHelper extends SQLiteOpenHelper {
 
@@ -12,16 +22,20 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper {
         super(context, name, factory, version); //tao ra db
     }
 
+
     @Override
     public void onCreate(SQLiteDatabase db) { //tao cac bang
         String sql = "Create Table LikedTracks " +
                 "(LTid INTEGER PRIMARY KEY, videoId TEXT, title TEXT, thumbnails TEXT, channelTitle TEXT)";
+        String sql2 = "Create Table Playlists" +
+                "(PLid INTEGER PRIMARY KEY, PLName TEXT)";
         db.execSQL(sql);
+        db.execSQL(sql2);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) { //nang cap version
-        if(newVersion > oldVersion){
+        if (newVersion > oldVersion) {
             String sql1 = "Drop Table LikedTracks";
             db.execSQL(sql1);
 
@@ -30,4 +44,5 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper {
             db.execSQL(sql2);
         }
     }
+
 }

@@ -1,7 +1,10 @@
 package com.example.prm392_musicapp.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.core.app.ActivityOptionsCompat;
+import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -9,9 +12,15 @@ import androidx.fragment.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.ImageView;
 
 import com.example.prm392_musicapp.R;
+import com.example.prm392_musicapp.activities.CreatePlaylist;
+import com.example.prm392_musicapp.activities.MainActivity;
+import com.example.prm392_musicapp.activities.VideoPlayActivity;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -72,12 +81,19 @@ public class FragmentPlaylist extends Fragment {
         View view = inflater.inflate(R.layout.fragment_playlist, container, false);
         fragmentManager = getActivity().getSupportFragmentManager();
         fragmentLibrary = new FragmentLibrary();
-        ((ImageView)view.findViewById(R.id.btn_comeback)).setOnClickListener(new View.OnClickListener() {
+        ((ImageView) view.findViewById(R.id.btn_comeback)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 fragmentTransaction = fragmentManager.beginTransaction();
                 fragmentTransaction.replace(R.id.fr_container, fragmentLibrary, "");
                 fragmentTransaction.commit();
+            }
+        });
+
+        ((Button) view.findViewById(R.id.btn_ctrPlaylist)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
             }
         });
 
