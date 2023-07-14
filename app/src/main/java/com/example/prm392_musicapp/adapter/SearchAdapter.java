@@ -128,6 +128,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.MusicViewH
         listOption.add(new ItemOption("Add to playlist"));
         listOption.add(new ItemOption("Like"));
         OptionAdapter optionAdapter = new OptionAdapter(listOption);
+        recyclerView.setAdapter(optionAdapter);
         bottomSheetDialog.setContentView(bottomSheetView);
         bottomSheetDialog.show();
 
