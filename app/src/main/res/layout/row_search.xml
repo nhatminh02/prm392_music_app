@@ -2,13 +2,14 @@
 
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:clickable="true"
     android:foreground="?attr/selectableItemBackground"
     app:cardCornerRadius="0dp">
 
-    <RelativeLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         style="@style/backGround"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -18,15 +19,21 @@
             android:id="@+id/tv_search_thumb"
             android:layout_width="65dp"
             android:layout_height="65dp"
-            android:src="@drawable/atbe" />
+            android:src="@drawable/atbe"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:id="@+id/linearLayout"
+            android:layout_width="270dp"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginStart="10dp"
             android:layout_toEndOf="@+id/tv_search_thumb"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tv_search_thumb"
+            app:layout_constraintTop_toTopOf="parent">
 
             <TextView
                 android:id="@+id/tv_search_music"
@@ -44,13 +51,22 @@
                 android:layout_height="wrap_content"
                 android:text="Singer" />
 
-            <Button
-                android:id="@+id/button_option"
-                android:textStyle="bold"
-                android:text="Option"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"></Button>
         </LinearLayout>
 
-    </RelativeLayout>
+        <ImageView
+            android:id="@+id/button_option"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:clickable="true"
+            android:foreground="?attr/selectableItemBackground"
+            android:padding="5dp"
+            android:src="@drawable/baseline_more_vert_24"
+            android:text="Option"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/linearLayout"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>
