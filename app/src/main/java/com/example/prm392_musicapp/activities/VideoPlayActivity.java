@@ -213,8 +213,9 @@ public class VideoPlayActivity extends AppCompatActivity {
                     }
                 });
 
-                //suffle button
+                ImageView repeat = findViewById(R.id.imv_repeat);
                 ImageView suffle = findViewById(R.id.imv_suffle);
+                //suffle button
                 checkSuffle = false;
                 suffle.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -225,6 +226,11 @@ public class VideoPlayActivity extends AppCompatActivity {
                             checkSuffle = !checkSuffle;
                         } else {
                             //todo: bat chuc nang suffle
+                            //check chỉ một nút được bật tại 1 thời điểm (hoặc repeat hoặc suffle)
+                            if(checkRepeat){
+                                repeat.setImageResource(R.drawable.baseline_repeat_24);
+                                checkRepeat = !checkRepeat;
+                            }
                             suffle.setImageResource(R.drawable.baseline_shuffle_on_24);
                             checkSuffle = !checkSuffle;
                         }
@@ -232,7 +238,6 @@ public class VideoPlayActivity extends AppCompatActivity {
                 });
 
                 //repeat button
-                ImageView repeat = findViewById(R.id.imv_repeat);
                 checkRepeat = false;
                 repeat.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -243,6 +248,10 @@ public class VideoPlayActivity extends AppCompatActivity {
                             checkRepeat = !checkRepeat;
                         } else {
                             //todo: bat chuc nang repeat
+                            if(checkSuffle){
+                                suffle.setImageResource(R.drawable.baseline_shuffle_24);
+                                checkSuffle = !checkSuffle;
+                            }
                             repeat.setImageResource(R.drawable.baseline_repeat_on_24);
                             checkRepeat = !checkRepeat;
                         }
