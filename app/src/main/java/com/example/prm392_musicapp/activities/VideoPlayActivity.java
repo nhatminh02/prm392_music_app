@@ -26,7 +26,6 @@ import com.example.prm392_musicapp.R;
 import com.example.prm392_musicapp.SQLite.MySQLiteOpenHelper;
 import com.example.prm392_musicapp.api.VideoDataUtils;
 import com.example.prm392_musicapp.models.Thumbnails;
-import com.example.prm392_musicapp.models.Video;
 import com.example.prm392_musicapp.models.Id;
 import com.example.prm392_musicapp.models.SingleItem;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.customui.DefaultPlayerUiController;
@@ -39,12 +38,11 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.You
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.options.IFramePlayerOptions;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class VideoPlayActivity extends AppCompatActivity {
     private TextView tv_title;
-    private Thumbnails thumbnails;
+    private String thumbnails;
     private TextView tv_channel;
     private ImageView heart;
     private AnimatedVectorDrawable emptyHeart;
@@ -108,7 +106,7 @@ public class VideoPlayActivity extends AppCompatActivity {
             public void onChanged(List<SingleItem> singleItems) {
                 tv_title.setText(singleItems.get(0).getSnippet().getTitle());
                 tv_channel.setText(singleItems.get(0).getSnippet().getChannelTitle());
-                thumbnails = singleItems.get(0).getSnippet().getThumbnails();
+                thumbnails = singleItems.get(0).getSnippet().getThumbnails().getMedium().getUrl();
             }
         });
 
@@ -139,7 +137,7 @@ public class VideoPlayActivity extends AppCompatActivity {
                 } else {
                     db = openHelper.getWritableDatabase();
                     String sql = "insert into LikedTracks(videoId,title,thumbnails,channelTitle) values(?,?,?,?)";
-                    db.execSQL(sql, new String[]{itemId, tv_title.getText().toString(), thumbnails.toString(), tv_channel.getText().toString()});
+                    db.execSQL(sql, new String[]{itemId, tv_title.getText().toString(), thumbnails, tv_channel.getText().toString()});
                     db.close();
                 }
                 heart.setImageDrawable(drawable);

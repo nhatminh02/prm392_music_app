@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.example.prm392_musicapp.R;
+import com.example.prm392_musicapp.SQLite.MySQLiteOpenHelper;
 import com.example.prm392_musicapp.adapter.MusicAdapter;
 
 import com.example.prm392_musicapp.models.Music;
@@ -29,6 +30,7 @@ import java.util.List;
 public class FragmentLibrary extends Fragment {
     FragmentManager fragmentManager;
     FragmentTransaction fragmentTransaction;
+    MySQLiteOpenHelper mySQLiteOpenHelper;
     FragmentLikedTracks fragmentLikedTracks;
     FragmentPlaylist fragmentPlaylist;
 
@@ -99,6 +101,7 @@ public class FragmentLibrary extends Fragment {
                 // Define behavior for when the button is clicked
                 fragmentManager = getActivity().getSupportFragmentManager();
                 fragmentLikedTracks = new FragmentLikedTracks();
+                fragmentLikedTracks.setSQLiteOpenHelper(mySQLiteOpenHelper);
                 fragmentTransaction = fragmentManager.beginTransaction();
                 fragmentTransaction.replace(R.id.fr_container, fragmentLikedTracks, "");
                 fragmentTransaction.commit();

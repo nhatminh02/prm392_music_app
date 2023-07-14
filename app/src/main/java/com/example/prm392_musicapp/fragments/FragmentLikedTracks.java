@@ -1,18 +1,35 @@
 package com.example.prm392_musicapp.fragments;
 
 import android.annotation.SuppressLint;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.example.prm392_musicapp.R;
+import com.example.prm392_musicapp.SQLite.MySQLiteOpenHelper;
+import com.example.prm392_musicapp.adapter.LikedMusicAdapter;
+import com.example.prm392_musicapp.models.Thumbnails;
+import com.example.prm392_musicapp.models.Video;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.gson.Gson;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -26,8 +43,18 @@ public class FragmentLikedTracks extends Fragment {
     FragmentManager fragmentManager;
     FragmentTransaction fragmentTransaction;
     FragmentLikedTracks fragmentLikedTracks;
+    private TextView tv_title;
+    private Thumbnails thumbnails;
+    private TextView tv_channel;
+    String id;
+    String videoId;
+    String title;
+    String channelTitle;
+    String thumbnail;
 
     FragmentLibrary fragmentLibrary;
+    MySQLiteOpenHelper mySQLiteOpenHelper;
+    SQLiteDatabase db;
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
@@ -66,15 +93,16 @@ public class FragmentLikedTracks extends Fragment {
         }
     }
 
-    @SuppressLint("MissingInflatedId")
+    @SuppressLint({"MissingInflatedId", "Range"})
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+
         View view = inflater.inflate(R.layout.liked_tracks_page, container, false);
         fragmentManager = getActivity().getSupportFragmentManager();
         fragmentLibrary = new FragmentLibrary();
-        ((ImageView)view.findViewById(R.id.btn_back)).setOnClickListener(new View.OnClickListener() {
+        ((ImageView) view.findViewById(R.id.btn_back)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 fragmentTransaction = fragmentManager.beginTransaction();
@@ -83,6 +111,46 @@ public class FragmentLikedTracks extends Fragment {
             }
         });
 
+        List<Video> dataList = new ArrayList<>();
+        mySQLiteOpenHelper = new MySQLiteOpenHelper(getActivity(), "ProjectDB", null, 1);
+        SQLiteDatabase db = mySQLiteOpenHelper.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM LikedTracks", null);
+            while (cursor.moveToNext()) {
+
+
+                id = cursor.getString(cursor.getColumnIndex("LTid"));
+                videoId = cursor.getString(cursor.getColumnIndex("videoId"));
+                title = cursor.getString(cursor.getColumnIndex("title"));
+                thumbnail = cursor.getString(cursor.getColumnIndex("thumbnails"));
+                channelTitle = cursor.getString(cursor.getColumnIndex("channelTitle"));
+                Video data = new Video(videoId, title, thumbnail, channelTitle);
+                dataList.add(data);
+            }
+        cursor.close();
+        if (dataList.size() > 0) {
+            // Hiển thị dữ liệu trong RecyclerView
+            RecyclerView recyclerView = view.findViewById(R.id.rec_liked_track);
+            LikedMusicAdapter adapter = new LikedMusicAdapter(dataList);
+            RecyclerView.LayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+            recyclerView.setLayoutManager(linearLayoutManager);
+            recyclerView.setAdapter(adapter);
+            ((ConstraintLayout) view.findViewById(R.id.layout_liked_track)).setVisibility(View.VISIBLE);
+            ((ConstraintLayout) view.findViewById(R.id.layout_noLikeTrack)).setVisibility(View.INVISIBLE);
+        } else {
+            ((ConstraintLayout) view.findViewById(R.id.layout_liked_track)).setVisibility(View.INVISIBLE);
+            ((ConstraintLayout) view.findViewById(R.id.layout_noLikeTrack)).setVisibility(View.VISIBLE);
+        }
+
+
+
+
+
         return view;
     }
+
+    public void setSQLiteOpenHelper(MySQLiteOpenHelper mySQLiteOpenHelper) {
+        this.mySQLiteOpenHelper = mySQLiteOpenHelper;
+    }
+
+
 }

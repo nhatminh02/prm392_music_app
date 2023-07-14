@@ -1,6 +1,7 @@
 package com.example.prm392_musicapp.api;
 
 import com.example.prm392_musicapp.models.SearchItemDetails;
+import com.example.prm392_musicapp.models.SingleItem;
 import com.example.prm392_musicapp.models.SingleItemDetail;
 
 import retrofit2.Call;
