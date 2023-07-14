@@ -12,23 +12,23 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.prm392_musicapp.R;
-import com.example.prm392_musicapp.models.Music;
+import com.example.prm392_musicapp.models.Video;
 
 import java.util.List;
 
-public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.MusicHolder> {
+public class RecentlyPlayedAdapter extends RecyclerView.Adapter<RecentlyPlayedAdapter.MusicHolder> {
 
-    List<Music> recMusics;
+    List<Video> recVideo;
     Activity activity;
 
-    public MusicAdapter(List<Music> recMusics, Activity activity) {
-        this.recMusics = recMusics;
+    public RecentlyPlayedAdapter(List<Video> recVideo, Activity activity) {
+        this.recVideo = recVideo;
         this.activity = activity;
     }
 
     @NonNull
     @Override
-    public MusicAdapter.MusicHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public RecentlyPlayedAdapter.MusicHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_music,
                 parent,false);
         return new MusicHolder(v);
@@ -36,14 +36,16 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.MusicHolder>
 
     @Override
     public void onBindViewHolder(@NonNull MusicHolder holder, int position) {
-        Glide.with(activity).load(recMusics.get(position).getThumbnail()).centerCrop().into(holder.imv_thumb);
-        holder.tv_musname.setText(recMusics.get(position).getMusicName());
-        holder.tv_singer.setText(recMusics.get(position).getSinger());
+        Glide.with(holder.imv_thumb.getContext())
+                .load(recVideo.get(position).getThumbnails())
+                .into(holder.imv_thumb);
+        holder.tv_musname.setText(recVideo.get(position).getTitle());
+        holder.tv_singer.setText(recVideo.get(position).getChannelTitle());
     }
 
     @Override
     public int getItemCount() {
-        return recMusics.size();
+        return recVideo.size();
     }
 
     public class MusicHolder extends RecyclerView.ViewHolder {

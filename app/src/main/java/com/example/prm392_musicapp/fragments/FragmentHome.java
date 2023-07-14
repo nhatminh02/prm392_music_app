@@ -1,5 +1,7 @@
 package com.example.prm392_musicapp.fragments;
 
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -11,8 +13,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.prm392_musicapp.R;
-import com.example.prm392_musicapp.adapter.MusicAdapter;
-import com.example.prm392_musicapp.models.Music;
+import com.example.prm392_musicapp.SQLite.MySQLiteOpenHelper;
+import com.example.prm392_musicapp.adapter.RecentlyPlayedAdapter;
+import com.example.prm392_musicapp.models.Video;
 
 
 import java.util.ArrayList;
@@ -24,6 +27,8 @@ import java.util.List;
  * create an instance of this fragment.
  */
 public class FragmentHome extends Fragment {
+    MySQLiteOpenHelper openHelper;
+    SQLiteDatabase db;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -71,29 +76,28 @@ public class FragmentHome extends Fragment {
 
         View view = inflater.inflate(R.layout.home_page, container, false);
 
-        int thumbnail;
-        String musicName;
-        String singer;
-        int index = 0;
+        openHelper = new MySQLiteOpenHelper(getContext(), "ProjectDB", null, 1);
+        db = openHelper.getReadableDatabase();
 
-        List<Music> reccomends = new ArrayList<>();
-        Music rm1 = new Music(R.drawable.atbe, "Am tham ben em", "Son Tung MTP");
-        Music rm2 = new Music(R.drawable.cadsv, "Chac ai do se ve", "Son Tung MTP");
-        Music rm3 = new Music(R.drawable.ctktvn, "Chung ta khong thuoc ve nhau", "Son Tung MTP");
-        reccomends.add(rm1);
-        reccomends.add(rm3);
-        reccomends.add(rm2);
-        MusicAdapter adapterReccomnend = new MusicAdapter(reccomends, getActivity());
+        List<Video> reccomends = new ArrayList<>();
+        RecentlyPlayedAdapter adapterReccomnend = new RecentlyPlayedAdapter(reccomends, getActivity());
         RecyclerView rec1 = view.findViewById(R.id.rec_reccomend);
         RecyclerView.LayoutManager layout_manager1 =
                 new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
         rec1.setLayoutManager(layout_manager1);
         rec1.setAdapter(adapterReccomnend);
 
-        List<Music> recently = new ArrayList<>();
-        Music recent1 = new Music(R.drawable.nnca, "Noi nay co anh", "Son Tung MTP");
-        recently.add(recent1);
-        MusicAdapter adapterRecently = new MusicAdapter(recently, getActivity());
+        String sql = "select * from Recently";
+        List<Video> recently = new ArrayList<>();
+        Cursor c = db.rawQuery(sql,null);
+        while(c.moveToNext()){
+            String videoId = c.getString(1);
+            String title = c.getString(2);
+            String thumbnails = c.getString(3);
+            String channelTitle = c.getString(4);
+            recently.add(new Video(videoId,title,thumbnails,channelTitle));
+        }
+        RecentlyPlayedAdapter adapterRecently = new RecentlyPlayedAdapter(recently, getActivity());
         RecyclerView rec2 = view.findViewById(R.id.rec_recently);
         RecyclerView.LayoutManager layout_manager2 =
                 new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
