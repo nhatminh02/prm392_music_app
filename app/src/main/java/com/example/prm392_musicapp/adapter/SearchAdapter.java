@@ -2,8 +2,13 @@ package com.example.prm392_musicapp.adapter;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+<<<<<<< HEAD
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
+=======
+import android.content.Context;
+import android.content.SharedPreferences;
+>>>>>>> a5a473eb14fa8ec51a51568dc5b2a4b7c51590dd
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,6 +37,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.MusicViewH
     Activity activity;
     private OnItemClickListener listener;
     private BottomSheetDialog bottomSheetDialog;
+<<<<<<< HEAD
     MySQLiteOpenHelper openHelper;
     SQLiteDatabase db;
 
@@ -44,6 +50,10 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.MusicViewH
     public void setOnOptionClickListener(OnOptionClickListener listener) {
         this.optionListener = listener;
     }
+=======
+    boolean darkMode;
+    SharedPreferences sharedPreferences;
+>>>>>>> a5a473eb14fa8ec51a51568dc5b2a4b7c51590dd
 
 
     public interface OnItemClickListener {
@@ -70,6 +80,15 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.MusicViewH
     @Override
     public MusicViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_search, parent, false);
+        ImageView btnOption = view.findViewById(R.id.button_option);
+        sharedPreferences = activity.getSharedPreferences("mode", Context.MODE_PRIVATE);
+        darkMode = sharedPreferences.getBoolean("dark", false);
+        if (darkMode) {
+            btnOption.setImageResource(R.drawable.baseline_more_vert_24_light);
+        } else {
+            btnOption.setImageResource(R.drawable.baseline_more_vert_24);
+
+        }
         return new MusicViewHolder(view);
     }
 
@@ -92,7 +111,12 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.MusicViewH
         holder.buttonOption.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+<<<<<<< HEAD
                 showButtonSheet(position, music);
+=======
+                showButtonSheet();
+                // Toast.makeText(v.getContext(), "Add to playlist",Toast.LENGTH_SHORT).show();
+>>>>>>> a5a473eb14fa8ec51a51568dc5b2a4b7c51590dd
             }
         });
         holder.setPosition(position);
@@ -120,8 +144,12 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.MusicViewH
             imgMusic = itemView.findViewById(R.id.tv_search_thumb);
             tvName = itemView.findViewById(R.id.tv_search_music);
             tvSinger = itemView.findViewById(R.id.tv_search_singer);
+<<<<<<< HEAD
             buttonOption=itemView.findViewById(R.id.button_option);
             buttonOption.setOnClickListener(this);
+=======
+            buttonOption = itemView.findViewById(R.id.button_option);
+>>>>>>> a5a473eb14fa8ec51a51568dc5b2a4b7c51590dd
         }
         public void setPosition(int position) {
             this.position = position;
@@ -140,8 +168,14 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.MusicViewH
 
     }
 
+<<<<<<< HEAD
     private void showButtonSheet(int position, SearchItem music){
         View bottomSheetView = LayoutInflater.from(activity).inflate(R.layout.layout_bottom_sheet,null);
+=======
+    private void showButtonSheet() {
+        View bottomSheetView = LayoutInflater.from(activity).inflate(R.layout.layout_bottom_sheet, null);
+        ImageView horizontalRule = bottomSheetView.findViewById(R.id.horizontal_rule);
+>>>>>>> a5a473eb14fa8ec51a51568dc5b2a4b7c51590dd
         RecyclerView recyclerView = bottomSheetView.findViewById(R.id.rev_data);
         LinearLayoutManager layoutManager = new LinearLayoutManager(activity);
         recyclerView        .setLayoutManager(layoutManager);
@@ -152,10 +186,25 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.MusicViewH
 
         OptionAdapter optionAdapter = new OptionAdapter(listOption);
         recyclerView.setAdapter(optionAdapter);
+<<<<<<< HEAD
 
         RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(activity, DividerItemDecoration.HORIZONTAL);
         recyclerView.addItemDecoration(itemDecoration);
 
+=======
+        RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(activity, DividerItemDecoration.HORIZONTAL);
+        recyclerView.addItemDecoration(itemDecoration);
+
+        //xử lý đổi theo theme
+        sharedPreferences = activity.getSharedPreferences("mode", Context.MODE_PRIVATE);
+        darkMode = sharedPreferences.getBoolean("dark", false);
+        if (darkMode) {
+            horizontalRule.setImageResource(R.drawable.baseline_horizontal_rule_24_light);
+        } else {
+            horizontalRule.setImageResource(R.drawable.baseline_horizontal_rule_24);
+        }
+
+>>>>>>> a5a473eb14fa8ec51a51568dc5b2a4b7c51590dd
         bottomSheetDialog.setContentView(bottomSheetView);
         bottomSheetDialog.show();
 

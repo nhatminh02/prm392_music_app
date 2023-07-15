@@ -147,9 +147,7 @@ public class FragmentPlaylist extends Fragment {
         popupWindow.setFocusable(true);
         // Hiển thị cửa sổ nhỏ tại vị trí mong muốn
         popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
-
-
-        popupView.findViewById(R.id.btn_save).setOnClickListener(new View.OnClickListener() {
+        popupView.findViewById(R.id.btn_save).setOnClickListener(new View.OnClickListener() {     
             @Override
             public void onClick(View v) {
                 String playlistName = ((EditText) popupView.findViewById(R.id.edt_namePlaylist)).getText().toString();

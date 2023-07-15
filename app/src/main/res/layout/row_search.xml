@@ -19,7 +19,7 @@
             android:id="@+id/tv_search_thumb"
             android:layout_width="65dp"
             android:layout_height="65dp"
-            android:src="@drawable/atbe"
+            android:src="@drawable/ic_launcher_background"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
