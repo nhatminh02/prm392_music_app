@@ -25,10 +25,12 @@ import android.widget.TextView;
 import com.example.prm392_musicapp.R;
 import com.example.prm392_musicapp.SQLite.MySQLiteOpenHelper;
 import com.example.prm392_musicapp.api.VideoDataUtils;
+import com.example.prm392_musicapp.fragments.FragmentHome;
 import com.example.prm392_musicapp.models.SearchItem;
 import com.example.prm392_musicapp.models.Thumbnails;
 import com.example.prm392_musicapp.models.Id;
 import com.example.prm392_musicapp.models.SingleItem;
+import com.example.prm392_musicapp.models.Video;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.customui.DefaultPlayerUiController;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.customui.views.YouTubePlayerSeekBar;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.customui.views.YouTubePlayerSeekBarListener;
@@ -60,9 +62,8 @@ public class VideoPlayActivity extends AppCompatActivity {
     private boolean checkControl, checkSuffle, checkRepeat;
     MySQLiteOpenHelper openHelper;
     SQLiteDatabase db;
-    String itemId;
+    String itemId,title,thumbnail,channel;
     int currentVideoIndex = 0;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -155,6 +156,37 @@ public class VideoPlayActivity extends AppCompatActivity {
             }
         });
 
+        //add recommend list
+        VideoDataUtils.getRelatedVideoData(itemId).observe(this, new Observer<List<SearchItem>>() {
+            @Override
+            public void onChanged(List<SearchItem> searchItems) {
+                String recommendId;
+                Random random = new Random();
+                int randomVideoIndex = random.nextInt(searchItems.size()) / 10;
+                recommendId = searchItems.get(randomVideoIndex).getId().getVideoId();
+                title = searchItems.get(randomVideoIndex).getSnippet().getTitle();
+                thumbnail = searchItems.get(randomVideoIndex).getSnippet().getThumbnails().getMedium().getUrl();
+                channel = searchItems.get(randomVideoIndex).getSnippet().getChannelTitle();
+                db = openHelper.getWritableDatabase();
+                db.delete("Recommends", "videoId=?", new String[]{recommendId});
+                String sql = "insert into Recommends(videoId,title,thumbnails,channelTitle) values(?,?,?,?)";
+                db.execSQL(sql, new String[]{recommendId, title,thumbnail, channel});
+                sql = "SELECT COUNT(*) FROM Recommends";
+                Cursor c = db.rawQuery(sql, null);
+                int count = 0;
+                if (c != null && c.moveToFirst()) {
+                    count = c.getInt(0);
+                    c.close();
+                }
+                if (count > 10) {
+                    String tableName = "Recommends";
+                    String whereClause = "recommendId = (SELECT MIN(recommendId) FROM " + tableName + ")";
+                    db.delete(tableName, whereClause, null);
+                }
+                db.close();
+            }
+        });
+
 
         //video play
         youTubePlayerView.enableBackgroundPlayback(true);
@@ -175,9 +207,7 @@ public class VideoPlayActivity extends AppCompatActivity {
                     }
                 });
                 youTubePlayer.addListener(youTubePlayerSeekBar);
-
                 youTubePlayerView.setCustomPlayerUi(defaultPlayerUiController.getRootView());
-
                 youTubePlayer.loadVideo(itemId, 0);
 
                 //them vao recently list
@@ -192,12 +222,13 @@ public class VideoPlayActivity extends AppCompatActivity {
                     count = c.getInt(0);
                     c.close();
                 }
-                if (count >= 5) {
+                if (count > 10) {
                     String tableName = "Recently";
                     String whereClause = "recId = (SELECT MIN(recId) FROM " + tableName + ")";
                     db.delete(tableName, whereClause, null);
                 }
                 db.close();
+
 
                 //video control button
                 videoControl = findViewById(R.id.videoControl);
@@ -246,7 +277,7 @@ public class VideoPlayActivity extends AppCompatActivity {
                         } else {
                             //todo: bat chuc nang suffle
                             //check chỉ một nút được bật tại 1 thời điểm (hoặc repeat hoặc suffle)
-                            if(checkRepeat){
+                            if (checkRepeat) {
                                 repeat.setImageResource(R.drawable.baseline_repeat_24);
                                 checkRepeat = !checkRepeat;
                             }
@@ -267,7 +298,7 @@ public class VideoPlayActivity extends AppCompatActivity {
                             checkRepeat = !checkRepeat;
                         } else {
                             //todo: bat chuc nang repeat
-                            if(checkSuffle){
+                            if (checkSuffle) {
                                 suffle.setImageResource(R.drawable.baseline_shuffle_24);
                                 checkSuffle = !checkSuffle;
                             }
@@ -362,4 +393,7 @@ public class VideoPlayActivity extends AppCompatActivity {
         moveTaskToBack(true);
         startActivity(intent);
     }
+
+
+
 }

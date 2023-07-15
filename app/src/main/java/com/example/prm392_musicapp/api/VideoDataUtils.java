@@ -26,7 +26,7 @@ public class VideoDataUtils {
         //AIzaSyDca6EiCASpFVwlvWFcbjj_ykdoWCNDevk
         //AIzaSyBZDg-87in5IzNFeBo9PeRC_kFrcN4jjnE
         Call<SearchItemDetails> videoDetailsRequest = dataService
-                .getSearchVideoData("snippet", searchQuery, "AIzaSyAZOWsclTyfmZH8bhxlP3HYVQV6KzrPbwE", "100", "VN","video","/m/04rlf");
+                .getSearchVideoData("snippet", searchQuery, "AIzaSyDca6EiCASpFVwlvWFcbjj_ykdoWCNDevk", "100", "VN","video","/m/04rlf");
         videoDetailsRequest.enqueue(new Callback<SearchItemDetails>() {
             @Override
             public void onResponse(Call<SearchItemDetails> call, Response<SearchItemDetails> response) {
@@ -55,7 +55,7 @@ public class VideoDataUtils {
         //AIzaSyDca6EiCASpFVwlvWFcbjj_ykdoWCNDevk
         //AIzaSyBZDg-87in5IzNFeBo9PeRC_kFrcN4jjnE
         Call<SearchItemDetails> videoDetailsRequest = dataService
-                .getSearchRelatedVideoData("snippet", "AIzaSyCxnM_yUk7Rw8xAQxwaYoDHan0Rx71FOQY", "100", "VN","video",videoId);
+                .getSearchRelatedVideoData("snippet", "AIzaSyDca6EiCASpFVwlvWFcbjj_ykdoWCNDevk", "100", "VN","video",videoId);
         videoDetailsRequest.enqueue(new Callback<SearchItemDetails>() {
             @Override
             public void onResponse(Call<SearchItemDetails> call, Response<SearchItemDetails> response) {

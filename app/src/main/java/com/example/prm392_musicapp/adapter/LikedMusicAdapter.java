@@ -1,11 +1,5 @@
 package com.example.prm392_musicapp.adapter;
 
-import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
-import android.os.Bundle;
-import android.app.Fragment;
 import android.database.sqlite.SQLiteDatabase;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,14 +9,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.prm392_musicapp.R;
-import com.example.prm392_musicapp.activities.VideoPlayActivity;
 import com.example.prm392_musicapp.SQLite.MySQLiteOpenHelper;
-import com.example.prm392_musicapp.fragments.FragmentLikedTracks;
 import com.example.prm392_musicapp.models.Video;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
