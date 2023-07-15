@@ -124,6 +124,7 @@ public class FragmentPlaylist extends Fragment {
             RecyclerView.LayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
             recyclerView.setLayoutManager(linearLayoutManager);
             recyclerView.setAdapter(adapter);
+
             ((ConstraintLayout) view.findViewById(R.id.layout_playlist)).setVisibility(View.VISIBLE);
             ((ConstraintLayout) view.findViewById(R.id.layout_noPlaylist)).setVisibility(View.INVISIBLE);
         } else {
