@@ -22,12 +22,8 @@ import com.example.prm392_musicapp.models.Video;
 import java.util.List;
 
 public class LikedMusicAdapter extends RecyclerView.Adapter<LikedMusicAdapter.MusicHolder> {
-
-    private Context context;
     private final List<Video> dataList;
     String videoId;
-
-    Activity activity;
 
     public LikedMusicAdapter(List<Video> dataList) {
         this.dataList = dataList;
@@ -53,9 +49,9 @@ public class LikedMusicAdapter extends RecyclerView.Adapter<LikedMusicAdapter.Mu
         holder.cons_music.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(context, VideoPlayActivity.class);
+                Intent intent = new Intent(v.getContext(), VideoPlayActivity.class);
                 intent.putExtra("itemId", videoId);
-                context.startActivity(intent);
+                v.getContext().startActivity(intent);
             }
         });
     }
