@@ -143,11 +143,11 @@ public class FragmentPlaylist extends Fragment {
         LayoutInflater inflater = (LayoutInflater) requireContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View popupView = inflater.inflate(R.layout.activity_create_playlist, null);
         popupWindow = new PopupWindow(popupView, WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
-
+        //thêm dòng này để nhập dc
+        popupWindow.setFocusable(true);
         // Hiển thị cửa sổ nhỏ tại vị trí mong muốn
         popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
-
-        popupView.findViewById(R.id.btn_save).setOnClickListener(new View.OnClickListener() {
+            popupView.findViewById(R.id.btn_save).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String playlistName = ((EditText) popupView.findViewById(R.id.edt_namePlaylist)).getText().toString();
