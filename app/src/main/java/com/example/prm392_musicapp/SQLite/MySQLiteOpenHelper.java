@@ -25,11 +25,15 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) { //tao cac bang
-        String sql = "Create Table LikedTracks " +
+        String sqlLT = "Create Table LikedTracks " +
                 "(LTid INTEGER PRIMARY KEY, videoId TEXT, title TEXT, thumbnails TEXT, channelTitle TEXT)";
+        db.execSQL(sqlLT);
+
+        String sqlRec = "Create Table Recently " +
+                "(recId INTEGER PRIMARY KEY, videoId TEXT, title TEXT, thumbnails TEXT, channelTitle TEXT)";
+        db.execSQL(sqlRec);
         String sql2 = "Create Table Playlists" +
                 "(PLid INTEGER PRIMARY KEY, PLName TEXT)";
-        db.execSQL(sql);
         db.execSQL(sql2);
     }
 

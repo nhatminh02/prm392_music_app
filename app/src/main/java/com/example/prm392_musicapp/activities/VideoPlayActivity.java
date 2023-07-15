@@ -76,10 +76,6 @@ public class VideoPlayActivity extends AppCompatActivity {
         skipNext = findViewById(R.id.imv_next);
         skipPrev = findViewById(R.id.imv_previous);
 
-        heart = findViewById(R.id.imv_heart_icon);
-        emptyHeart = (AnimatedVectorDrawable) getDrawable(R.drawable.avd_heart_empty);
-        fillHeart = (AnimatedVectorDrawable) getDrawable(R.drawable.avd_heart_fill);
-
         //volume control bar
         seekBar = findViewById(R.id.volumeSeekBar);
         audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
@@ -118,19 +114,25 @@ public class VideoPlayActivity extends AppCompatActivity {
         });
 
         //add liked track
-        //todo: check xem track da ton tai trong bang liked track hay chua, neu ton tai thi set heart thanh fillheart
-        // trong cai ben duoi co ve dung nhung no k chay
+        heart = findViewById(R.id.imv_heart_icon);
+        emptyHeart = (AnimatedVectorDrawable) getDrawable(R.drawable.avd_heart_empty); //empty heart clip
+        fillHeart = (AnimatedVectorDrawable) getDrawable(R.drawable.avd_heart_fill); //fill heart clip
         openHelper = new MySQLiteOpenHelper(this, "ProjectDB", null, 1);
         db = openHelper.getReadableDatabase();
-        String sql = "select * from LikedTracks";
-        Cursor c = db.rawQuery(sql, null);
-        heart.setImageDrawable(emptyHeart);
-        while (c.moveToNext()) {
-            String vId = c.getString(1);
-            if (vId.equals(itemId)) {
-                heart.setImageDrawable(fillHeart);
-                break;
-            }
+        String sql = "select * from LikedTracks where videoId = ?";
+        String[] selectionArgs = {itemId};
+        Cursor c = db.rawQuery(sql, selectionArgs);
+        boolean likedVideo = c.moveToFirst();
+        Log.d("likedVideo", String.valueOf(likedVideo));
+        c.close();
+        if (likedVideo) {
+            heart.setImageDrawable(fillHeart);
+            fillHeart.start();
+            full = true;
+        } else {
+            heart.setImageDrawable(emptyHeart);
+            emptyHeart.start();
+            full = false;
         }
 
         heart.setOnClickListener(new View.OnClickListener() {
@@ -177,6 +179,25 @@ public class VideoPlayActivity extends AppCompatActivity {
                 youTubePlayerView.setCustomPlayerUi(defaultPlayerUiController.getRootView());
 
                 youTubePlayer.loadVideo(itemId, 0);
+
+                //them vao recently list
+                db = openHelper.getWritableDatabase();
+                db.delete("Recently", "videoId=?", new String[]{itemId});
+                String sql = "insert into Recently(videoId,title,thumbnails,channelTitle) values(?,?,?,?)";
+                db.execSQL(sql, new String[]{itemId, tv_title.getText().toString(), thumbnails, tv_channel.getText().toString()});
+                sql = "SELECT COUNT(*) FROM Recently";
+                Cursor c = db.rawQuery(sql, null);
+                int count = 0;
+                if (c != null && c.moveToFirst()) {
+                    count = c.getInt(0);
+                    c.close();
+                }
+                if (count >= 5) {
+                    String tableName = "Recently";
+                    String whereClause = "recId = (SELECT MIN(recId) FROM " + tableName + ")";
+                    db.delete(tableName, whereClause, null);
+                }
+                db.close();
 
                 //video control button
                 videoControl = findViewById(R.id.videoControl);

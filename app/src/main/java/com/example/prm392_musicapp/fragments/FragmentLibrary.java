@@ -15,9 +15,8 @@ import android.widget.Button;
 
 import com.example.prm392_musicapp.R;
 import com.example.prm392_musicapp.SQLite.MySQLiteOpenHelper;
-import com.example.prm392_musicapp.adapter.MusicAdapter;
-
-import com.example.prm392_musicapp.models.Music;
+import com.example.prm392_musicapp.adapter.RecentlyPlayedAdapter;
+import com.example.prm392_musicapp.models.Video;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -84,10 +83,8 @@ public class FragmentLibrary extends Fragment {
 
 
 
-        List<Music> recently = new ArrayList<>();
-        Music recent1 = new Music(R.drawable.nnca, "Noi nay co anh", "Son Tung MTP");
-        recently.add(recent1);
-        MusicAdapter adapterRecently = new MusicAdapter(recently, getActivity());
+        List<Video> recently = new ArrayList<>();
+        RecentlyPlayedAdapter adapterRecently = new RecentlyPlayedAdapter(recently, getActivity());
         RecyclerView rec2 = view.findViewById(R.id.rec_recently);
         RecyclerView.LayoutManager layout_manager2 = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
         rec2.setLayoutManager(layout_manager2);
