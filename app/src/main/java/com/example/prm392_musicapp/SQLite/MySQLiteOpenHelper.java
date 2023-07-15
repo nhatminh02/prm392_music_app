@@ -35,13 +35,10 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper {
         String sql2 = "Create Table Playlists" +
                 "(PLid INTEGER PRIMARY KEY, PLName TEXT)";
         String sql3 = "Create Table PlaylistMusic" +
-<<<<<<< HEAD
                 "(PLMid INTEGER PRIMARY KEY, PLid INTEGER, PLMvideoId TEXT, PLMtitle TEXT, PLMthumbnails TEXT, PLMchannelTitle TEXT, FOREIGN KEY(PLid) REFERENCES Playlists(PLid))";
-        db.execSQL(sql);
-=======
-                "(PLMid INTEGER PRIMARY KEY, PLMvideoId TEXT, PLMtitle TEXT, PLMthumbnails TEXT, PLMchannelTitle TEXT)";
+
         db.execSQL(sqlLT);
->>>>>>> a5a473eb14fa8ec51a51568dc5b2a4b7c51590dd
+
         db.execSQL(sql2);
         db.execSQL(sql3);
     }
