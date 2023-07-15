@@ -25,6 +25,7 @@ import android.widget.TextView;
 import com.example.prm392_musicapp.R;
 import com.example.prm392_musicapp.SQLite.MySQLiteOpenHelper;
 import com.example.prm392_musicapp.api.VideoDataUtils;
+import com.example.prm392_musicapp.models.SearchItem;
 import com.example.prm392_musicapp.models.Thumbnails;
 import com.example.prm392_musicapp.models.Id;
 import com.example.prm392_musicapp.models.SingleItem;
@@ -39,12 +40,16 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.options.IFram
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView;
 
 import java.util.List;
+import java.util.Random;
 
 public class VideoPlayActivity extends AppCompatActivity {
     private TextView tv_title;
     private String thumbnails;
     private TextView tv_channel;
     private ImageView heart;
+    private ImageView videoControl;
+    private ImageView skipNext;
+    private ImageView skipPrev;
     private AnimatedVectorDrawable emptyHeart;
     private AnimatedVectorDrawable fillHeart;
     private YouTubePlayerView youTubePlayerView;
@@ -56,6 +61,8 @@ public class VideoPlayActivity extends AppCompatActivity {
     MySQLiteOpenHelper openHelper;
     SQLiteDatabase db;
     String itemId;
+    int currentVideoIndex = 0;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +73,8 @@ public class VideoPlayActivity extends AppCompatActivity {
 
         tv_title = findViewById(R.id.tv_title);
         tv_channel = findViewById(R.id.tv_channel);
+        skipNext = findViewById(R.id.imv_next);
+        skipPrev = findViewById(R.id.imv_previous);
 
         //volume control bar
         seekBar = findViewById(R.id.volumeSeekBar);
@@ -95,8 +104,6 @@ public class VideoPlayActivity extends AppCompatActivity {
         youTubePlayerView = findViewById(R.id.youtube_player_view);
 
         itemId = getIntent().getStringExtra("itemId");
-        Id id = new Id();
-
         VideoDataUtils.getVideoById(itemId).observe(this, new Observer<List<SingleItem>>() {
             @Override
             public void onChanged(List<SingleItem> singleItems) {
@@ -148,6 +155,7 @@ public class VideoPlayActivity extends AppCompatActivity {
             }
         });
 
+
         //video play
         youTubePlayerView.enableBackgroundPlayback(true);
         YouTubePlayerListener listener = new AbstractYouTubePlayerListener() {
@@ -192,7 +200,7 @@ public class VideoPlayActivity extends AppCompatActivity {
                 db.close();
 
                 //video control button
-                ImageView videoControl = findViewById(R.id.videoControl);
+                videoControl = findViewById(R.id.videoControl);
                 checkControl = true;
                 videoControl.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -209,8 +217,24 @@ public class VideoPlayActivity extends AppCompatActivity {
                     }
                 });
 
-                //suffle button
+                //skip control
+                skipPrev.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        controlSkip(itemId, v.getId(), youTubePlayer);
+                    }
+                });
+
+                skipNext.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        controlSkip(itemId, v.getId(), youTubePlayer);
+                    }
+                });
+
+                ImageView repeat = findViewById(R.id.imv_repeat);
                 ImageView suffle = findViewById(R.id.imv_suffle);
+                //suffle button
                 checkSuffle = false;
                 suffle.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -221,6 +245,11 @@ public class VideoPlayActivity extends AppCompatActivity {
                             checkSuffle = !checkSuffle;
                         } else {
                             //todo: bat chuc nang suffle
+                            //check chỉ một nút được bật tại 1 thời điểm (hoặc repeat hoặc suffle)
+                            if(checkRepeat){
+                                repeat.setImageResource(R.drawable.baseline_repeat_24);
+                                checkRepeat = !checkRepeat;
+                            }
                             suffle.setImageResource(R.drawable.baseline_shuffle_on_24);
                             checkSuffle = !checkSuffle;
                         }
@@ -228,7 +257,6 @@ public class VideoPlayActivity extends AppCompatActivity {
                 });
 
                 //repeat button
-                ImageView repeat = findViewById(R.id.imv_repeat);
                 checkRepeat = false;
                 repeat.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -239,6 +267,10 @@ public class VideoPlayActivity extends AppCompatActivity {
                             checkRepeat = !checkRepeat;
                         } else {
                             //todo: bat chuc nang repeat
+                            if(checkSuffle){
+                                suffle.setImageResource(R.drawable.baseline_shuffle_24);
+                                checkSuffle = !checkSuffle;
+                            }
                             repeat.setImageResource(R.drawable.baseline_repeat_on_24);
                             checkRepeat = !checkRepeat;
                         }
@@ -253,12 +285,72 @@ public class VideoPlayActivity extends AppCompatActivity {
                 //xử lý chức năng repeat
                 if (state.equals(PlayerConstants.PlayerState.ENDED) && checkRepeat) {
                     youTubePlayer.loadVideo(itemId, 0);
+                } else if (state.equals(PlayerConstants.PlayerState.ENDED) && checkSuffle) {
+                    controlSuffle(itemId, youTubePlayer);
                 }
             }
         };
 
         IFramePlayerOptions options = new IFramePlayerOptions.Builder().controls(0).fullscreen(1).build();
         youTubePlayerView.initialize(listener, options);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.i("on1", "onResume");
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Log.i("on1", "onRestart");
+
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.i("on1", "onStop");
+
+    }
+
+    public void controlSkip(String videoId, int btnId, YouTubePlayer youTubePlayer) {
+        VideoDataUtils.getRelatedVideoData(videoId).observe(this, new Observer<List<SearchItem>>() {
+            @Override
+            public void onChanged(List<SearchItem> searchItems) {
+                String vId;
+                if (btnId == skipNext.getId()) {
+                    currentVideoIndex++;
+                    if (currentVideoIndex >= searchItems.size()) {
+                        currentVideoIndex = 0;
+                    }
+                    vId = searchItems.get(currentVideoIndex).getId().getVideoId();
+                    youTubePlayer.loadVideo(vId, 0);
+                } else if (btnId == skipPrev.getId()) {
+                    currentVideoIndex--;
+                    if (currentVideoIndex < 0) {
+                        currentVideoIndex = searchItems.size() - 1;
+                    }
+                    vId = searchItems.get(currentVideoIndex).getId().getVideoId();
+                    youTubePlayer.loadVideo(vId, 0);
+                }
+            }
+        });
+    }
+
+    public void controlSuffle(String videoId, YouTubePlayer youTubePlayer) {
+        VideoDataUtils.getRelatedVideoData(videoId).observe(this, new Observer<List<SearchItem>>() {
+            @Override
+            public void onChanged(List<SearchItem> searchItems) {
+                Random random = new Random();
+                String vId;
+                int randomVideoIndex = random.nextInt(searchItems.size());
+                vId = searchItems.get(randomVideoIndex).getId().getVideoId();
+                Log.i("ran", vId);
+                youTubePlayer.loadVideo(vId, 0);
+            }
+        });
     }
 
     public void onBack(View view) {

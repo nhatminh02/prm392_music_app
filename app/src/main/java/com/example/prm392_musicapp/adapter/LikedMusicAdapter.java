@@ -1,12 +1,16 @@
 package com.example.prm392_musicapp.adapter;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.app.Fragment;
+import android.database.sqlite.SQLiteDatabase;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -17,16 +21,29 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.prm392_musicapp.R;
 import com.example.prm392_musicapp.activities.VideoPlayActivity;
+import com.example.prm392_musicapp.SQLite.MySQLiteOpenHelper;
+import com.example.prm392_musicapp.fragments.FragmentLikedTracks;
 import com.example.prm392_musicapp.models.Video;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.List;
 
 public class LikedMusicAdapter extends RecyclerView.Adapter<LikedMusicAdapter.MusicHolder> {
     private final List<Video> dataList;
     String videoId;
+    private View.OnClickListener onClickListener;
+    MySQLiteOpenHelper mySQLiteOpenHelper;
+    Activity activity;
 
     public LikedMusicAdapter(List<Video> dataList) {
         this.dataList = dataList;
+    }
+    public void setOnClickListener(View.OnClickListener onClickListener) {
+        this.onClickListener = onClickListener;
+    }
+
+    public interface OnClickListener {
+        void onClick(int position, Video video);
     }
 
     @NonNull
@@ -56,6 +73,8 @@ public class LikedMusicAdapter extends RecyclerView.Adapter<LikedMusicAdapter.Mu
         });
     }
 
+
+
     @Override
     public int getItemCount() {
         return dataList.size();
@@ -67,12 +86,27 @@ public class LikedMusicAdapter extends RecyclerView.Adapter<LikedMusicAdapter.Mu
         TextView tv_musname;
         TextView tv_singer;
 
+
         public MusicHolder(@NonNull View itemView) {
             super(itemView);
             imv_thumb = itemView.findViewById(R.id.imv_thumb);
             tv_musname = itemView.findViewById(R.id.tv_musname);
             tv_singer = itemView.findViewById(R.id.tv_singer);
             cons_music = itemView.findViewById(R.id.cons_music);
+            ((FloatingActionButton)itemView.findViewById(R.id.delete_liked_track)).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int position = getBindingAdapterPosition();
+                    mySQLiteOpenHelper = new MySQLiteOpenHelper(itemView.getContext(), "ProjectDB", null, 1);
+                    SQLiteDatabase db = mySQLiteOpenHelper.getReadableDatabase();
+                    db = mySQLiteOpenHelper.getWritableDatabase();
+                    db.delete("LikedTracks", "title=?", new String[]{tv_musname.getText().toString()});
+                    db.close();
+
+                    dataList.remove(position);
+                    notifyItemRemoved(position);
+                }
+            });
         }
     }
 }

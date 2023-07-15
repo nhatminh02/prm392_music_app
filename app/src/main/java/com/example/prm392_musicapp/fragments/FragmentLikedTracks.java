@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -24,6 +25,7 @@ import com.example.prm392_musicapp.SQLite.MySQLiteOpenHelper;
 import com.example.prm392_musicapp.adapter.LikedMusicAdapter;
 import com.example.prm392_musicapp.models.Thumbnails;
 import com.example.prm392_musicapp.models.Video;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -44,6 +46,11 @@ public class FragmentLikedTracks extends Fragment {
     private TextView tv_title;
     private Thumbnails thumbnails;
     private TextView tv_channel;
+    String id;
+    String videoId;
+    String title;
+    String channelTitle;
+    String thumbnail;
 
     FragmentLibrary fragmentLibrary;
     MySQLiteOpenHelper mySQLiteOpenHelper;
@@ -109,19 +116,13 @@ public class FragmentLikedTracks extends Fragment {
         SQLiteDatabase db = mySQLiteOpenHelper.getReadableDatabase();
         Cursor cursor = db.rawQuery("SELECT * FROM LikedTracks", null);
             while (cursor.moveToNext()) {
-                //Thumbnails thumbnail;
-                String id;
-                String videoId;
-                String title;
-                String channelTitle;
-                String thumbnail;
+
 
                 id = cursor.getString(cursor.getColumnIndex("LTid"));
                 videoId = cursor.getString(cursor.getColumnIndex("videoId"));
                 title = cursor.getString(cursor.getColumnIndex("title"));
                 thumbnail = cursor.getString(cursor.getColumnIndex("thumbnails"));
                 channelTitle = cursor.getString(cursor.getColumnIndex("channelTitle"));
-                //thumbnail = deserializeThumbnail(thumbnailJson);
                 Video data = new Video(videoId, title, thumbnail, channelTitle);
                 dataList.add(data);
             }
@@ -133,14 +134,15 @@ public class FragmentLikedTracks extends Fragment {
             RecyclerView.LayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
             recyclerView.setLayoutManager(linearLayoutManager);
             recyclerView.setAdapter(adapter);
-            Log.d("geted data", dataList.size() + "");
             ((ConstraintLayout) view.findViewById(R.id.layout_liked_track)).setVisibility(View.VISIBLE);
             ((ConstraintLayout) view.findViewById(R.id.layout_noLikeTrack)).setVisibility(View.INVISIBLE);
         } else {
-            Log.d(" not geted data", dataList.size() + "");
             ((ConstraintLayout) view.findViewById(R.id.layout_liked_track)).setVisibility(View.INVISIBLE);
             ((ConstraintLayout) view.findViewById(R.id.layout_noLikeTrack)).setVisibility(View.VISIBLE);
         }
+
+
+
 
 
         return view;
@@ -148,12 +150,6 @@ public class FragmentLikedTracks extends Fragment {
 
     public void setSQLiteOpenHelper(MySQLiteOpenHelper mySQLiteOpenHelper) {
         this.mySQLiteOpenHelper = mySQLiteOpenHelper;
-    }
-
-
-    private Thumbnails deserializeThumbnail(String thumbnailJson) {
-        Gson gson = new Gson();
-        return gson.fromJson(thumbnailJson, Thumbnails.class);
     }
 
 

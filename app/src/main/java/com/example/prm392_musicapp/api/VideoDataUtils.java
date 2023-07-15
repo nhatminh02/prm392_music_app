@@ -46,6 +46,35 @@ public class VideoDataUtils {
 
         return itemsLiveData;
     }
+
+    public static MutableLiveData<List<SearchItem>> getRelatedVideoData(String videoId) {
+        MutableLiveData<List<SearchItem>> itemsLiveData = new MutableLiveData<>();
+
+        GetVideoDataService dataService = RetrofitInstance.getRetrofit().create(GetVideoDataService.class);
+        //AIzaSyCxnM_yUk7Rw8xAQxwaYoDHan0Rx71FOQY
+        //AIzaSyDca6EiCASpFVwlvWFcbjj_ykdoWCNDevk
+        //AIzaSyBZDg-87in5IzNFeBo9PeRC_kFrcN4jjnE
+        Call<SearchItemDetails> videoDetailsRequest = dataService
+                .getSearchRelatedVideoData("snippet", "AIzaSyCxnM_yUk7Rw8xAQxwaYoDHan0Rx71FOQY", "100", "VN","video",videoId);
+        videoDetailsRequest.enqueue(new Callback<SearchItemDetails>() {
+            @Override
+            public void onResponse(Call<SearchItemDetails> call, Response<SearchItemDetails> response) {
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        List<SearchItem> itemsList = response.body().getItems();
+                        itemsLiveData.setValue(itemsList);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<SearchItemDetails> call, Throwable t) {
+                Log.i("failed", t.getMessage());
+            }
+        });
+
+        return itemsLiveData;
+    }
     public static MutableLiveData<List<SingleItem>> getVideoById(String id) {
         MutableLiveData<List<SingleItem>> itemLiveData = new MutableLiveData<>();
 
