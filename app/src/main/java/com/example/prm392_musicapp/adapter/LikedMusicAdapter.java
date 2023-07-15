@@ -33,7 +33,6 @@ public class LikedMusicAdapter extends RecyclerView.Adapter<LikedMusicAdapter.Mu
     String videoId;
     private View.OnClickListener onClickListener;
     MySQLiteOpenHelper mySQLiteOpenHelper;
-    Activity activity;
 
     public LikedMusicAdapter(List<Video> dataList) {
         this.dataList = dataList;
@@ -56,21 +55,11 @@ public class LikedMusicAdapter extends RecyclerView.Adapter<LikedMusicAdapter.Mu
 
     @Override
     public void onBindViewHolder(@NonNull MusicHolder holder, int position) {
-        videoId = dataList.get(position).getVideoId();
         Glide.with(holder.imv_thumb.getContext())
                 .load(dataList.get(position).getThumbnails())
                 .into(holder.imv_thumb);
         holder.tv_musname.setText(dataList.get(position).getTitle());
         holder.tv_singer.setText(dataList.get(position).getChannelTitle());
-
-        holder.cons_music.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(v.getContext(), VideoPlayActivity.class);
-                intent.putExtra("itemId", videoId);
-                v.getContext().startActivity(intent);
-            }
-        });
     }
 
 
@@ -81,7 +70,6 @@ public class LikedMusicAdapter extends RecyclerView.Adapter<LikedMusicAdapter.Mu
     }
 
     public class MusicHolder extends RecyclerView.ViewHolder {
-        ConstraintLayout cons_music;
         ImageView imv_thumb;
         TextView tv_musname;
         TextView tv_singer;
@@ -92,7 +80,6 @@ public class LikedMusicAdapter extends RecyclerView.Adapter<LikedMusicAdapter.Mu
             imv_thumb = itemView.findViewById(R.id.imv_thumb);
             tv_musname = itemView.findViewById(R.id.tv_musname);
             tv_singer = itemView.findViewById(R.id.tv_singer);
-            cons_music = itemView.findViewById(R.id.cons_music);
             ((FloatingActionButton)itemView.findViewById(R.id.delete_liked_track)).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
