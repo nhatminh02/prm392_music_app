@@ -1,6 +1,7 @@
 package com.example.prm392_musicapp.adapter;
 
 import android.app.Activity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.prm392_musicapp.R;
+import com.example.prm392_musicapp.models.SearchItem;
 import com.example.prm392_musicapp.models.Video;
 
 import java.util.List;
@@ -20,6 +22,15 @@ public class RecentlyPlayedAdapter extends RecyclerView.Adapter<RecentlyPlayedAd
 
     List<Video> recVideo;
     Activity activity;
+    private RecentlyPlayedAdapter.OnItemClickListener listener;
+
+    public interface OnItemClickListener {
+        void onItemClick(String itemId);
+    }
+
+    public void setOnItemClickListener(RecentlyPlayedAdapter.OnItemClickListener listener) {
+        this.listener = listener;
+    }
 
     public RecentlyPlayedAdapter(List<Video> recVideo, Activity activity) {
         this.recVideo = recVideo;
@@ -48,16 +59,28 @@ public class RecentlyPlayedAdapter extends RecyclerView.Adapter<RecentlyPlayedAd
         return recVideo.size();
     }
 
-    public class MusicHolder extends RecyclerView.ViewHolder {
+    public class MusicHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         ImageView imv_thumb;
         TextView tv_musname;
         TextView tv_singer;
 
         public MusicHolder(@NonNull View itemView) {
             super(itemView);
+            itemView.setOnClickListener(this);
             imv_thumb =itemView.findViewById(R.id.imv_thumb);
             tv_musname =itemView.findViewById(R.id.tv_musname);
             tv_singer =itemView.findViewById(R.id.tv_singer);
+        }
+
+        @Override
+        public void onClick(View v) {
+            int position = getBindingAdapterPosition();
+            Log.i("RecentlyPlayedAdapter", "Item clicked");
+            if (position != RecyclerView.NO_POSITION && listener != null) {
+                Video video = recVideo.get(position);
+                String videoId = video.getVideoId(); // Retrieve the ID of the clicked item
+                listener.onItemClick(videoId); // Callback the listener with the item ID
+            }
         }
     }
 }

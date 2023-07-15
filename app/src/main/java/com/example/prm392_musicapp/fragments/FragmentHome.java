@@ -1,5 +1,6 @@
 package com.example.prm392_musicapp.fragments;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -8,13 +9,16 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.prm392_musicapp.R;
 import com.example.prm392_musicapp.SQLite.MySQLiteOpenHelper;
+import com.example.prm392_musicapp.activities.VideoPlayActivity;
 import com.example.prm392_musicapp.adapter.RecentlyPlayedAdapter;
+import com.example.prm392_musicapp.adapter.SearchAdapter;
 import com.example.prm392_musicapp.models.Video;
 
 
@@ -97,7 +101,19 @@ public class FragmentHome extends Fragment {
             String channelTitle = c.getString(4);
             recently.add(new Video(videoId,title,thumbnails,channelTitle));
         }
+
+
+
         RecentlyPlayedAdapter adapterRecently = new RecentlyPlayedAdapter(recently, getActivity());
+        adapterRecently.setOnItemClickListener(new RecentlyPlayedAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(String videoId) {
+                Log.i("run1", "onItemClick" + videoId);
+                Intent intent = new Intent(getActivity(), VideoPlayActivity.class);
+                intent.putExtra("itemId", videoId);
+                startActivity(intent);
+            }
+        });
         RecyclerView rec2 = view.findViewById(R.id.rec_recently);
         RecyclerView.LayoutManager layout_manager2 =
                 new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
