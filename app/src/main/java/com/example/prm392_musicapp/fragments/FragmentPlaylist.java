@@ -105,17 +105,14 @@ public class FragmentPlaylist extends Fragment {
             }
         });
 
-        ((Button) view.findViewById(R.id.btn_ctrPlaylist)).setOnClickListener(this::onClicked);
-
-        ((Button) view.findViewById(R.id.btn_add)).setOnClickListener(this::onClicked);
 
         List<Playlist> dataList = new ArrayList<>();
         openHelper = new MySQLiteOpenHelper(getActivity(), "ProjectDB", null, 1);
         SQLiteDatabase db = openHelper.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM LikedTracks", null);
+        Cursor cursor = db.rawQuery("SELECT * FROM PLaylists", null);
         while (cursor.moveToNext()) {
-            @SuppressLint("Range") int id = Integer.parseInt(cursor.getString(cursor.getColumnIndex("PLId")));
-            @SuppressLint("Range") String name = cursor.getString(cursor.getColumnIndex("PLName"));
+            int id = Integer.parseInt(String.valueOf(cursor.getInt(0)));
+            String name = cursor.getString(1);
             Playlist data = new Playlist(id, name);
             dataList.add(data);
         }
@@ -134,6 +131,9 @@ public class FragmentPlaylist extends Fragment {
             ((ConstraintLayout) view.findViewById(R.id.layout_noPlaylist)).setVisibility(View.VISIBLE);
         }
 
+        ((Button) view.findViewById(R.id.btn_ctrPlaylist)).setOnClickListener(this::onClicked);
+        ((Button) view.findViewById(R.id.btn_add)).setOnClickListener(this::onClicked);
+
 
         return view;
     }
@@ -143,9 +143,10 @@ public class FragmentPlaylist extends Fragment {
         LayoutInflater inflater = (LayoutInflater) requireContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View popupView = inflater.inflate(R.layout.activity_create_playlist, null);
         popupWindow = new PopupWindow(popupView, WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
-
+        popupWindow.setFocusable(true);
         // Hiển thị cửa sổ nhỏ tại vị trí mong muốn
         popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
+
 
         popupView.findViewById(R.id.btn_save).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -153,7 +154,7 @@ public class FragmentPlaylist extends Fragment {
                 String playlistName = ((EditText) popupView.findViewById(R.id.edt_namePlaylist)).getText().toString();
                 openHelper = new MySQLiteOpenHelper(getActivity(), "ProjectDB", null, 1);
                 db = openHelper.getWritableDatabase();
-                String sql = "SELECT * FROM Playlists WHERE PLName LIKE ?";
+                String sql = "SELECT * FROM Playlists WHERE PLName = ?";
                 Cursor c = db.rawQuery(sql, new String[]{"%" + playlistName + "%"});
                 List<Playlist> list = new ArrayList<>();
                 while (c.moveToNext()) {
@@ -161,15 +162,18 @@ public class FragmentPlaylist extends Fragment {
                     String name = c.getString(1);
                     list.add(new Playlist(id, name));
                 }
-                if (list.size() == 0 || TextUtils.isEmpty(((EditText) popupView.findViewById(R.id.edt_namePlaylist)).getText())) {
+                if (list.size() != 0 || TextUtils.isEmpty(((EditText) popupView.findViewById(R.id.edt_namePlaylist)).getText())) {
                     ((TextView) popupView.findViewById(R.id.edt_namePlaylist)).setError("Đã tồn tại hoặc chưa điền");
                     ((TextView) popupView.findViewById(R.id.edt_namePlaylist)).requestFocus();
                 } else {
-                    String sqlAdd = "insert into LikedTracks(videoId,title,thumbnails,channelTitle) values(?,?,?,?)";
-                    db.execSQL(sql, new String[]{playlistName});
+                    String sqlAdd = "insert into PLaylists(PLName) values(?)";
+                    db.execSQL(sqlAdd, new String[]{playlistName});
+                    db.close();
+                    popupWindow.dismiss();
                 }
             }
         });
+
 
         popupView.findViewById(R.id.btn_cancel).setOnClickListener(new View.OnClickListener() {
             @Override
