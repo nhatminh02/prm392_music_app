@@ -1,26 +1,39 @@
 package com.example.prm392_musicapp.fragments;
 
-import android.content.Intent;
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
-import androidx.core.app.ActivityOptionsCompat;
-import androidx.core.view.ViewCompat;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
+import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
+import android.widget.TextView;
 
 import com.example.prm392_musicapp.R;
-import com.example.prm392_musicapp.activities.CreatePlaylist;
-import com.example.prm392_musicapp.activities.MainActivity;
-import com.example.prm392_musicapp.activities.VideoPlayActivity;
+import com.example.prm392_musicapp.SQLite.MySQLiteOpenHelper;
+import com.example.prm392_musicapp.adapter.LikedMusicAdapter;
+import com.example.prm392_musicapp.adapter.PlaylistAdapter;
+import com.example.prm392_musicapp.models.Playlist;
+import com.example.prm392_musicapp.models.Video;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -32,6 +45,8 @@ public class FragmentPlaylist extends Fragment {
     FragmentManager fragmentManager;
     FragmentTransaction fragmentTransaction;
     FragmentLikedTracks fragmentLikedTracks;
+    MySQLiteOpenHelper openHelper;
+    SQLiteDatabase db;
 
     FragmentLibrary fragmentLibrary;
 
@@ -90,13 +105,77 @@ public class FragmentPlaylist extends Fragment {
             }
         });
 
-        ((Button) view.findViewById(R.id.btn_ctrPlaylist)).setOnClickListener(new View.OnClickListener() {
+        ((Button) view.findViewById(R.id.btn_ctrPlaylist)).setOnClickListener(this::onClicked);
+
+        ((Button) view.findViewById(R.id.btn_add)).setOnClickListener(this::onClicked);
+
+        List<Playlist> dataList = new ArrayList<>();
+        openHelper = new MySQLiteOpenHelper(getActivity(), "ProjectDB", null, 1);
+        SQLiteDatabase db = openHelper.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM LikedTracks", null);
+        while (cursor.moveToNext()) {
+            @SuppressLint("Range") int id = Integer.parseInt(cursor.getString(cursor.getColumnIndex("PLId")));
+            @SuppressLint("Range") String name = cursor.getString(cursor.getColumnIndex("PLName"));
+            Playlist data = new Playlist(id, name);
+            dataList.add(data);
+        }
+        cursor.close();
+        if (dataList.size() > 0) {
+            // Hiển thị dữ liệu trong RecyclerView
+            RecyclerView recyclerView = view.findViewById(R.id.rec_playlist);
+            PlaylistAdapter adapter = new PlaylistAdapter(dataList);
+            RecyclerView.LayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+            recyclerView.setLayoutManager(linearLayoutManager);
+            recyclerView.setAdapter(adapter);
+            ((ConstraintLayout) view.findViewById(R.id.layout_playlist)).setVisibility(View.VISIBLE);
+            ((ConstraintLayout) view.findViewById(R.id.layout_noPlaylist)).setVisibility(View.INVISIBLE);
+        } else {
+            ((ConstraintLayout) view.findViewById(R.id.layout_playlist)).setVisibility(View.INVISIBLE);
+            ((ConstraintLayout) view.findViewById(R.id.layout_noPlaylist)).setVisibility(View.VISIBLE);
+        }
+
+
+        return view;
+    }
+
+    public void onClicked(View view) {
+        PopupWindow popupWindow;
+        LayoutInflater inflater = (LayoutInflater) requireContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View popupView = inflater.inflate(R.layout.activity_create_playlist, null);
+        popupWindow = new PopupWindow(popupView, WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
+
+        // Hiển thị cửa sổ nhỏ tại vị trí mong muốn
+        popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
+
+        popupView.findViewById(R.id.btn_save).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                    
+                String playlistName = ((EditText) popupView.findViewById(R.id.edt_namePlaylist)).getText().toString();
+                openHelper = new MySQLiteOpenHelper(getActivity(), "ProjectDB", null, 1);
+                db = openHelper.getWritableDatabase();
+                String sql = "SELECT * FROM Playlists WHERE PLName LIKE ?";
+                Cursor c = db.rawQuery(sql, new String[]{"%" + playlistName + "%"});
+                List<Playlist> list = new ArrayList<>();
+                while (c.moveToNext()) {
+                    int id = c.getInt(0);
+                    String name = c.getString(1);
+                    list.add(new Playlist(id, name));
+                }
+                if (list.size() == 0 || TextUtils.isEmpty(((EditText) popupView.findViewById(R.id.edt_namePlaylist)).getText())) {
+                    ((TextView) popupView.findViewById(R.id.edt_namePlaylist)).setError("Đã tồn tại hoặc chưa điền");
+                    ((TextView) popupView.findViewById(R.id.edt_namePlaylist)).requestFocus();
+                } else {
+                    String sqlAdd = "insert into LikedTracks(videoId,title,thumbnails,channelTitle) values(?,?,?,?)";
+                    db.execSQL(sql, new String[]{playlistName});
+                }
             }
         });
 
-        return view;
+        popupView.findViewById(R.id.btn_cancel).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                popupWindow.dismiss();
+            }
+        });
     }
 }
