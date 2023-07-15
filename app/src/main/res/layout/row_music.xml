@@ -3,9 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:clickable="true"
+    android:foreground="?attr/selectableItemBackground"
+    >
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cons_music"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
@@ -15,8 +19,8 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="15dp"
             android:layout_marginTop="5dp"
-            android:maxLines="1"
             android:ellipsize="end"
+            android:maxLines="1"
             android:text="TextView"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_musname" />
@@ -36,8 +40,8 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="15dp"
             android:layout_marginTop="5dp"
-            android:maxLines="1"
             android:ellipsize="end"
+            android:maxLines="1"
             android:text="TextView"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"

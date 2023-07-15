@@ -129,15 +129,4 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void onMyButtonClick() {
-        ((Button) findViewById(R.id.btn_liked_tracks)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.replace(R.id.fr_container, fragmentLikedTracks, "");
-                fragmentTransaction.commit();
-            }
-        });
-    }
-
 }
