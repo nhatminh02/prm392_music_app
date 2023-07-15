@@ -8,6 +8,18 @@
     android:layout_height="match_parent"
     tools:context=".fragments.FragmentPlaylist">
 
+    <Button
+        android:id="@+id/btn_add"
+        android:layout_width="68dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="11dp"
+        android:layout_marginEnd="18dp"
+        android:background="#0B0A0A"
+        android:onClick="onClicked"
+        android:text="+"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:id="@+id/textView5"
         style="@style/text"
@@ -91,16 +103,5 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <Button
-        android:id="@+id/btn_add"
-        android:layout_width="68dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="11dp"
-        android:layout_marginEnd="18dp"
-        android:background="@color/black"
-        android:text="+"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
