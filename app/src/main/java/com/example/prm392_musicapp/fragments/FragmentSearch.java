@@ -3,6 +3,7 @@ package com.example.prm392_musicapp.fragments;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,6 +22,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.prm392_musicapp.R;
+import com.example.prm392_musicapp.SQLite.MySQLiteOpenHelper;
 import com.example.prm392_musicapp.activities.VideoPlayActivity;
 import com.example.prm392_musicapp.adapter.SearchAdapter;
 import com.example.prm392_musicapp.api.VideoDataUtils;
@@ -39,6 +41,8 @@ public class FragmentSearch extends Fragment {
     TextView startTitleSearch;
     TextView startSubtitleSearch;
     SharedPreferences sharedPreferences;
+    MySQLiteOpenHelper openHelper;
+    SQLiteDatabase db;
     boolean darkMode;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -86,6 +90,7 @@ public class FragmentSearch extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        openHelper = new MySQLiteOpenHelper(getActivity(), "ProjectDB", null, 1);
         View view = inflater.inflate(R.layout.search_page, container, false);
         final Handler handler = new Handler();
         progressBar = view.findViewById(R.id.search_progress_bar);
@@ -106,6 +111,24 @@ public class FragmentSearch extends Fragment {
             }
         });
 
+        searchAdapter.setOnOptionClickListener(new SearchAdapter.OnOptionClickListener() {
+            @Override
+            public void onOptionClick(int position,SearchItem music) {
+                // Xử lý sự kiện khi người dùng nhấn vào một tùy chọn
+                // Sử dụng position để định danh cho item được chọn trong mListMusic
+                if (position == 1) {
+                    //SearchItem music;
+                    String itemId = music.getId().getVideoId(); // Retrieve the ID of the selected item
+                    db = openHelper.getWritableDatabase();
+                    String sql = "insert into LikedTracks(videoId,title,thumbnails,channelTitle) values(?,?,?,?)";
+                    db.execSQL(sql, new String[]{itemId, music.getSnippet().getTitle(), music.getSnippet().getThumbnails().getMedium().getUrl(), music.getSnippet().getChannelTitle()});
+                    db.close();
+                }
+                if (position == 0) {
+
+                }
+            }
+        });
 
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -176,6 +199,8 @@ public class FragmentSearch extends Fragment {
         RecyclerView.LayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         revMusic.setLayoutManager(linearLayoutManager);
         revMusic.setAdapter(searchAdapter);
+
+
 
         return view;
     }
