@@ -58,6 +58,7 @@ public class VideoPlayActivity extends AppCompatActivity {
     private AnimatedVectorDrawable emptyHeart;
     private AnimatedVectorDrawable fillHeart;
     private YouTubePlayerView youTubePlayerView;
+    private YouTubePlayer player;
     private boolean full = false;
     private ConstraintLayout videoPage;
     private SeekBar seekBar;
@@ -76,7 +77,6 @@ public class VideoPlayActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.video_play_page);
-
 
         tv_title = findViewById(R.id.tv_title);
         tv_channel = findViewById(R.id.tv_channel);
@@ -134,6 +134,7 @@ public class VideoPlayActivity extends AppCompatActivity {
         youTubePlayerView = findViewById(R.id.youtube_player_view);
 
         itemId = getIntent().getStringExtra("itemId");
+
         VideoDataUtils.getVideoById(itemId).observe(this, new Observer<List<SingleItem>>() {
             @Override
             public void onChanged(List<SingleItem> singleItems) {
@@ -191,6 +192,7 @@ public class VideoPlayActivity extends AppCompatActivity {
         YouTubePlayerListener listener = new AbstractYouTubePlayerListener() {
             @Override
             public void onReady(@NonNull YouTubePlayer youTubePlayer) {
+                player = youTubePlayer;
                 DefaultPlayerUiController defaultPlayerUiController = new DefaultPlayerUiController(youTubePlayerView, youTubePlayer);
                 defaultPlayerUiController.showUi(false);
 
@@ -368,22 +370,25 @@ public class VideoPlayActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        Log.i("on1", "onResume");
-    }
-
-    @Override
     protected void onRestart() {
         super.onRestart();
-        Log.i("on1", "onRestart");
+        SharedPreferences sharedPreferencesId = getSharedPreferences("IdSharePref", Context.MODE_PRIVATE);
+        String currentId = sharedPreferencesId.getString("currentId", null);
+        String prevId = sharedPreferencesId.getString("prevId", null);
 
-    }
+        VideoDataUtils.getVideoById(currentId).observe(this, new Observer<List<SingleItem>>() {
+            @Override
+            public void onChanged(List<SingleItem> singleItems) {
+                tv_title.setText(singleItems.get(0).getSnippet().getTitle());
+                tv_channel.setText(singleItems.get(0).getSnippet().getChannelTitle());
+                thumbnails = singleItems.get(0).getSnippet().getThumbnails().getMedium().getUrl();
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        Log.i("on1", "onStop");
+                if (!(currentId.equals(prevId))) {
+                    player.loadVideo(currentId, 0);
+                }
+            }
+        });
+
 
     }
 
@@ -423,7 +428,8 @@ public class VideoPlayActivity extends AppCompatActivity {
             public void onChanged(List<SearchItem> searchItems) {
                 Random random = new Random();
                 String vId;
-                int randomVideoIndex = random.nextInt(searchItems.size());
+                int randomVideoIndex = random.nextInt(searchItems.size()) / 10;
+                Log.i("random1", randomVideoIndex + "");
                 vId = searchItems.get(randomVideoIndex).getId().getVideoId();
                 Log.i("ran", vId);
                 tv_title.setText(searchItems.get(randomVideoIndex).getSnippet().getTitle());
