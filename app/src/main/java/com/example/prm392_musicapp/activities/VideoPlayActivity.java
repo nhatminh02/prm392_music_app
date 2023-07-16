@@ -68,7 +68,7 @@ public class VideoPlayActivity extends AppCompatActivity {
     private SharedPreferences sharedPreferences;
     private MySQLiteOpenHelper openHelper;
     private SQLiteDatabase db;
-    private String itemId;
+    private String itemId,title,thumbnail,channel;
     private int currentVideoIndex = 0;
 
 
@@ -185,6 +185,37 @@ public class VideoPlayActivity extends AppCompatActivity {
             }
         });
 
+        //add recommend list
+        VideoDataUtils.getRelatedVideoData(itemId).observe(this, new Observer<List<SearchItem>>() {
+            @Override
+            public void onChanged(List<SearchItem> searchItems) {
+                String recommendId;
+                Random random = new Random();
+                int randomVideoIndex = random.nextInt(searchItems.size()) / 10;
+                recommendId = searchItems.get(randomVideoIndex).getId().getVideoId();
+                title = searchItems.get(randomVideoIndex).getSnippet().getTitle();
+                thumbnail = searchItems.get(randomVideoIndex).getSnippet().getThumbnails().getMedium().getUrl();
+                channel = searchItems.get(randomVideoIndex).getSnippet().getChannelTitle();
+                db = openHelper.getWritableDatabase();
+                db.delete("Recommends", "videoId=?", new String[]{recommendId});
+                String sql = "insert into Recommends(videoId,title,thumbnails,channelTitle) values(?,?,?,?)";
+                db.execSQL(sql, new String[]{recommendId, title,thumbnail, channel});
+                sql = "SELECT COUNT(*) FROM Recommends";
+                Cursor c = db.rawQuery(sql, null);
+                int count = 0;
+                if (c != null && c.moveToFirst()) {
+                    count = c.getInt(0);
+                    c.close();
+                }
+                if (count > 10) {
+                    String tableName = "Recommends";
+                    String whereClause = "recommendId = (SELECT MIN(recommendId) FROM " + tableName + ")";
+                    db.delete(tableName, whereClause, null);
+                }
+                db.close();
+            }
+        });
+
 
         //video play
         youTubePlayerView.enableBackgroundPlayback(true);
@@ -233,7 +264,7 @@ public class VideoPlayActivity extends AppCompatActivity {
                     count = c.getInt(0);
                     c.close();
                 }
-                if (count >= 5) {
+                if (count > 10) {
                     String tableName = "Recently";
                     String whereClause = "recId = (SELECT MIN(recId) FROM " + tableName + ")";
                     db.delete(tableName, whereClause, null);
