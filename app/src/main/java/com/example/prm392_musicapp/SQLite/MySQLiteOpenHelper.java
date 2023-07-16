@@ -29,6 +29,8 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper {
                 "(LTid INTEGER PRIMARY KEY, videoId TEXT, title TEXT, thumbnails TEXT, channelTitle TEXT)";
         String sqlRec = "Create Table Recently " +
                 "(recId INTEGER PRIMARY KEY, videoId TEXT, title TEXT, thumbnails TEXT, channelTitle TEXT)";
+        String sqlRecommend = "Create Table Recommends " +
+                "(recommendId INTEGER PRIMARY KEY, videoId TEXT, title TEXT, thumbnails TEXT, channelTitle TEXT)";
         String sql2 = "Create Table Playlists" +
                 "(PLid INTEGER PRIMARY KEY, PLName TEXT)";
         String sql3 = "Create Table PlaylistMusic" +
@@ -37,17 +39,17 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper {
         db.execSQL(sqlRec);
         db.execSQL(sql2);
         db.execSQL(sql3);
+        db.execSQL(sqlRecommend);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) { //nang cap version
         if (newVersion > oldVersion) {
-            String sql1 = "Drop Table LikedTracks";
-            db.execSQL(sql1);
-
-            String sql2 = "Create Table LikedTracks " +
-                    "(LTid INTEGER PRIMARY KEY, videoId TEXT, title TEXT, thumbnails TEXT, channelTitle TEXT)";
-            db.execSQL(sql2);
+            db.execSQL("Drop table if exists LikedTracks");
+            db.execSQL("Drop table if exists Recently");
+            db.execSQL("Drop table if exists Reccomends");
+            db.execSQL("Drop table if exists Playlists");
+            onCreate(db);
         }
     }
 
