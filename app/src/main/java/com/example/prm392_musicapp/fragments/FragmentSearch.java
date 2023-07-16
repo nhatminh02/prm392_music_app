@@ -99,6 +99,10 @@ public class FragmentSearch extends Fragment {
         searchView = view.findViewById(R.id.searchView);
         startTitleSearch = view.findViewById(R.id.start_title_search);
         startSubtitleSearch = view.findViewById(R.id.start_subtitle_search);
+
+        SharedPreferences sharedPreferencesId = getActivity().getSharedPreferences("IdSharePref", Context.MODE_PRIVATE);
+        SharedPreferences.Editor sharedPreferencesIdEdit = sharedPreferencesId.edit();
+
         handleSwitchTheme();
         //Lấy ra id của video khi click vào
         searchAdapter.setOnItemClickListener(new SearchAdapter.OnItemClickListener() {
@@ -107,6 +111,22 @@ public class FragmentSearch extends Fragment {
                 Log.i("itemId", itemId);
                 Intent intent = new Intent(getActivity(), VideoPlayActivity.class);
                 intent.putExtra("itemId", itemId);
+                //lưu currentId và prevId trên share preferences
+                String currentID = sharedPreferencesId.getString("currentId", null);
+                String prevID = sharedPreferencesId.getString("prevId", null);
+                if(currentID == null){
+                    sharedPreferencesIdEdit.putString("currentId", itemId);
+                    sharedPreferencesIdEdit.putString("prevId", itemId);
+                } else if (currentID != null && prevID != null){
+                    if(!currentID.equals(itemId)){
+                        sharedPreferencesIdEdit.putString("prevId", currentID);
+                        sharedPreferencesIdEdit.putString("currentId", itemId);
+                    }else{
+                        sharedPreferencesIdEdit.putString("prevId", itemId);
+//                        sharedPreferencesIdEdit.putString("currentId", itemId);
+                    }
+                }
+                sharedPreferencesIdEdit.apply();
                 startActivity(intent);
             }
         });
@@ -130,7 +150,6 @@ public class FragmentSearch extends Fragment {
                 }
             }
         });
-
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
