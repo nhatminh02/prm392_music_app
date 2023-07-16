@@ -27,29 +27,29 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) { //tao cac bang
         String sqlLT = "Create Table LikedTracks " +
                 "(LTid INTEGER PRIMARY KEY, videoId TEXT, title TEXT, thumbnails TEXT, channelTitle TEXT)";
-        db.execSQL(sqlLT);
-
         String sqlRec = "Create Table Recently " +
                 "(recId INTEGER PRIMARY KEY, videoId TEXT, title TEXT, thumbnails TEXT, channelTitle TEXT)";
-        db.execSQL(sqlRec);
+        String sqlRecommend = "Create Table Recommends " +
+                "(recommendId INTEGER PRIMARY KEY, videoId TEXT, title TEXT, thumbnails TEXT, channelTitle TEXT)";
         String sql2 = "Create Table Playlists" +
                 "(PLid INTEGER PRIMARY KEY, PLName TEXT)";
         String sql3 = "Create Table PlaylistMusic" +
-                "(PLMid INTEGER PRIMARY KEY, PLMvideoId TEXT, PLMtitle TEXT, PLMthumbnails TEXT, PLMchannelTitle TEXT)";
+                "(PLMid INTEGER PRIMARY KEY, PLid INTEGER, PLMvideoId TEXT, PLMtitle TEXT, PLMthumbnails TEXT, PLMchannelTitle TEXT, FOREIGN KEY(PLid) REFERENCES Playlists(PLid))";
         db.execSQL(sqlLT);
+        db.execSQL(sqlRec);
         db.execSQL(sql2);
         db.execSQL(sql3);
+        db.execSQL(sqlRecommend);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) { //nang cap version
         if (newVersion > oldVersion) {
-            String sql1 = "Drop Table LikedTracks";
-            db.execSQL(sql1);
-
-            String sql2 = "Create Table LikedTracks " +
-                    "(LTid INTEGER PRIMARY KEY, videoId TEXT, title TEXT, thumbnails TEXT, channelTitle TEXT)";
-            db.execSQL(sql2);
+            db.execSQL("Drop table if exists LikedTracks");
+            db.execSQL("Drop table if exists Recently");
+            db.execSQL("Drop table if exists Reccomends");
+            db.execSQL("Drop table if exists Playlists");
+            onCreate(db);
         }
     }
 

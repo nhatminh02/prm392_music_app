@@ -1,6 +1,7 @@
 package com.example.prm392_musicapp.fragments;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -22,7 +23,9 @@ import android.widget.TextView;
 
 import com.example.prm392_musicapp.R;
 import com.example.prm392_musicapp.SQLite.MySQLiteOpenHelper;
+import com.example.prm392_musicapp.activities.VideoPlayActivity;
 import com.example.prm392_musicapp.adapter.LikedMusicAdapter;
+import com.example.prm392_musicapp.adapter.RecommendAdapter;
 import com.example.prm392_musicapp.models.Thumbnails;
 import com.example.prm392_musicapp.models.Video;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -116,8 +119,6 @@ public class FragmentLikedTracks extends Fragment {
         SQLiteDatabase db = mySQLiteOpenHelper.getReadableDatabase();
         Cursor cursor = db.rawQuery("SELECT * FROM LikedTracks", null);
             while (cursor.moveToNext()) {
-
-
                 id = cursor.getString(cursor.getColumnIndex("LTid"));
                 videoId = cursor.getString(cursor.getColumnIndex("videoId"));
                 title = cursor.getString(cursor.getColumnIndex("title"));
@@ -131,6 +132,16 @@ public class FragmentLikedTracks extends Fragment {
             // Hiển thị dữ liệu trong RecyclerView
             RecyclerView recyclerView = view.findViewById(R.id.rec_liked_track);
             LikedMusicAdapter adapter = new LikedMusicAdapter(dataList);
+            //click de phat
+            adapter.setOnItemClickListener(new LikedMusicAdapter.OnItemClickListener(){
+                @Override
+                public void onItemClick(String videoId) {
+                    Log.i("run1", "onItemClick" + videoId);
+                    Intent intent = new Intent(getActivity(), VideoPlayActivity.class);
+                    intent.putExtra("itemId", videoId);
+                    startActivity(intent);
+                }
+            });
             RecyclerView.LayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
             recyclerView.setLayoutManager(linearLayoutManager);
             recyclerView.setAdapter(adapter);
@@ -140,17 +151,11 @@ public class FragmentLikedTracks extends Fragment {
             ((ConstraintLayout) view.findViewById(R.id.layout_liked_track)).setVisibility(View.INVISIBLE);
             ((ConstraintLayout) view.findViewById(R.id.layout_noLikeTrack)).setVisibility(View.VISIBLE);
         }
-
-
-
-
-
         return view;
     }
 
     public void setSQLiteOpenHelper(MySQLiteOpenHelper mySQLiteOpenHelper) {
         this.mySQLiteOpenHelper = mySQLiteOpenHelper;
     }
-
 
 }

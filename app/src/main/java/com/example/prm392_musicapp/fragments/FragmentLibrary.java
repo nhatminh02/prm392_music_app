@@ -1,5 +1,8 @@
 package com.example.prm392_musicapp.fragments;
 
+import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -8,6 +11,7 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +19,7 @@ import android.widget.Button;
 
 import com.example.prm392_musicapp.R;
 import com.example.prm392_musicapp.SQLite.MySQLiteOpenHelper;
+import com.example.prm392_musicapp.activities.VideoPlayActivity;
 import com.example.prm392_musicapp.adapter.RecentlyPlayedAdapter;
 import com.example.prm392_musicapp.models.Video;
 
@@ -30,6 +35,7 @@ public class FragmentLibrary extends Fragment {
     FragmentManager fragmentManager;
     FragmentTransaction fragmentTransaction;
     MySQLiteOpenHelper mySQLiteOpenHelper;
+    SQLiteDatabase db;
     FragmentLikedTracks fragmentLikedTracks;
     FragmentPlaylist fragmentPlaylist;
 
@@ -80,13 +86,33 @@ public class FragmentLibrary extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.library_page, container, false);
-
-
-
+        mySQLiteOpenHelper = new MySQLiteOpenHelper(getContext(), "ProjectDB", null, 1);
+        db = mySQLiteOpenHelper.getReadableDatabase();
+        //lay ra list recently
+        String sql = "select * from Recently order by recId desc";
         List<Video> recently = new ArrayList<>();
+        Cursor c = db.rawQuery(sql,null);
+        while(c.moveToNext()){
+            String videoId = c.getString(1);
+            String title = c.getString(2);
+            String thumbnails = c.getString(3);
+            String channelTitle = c.getString(4);
+            recently.add(new Video(videoId,title,thumbnails,channelTitle));
+        }
         RecentlyPlayedAdapter adapterRecently = new RecentlyPlayedAdapter(recently, getActivity());
+        //click de phat
+        adapterRecently.setOnItemClickListener(new RecentlyPlayedAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(String videoId) {
+                Log.i("run1", "onItemClick" + videoId);
+                Intent intent = new Intent(getActivity(), VideoPlayActivity.class);
+                intent.putExtra("itemId", videoId);
+                startActivity(intent);
+            }
+        });
         RecyclerView rec2 = view.findViewById(R.id.rec_recently);
-        RecyclerView.LayoutManager layout_manager2 = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
+        RecyclerView.LayoutManager layout_manager2 =
+                new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
         rec2.setLayoutManager(layout_manager2);
         rec2.setAdapter(adapterRecently);
 

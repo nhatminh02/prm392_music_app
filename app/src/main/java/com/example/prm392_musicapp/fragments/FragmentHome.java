@@ -1,11 +1,13 @@
 package com.example.prm392_musicapp.fragments;
 
+import android.content.ClipData;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -18,7 +20,10 @@ import com.example.prm392_musicapp.R;
 import com.example.prm392_musicapp.SQLite.MySQLiteOpenHelper;
 import com.example.prm392_musicapp.activities.VideoPlayActivity;
 import com.example.prm392_musicapp.adapter.RecentlyPlayedAdapter;
+import com.example.prm392_musicapp.adapter.RecommendAdapter;
 import com.example.prm392_musicapp.adapter.SearchAdapter;
+import com.example.prm392_musicapp.api.VideoDataUtils;
+import com.example.prm392_musicapp.models.SingleItem;
 import com.example.prm392_musicapp.models.Video;
 
 
@@ -79,21 +84,41 @@ public class FragmentHome extends Fragment {
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.home_page, container, false);
-
         openHelper = new MySQLiteOpenHelper(getContext(), "ProjectDB", null, 1);
         db = openHelper.getReadableDatabase();
 
-        List<Video> reccomends = new ArrayList<>();
-        RecentlyPlayedAdapter adapterReccomnend = new RecentlyPlayedAdapter(reccomends, getActivity());
+        //lay ra list recommends
+        String sql = "select * from Recommends order by recommendId desc";
+        List<Video> recommends = new ArrayList<>();
+        Cursor c = db.rawQuery(sql,null);
+        while(c.moveToNext()){
+            String videoId = c.getString(1);
+            String title = c.getString(2);
+            String thumbnails = c.getString(3);
+            String channelTitle = c.getString(4);
+            recommends.add(new Video(videoId,title,thumbnails,channelTitle));
+        }
+        RecommendAdapter adapterRecommend = new RecommendAdapter(recommends, getActivity());
+        //click de phat
+        adapterRecommend.setOnItemClickListener(new RecommendAdapter.OnItemClickListener(){
+            @Override
+            public void onItemClick(String videoId) {
+                Log.i("run1", "onItemClick" + videoId);
+                Intent intent = new Intent(getActivity(), VideoPlayActivity.class);
+                intent.putExtra("itemId", videoId);
+                startActivity(intent);
+            }
+        });
         RecyclerView rec1 = view.findViewById(R.id.rec_reccomend);
         RecyclerView.LayoutManager layout_manager1 =
                 new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
         rec1.setLayoutManager(layout_manager1);
-        rec1.setAdapter(adapterReccomnend);
+        rec1.setAdapter(adapterRecommend);
 
-        String sql = "select * from Recently";
+        //lay ra list recently
+        sql = "select * from Recently order by recId desc";
         List<Video> recently = new ArrayList<>();
-        Cursor c = db.rawQuery(sql,null);
+        c = db.rawQuery(sql,null);
         while(c.moveToNext()){
             String videoId = c.getString(1);
             String title = c.getString(2);
@@ -101,10 +126,8 @@ public class FragmentHome extends Fragment {
             String channelTitle = c.getString(4);
             recently.add(new Video(videoId,title,thumbnails,channelTitle));
         }
-
-
-
         RecentlyPlayedAdapter adapterRecently = new RecentlyPlayedAdapter(recently, getActivity());
+        //click de phat
         adapterRecently.setOnItemClickListener(new RecentlyPlayedAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(String videoId) {
