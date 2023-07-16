@@ -120,6 +120,7 @@ public class FragmentSearch extends Fragment {
                     //SearchItem music;
                     String itemId = music.getId().getVideoId(); // Retrieve the ID of the selected item
                     db = openHelper.getWritableDatabase();
+                    db.delete("LikedTracks", "videoId=?", new String[]{itemId});
                     String sql = "insert into LikedTracks(videoId,title,thumbnails,channelTitle) values(?,?,?,?)";
                     db.execSQL(sql, new String[]{itemId, music.getSnippet().getTitle(), music.getSnippet().getThumbnails().getMedium().getUrl(), music.getSnippet().getChannelTitle()});
                     db.close();
