@@ -50,7 +50,6 @@ public class RecommendAdapter extends RecyclerView.Adapter<RecommendAdapter.Musi
                 .load(recommendVideo.get(position).getThumbnails())
                 .into(holder.imv_thumb);
         holder.tv_musname.setText(recommendVideo.get(position).getTitle());
-
         holder.tv_singer.setText(recommendVideo.get(position).getChannelTitle());
     }
 
