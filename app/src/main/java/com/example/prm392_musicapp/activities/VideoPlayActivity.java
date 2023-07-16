@@ -7,7 +7,9 @@ import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Observer;
 
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.AnimatedVectorDrawable;
@@ -25,12 +27,10 @@ import android.widget.TextView;
 import com.example.prm392_musicapp.R;
 import com.example.prm392_musicapp.SQLite.MySQLiteOpenHelper;
 import com.example.prm392_musicapp.api.VideoDataUtils;
-import com.example.prm392_musicapp.fragments.FragmentHome;
 import com.example.prm392_musicapp.models.SearchItem;
 import com.example.prm392_musicapp.models.Thumbnails;
 import com.example.prm392_musicapp.models.Id;
 import com.example.prm392_musicapp.models.SingleItem;
-import com.example.prm392_musicapp.models.Video;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.customui.DefaultPlayerUiController;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.customui.views.YouTubePlayerSeekBar;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.customui.views.YouTubePlayerSeekBarListener;
@@ -52,6 +52,9 @@ public class VideoPlayActivity extends AppCompatActivity {
     private ImageView videoControl;
     private ImageView skipNext;
     private ImageView skipPrev;
+    private ImageView repeat;
+    private ImageView suffle;
+    private ImageView backBtn;
     private AnimatedVectorDrawable emptyHeart;
     private AnimatedVectorDrawable fillHeart;
     private YouTubePlayerView youTubePlayerView;
@@ -60,22 +63,48 @@ public class VideoPlayActivity extends AppCompatActivity {
     private SeekBar seekBar;
     private AudioManager audioManager;
     private boolean checkControl, checkSuffle, checkRepeat;
-    MySQLiteOpenHelper openHelper;
-    SQLiteDatabase db;
-    String itemId,title,thumbnail,channel;
-    int currentVideoIndex = 0;
+
+    private boolean darkMode;
+    private SharedPreferences sharedPreferences;
+    private MySQLiteOpenHelper openHelper;
+    private SQLiteDatabase db;
+    private String itemId;
+    private int currentVideoIndex = 0;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.video_play_page);
-        Log.i("on1", "onCreate");
 
 
         tv_title = findViewById(R.id.tv_title);
         tv_channel = findViewById(R.id.tv_channel);
         skipNext = findViewById(R.id.imv_next);
         skipPrev = findViewById(R.id.imv_previous);
+        videoControl = findViewById(R.id.videoControl);
+        repeat = findViewById(R.id.imv_repeat);
+        suffle = findViewById(R.id.imv_suffle);
+        backBtn = findViewById(R.id.imv_back);
+
+        sharedPreferences = getSharedPreferences("mode", Context.MODE_PRIVATE);
+        darkMode = sharedPreferences.getBoolean("dark", false);
+        if (darkMode) {
+            skipNext.setImageResource(R.drawable.baseline_skip_next_24_light);
+            skipPrev.setImageResource(R.drawable.baseline_skip_previous_24_light);
+            videoControl.setImageResource(R.drawable.baseline_pause_24);
+            repeat.setImageResource(R.drawable.baseline_repeat_24_light);
+            suffle.setImageResource(R.drawable.baseline_shuffle_24_light);
+            backBtn.setImageResource(R.drawable.baseline_keyboard_arrow_left_24_light);
+        } else {
+            skipNext.setImageResource(R.drawable.baseline_skip_next_24_dark);
+            skipPrev.setImageResource(R.drawable.baseline_skip_previous_24_dark);
+            videoControl.setImageResource(R.drawable.baseline_pause_24_dark);
+            repeat.setImageResource(R.drawable.baseline_repeat_24);
+            suffle.setImageResource(R.drawable.baseline_shuffle_24);
+            backBtn.setImageResource(R.drawable.baseline_keyboard_arrow_left_24_dark);
+        }
+
 
         //volume control bar
         seekBar = findViewById(R.id.volumeSeekBar);
@@ -156,37 +185,6 @@ public class VideoPlayActivity extends AppCompatActivity {
             }
         });
 
-        //add recommend list
-        VideoDataUtils.getRelatedVideoData(itemId).observe(this, new Observer<List<SearchItem>>() {
-            @Override
-            public void onChanged(List<SearchItem> searchItems) {
-                String recommendId;
-                Random random = new Random();
-                int randomVideoIndex = random.nextInt(searchItems.size()) / 10;
-                recommendId = searchItems.get(randomVideoIndex).getId().getVideoId();
-                title = searchItems.get(randomVideoIndex).getSnippet().getTitle();
-                thumbnail = searchItems.get(randomVideoIndex).getSnippet().getThumbnails().getMedium().getUrl();
-                channel = searchItems.get(randomVideoIndex).getSnippet().getChannelTitle();
-                db = openHelper.getWritableDatabase();
-                db.delete("Recommends", "videoId=?", new String[]{recommendId});
-                String sql = "insert into Recommends(videoId,title,thumbnails,channelTitle) values(?,?,?,?)";
-                db.execSQL(sql, new String[]{recommendId, title,thumbnail, channel});
-                sql = "SELECT COUNT(*) FROM Recommends";
-                Cursor c = db.rawQuery(sql, null);
-                int count = 0;
-                if (c != null && c.moveToFirst()) {
-                    count = c.getInt(0);
-                    c.close();
-                }
-                if (count > 10) {
-                    String tableName = "Recommends";
-                    String whereClause = "recommendId = (SELECT MIN(recommendId) FROM " + tableName + ")";
-                    db.delete(tableName, whereClause, null);
-                }
-                db.close();
-            }
-        });
-
 
         //video play
         youTubePlayerView.enableBackgroundPlayback(true);
@@ -198,8 +196,19 @@ public class VideoPlayActivity extends AppCompatActivity {
 
                 //thanh chỉnh thời gian chạy của video
                 YouTubePlayerSeekBar youTubePlayerSeekBar = findViewById(R.id.youtube_player_seekbar);
-                youTubePlayerSeekBar.getVideoCurrentTimeTextView()
-                        .setTextColor(ContextCompat.getColor(VideoPlayActivity.this, android.R.color.black));
+                if (darkMode) {
+                    youTubePlayerSeekBar.setColor(getResources().getColor(R.color.white));
+                    youTubePlayerSeekBar.getVideoCurrentTimeTextView()
+                            .setTextColor(ContextCompat.getColor(VideoPlayActivity.this, android.R.color.white));
+                    youTubePlayerSeekBar.getVideoDurationTextView()
+                            .setTextColor(ContextCompat.getColor(VideoPlayActivity.this, android.R.color.white));
+                } else {
+                    youTubePlayerSeekBar.setColor(getResources().getColor(R.color.black));
+                    youTubePlayerSeekBar.getVideoCurrentTimeTextView()
+                            .setTextColor(ContextCompat.getColor(VideoPlayActivity.this, android.R.color.black));
+                    youTubePlayerSeekBar.getVideoDurationTextView()
+                            .setTextColor(ContextCompat.getColor(VideoPlayActivity.this, android.R.color.black));
+                }
                 youTubePlayerSeekBar.setYoutubePlayerSeekBarListener(new YouTubePlayerSeekBarListener() {
                     @Override
                     public void seekTo(float time) {
@@ -207,7 +216,9 @@ public class VideoPlayActivity extends AppCompatActivity {
                     }
                 });
                 youTubePlayer.addListener(youTubePlayerSeekBar);
+
                 youTubePlayerView.setCustomPlayerUi(defaultPlayerUiController.getRootView());
+
                 youTubePlayer.loadVideo(itemId, 0);
 
                 //them vao recently list
@@ -222,27 +233,34 @@ public class VideoPlayActivity extends AppCompatActivity {
                     count = c.getInt(0);
                     c.close();
                 }
-                if (count > 10) {
+                if (count >= 5) {
                     String tableName = "Recently";
                     String whereClause = "recId = (SELECT MIN(recId) FROM " + tableName + ")";
                     db.delete(tableName, whereClause, null);
                 }
                 db.close();
 
-
                 //video control button
-                videoControl = findViewById(R.id.videoControl);
                 checkControl = true;
                 videoControl.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         if (checkControl) {
                             youTubePlayer.pause();
-                            videoControl.setImageResource(R.drawable.baseline_play_arrow_24_dark);
+                            if (darkMode) {
+                                videoControl.setImageResource(R.drawable.baseline_play_arrow_24);
+
+                            } else {
+                                videoControl.setImageResource(R.drawable.baseline_play_arrow_24_dark);
+                            }
                             checkControl = !checkControl;
                         } else {
                             youTubePlayer.play();
-                            videoControl.setImageResource(R.drawable.baseline_pause_24_dark);
+                            if (darkMode) {
+                                videoControl.setImageResource(R.drawable.baseline_pause_24);
+                            } else {
+                                videoControl.setImageResource(R.drawable.baseline_pause_24_dark);
+                            }
                             checkControl = !checkControl;
                         }
                     }
@@ -263,8 +281,6 @@ public class VideoPlayActivity extends AppCompatActivity {
                     }
                 });
 
-                ImageView repeat = findViewById(R.id.imv_repeat);
-                ImageView suffle = findViewById(R.id.imv_suffle);
                 //suffle button
                 checkSuffle = false;
                 suffle.setOnClickListener(new View.OnClickListener() {
@@ -272,16 +288,29 @@ public class VideoPlayActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         if (checkSuffle) {
                             //todo: tat chuc nang suffle
-                            suffle.setImageResource(R.drawable.baseline_shuffle_24);
+                            if (darkMode) {
+                                suffle.setImageResource(R.drawable.baseline_shuffle_24_light);
+                            } else {
+                                suffle.setImageResource(R.drawable.baseline_shuffle_24);
+
+                            }
                             checkSuffle = !checkSuffle;
                         } else {
                             //todo: bat chuc nang suffle
                             //check chỉ một nút được bật tại 1 thời điểm (hoặc repeat hoặc suffle)
                             if (checkRepeat) {
-                                repeat.setImageResource(R.drawable.baseline_repeat_24);
+                                if (darkMode) {
+                                    repeat.setImageResource(R.drawable.baseline_repeat_24_light);
+                                } else {
+                                    repeat.setImageResource(R.drawable.baseline_repeat_24);
+                                }
                                 checkRepeat = !checkRepeat;
                             }
-                            suffle.setImageResource(R.drawable.baseline_shuffle_on_24);
+                            if (darkMode) {
+                                suffle.setImageResource(R.drawable.baseline_shuffle_on_24_light);
+                            } else {
+                                suffle.setImageResource(R.drawable.baseline_shuffle_on_24);
+                            }
                             checkSuffle = !checkSuffle;
                         }
                     }
@@ -294,15 +323,27 @@ public class VideoPlayActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         if (checkRepeat) {
                             //todo: tat chuc nang repeat
-                            repeat.setImageResource(R.drawable.baseline_repeat_24);
+                            if (darkMode) {
+                                repeat.setImageResource(R.drawable.baseline_repeat_24_light);
+                            } else {
+                                repeat.setImageResource(R.drawable.baseline_repeat_24);
+                            }
                             checkRepeat = !checkRepeat;
                         } else {
                             //todo: bat chuc nang repeat
                             if (checkSuffle) {
-                                suffle.setImageResource(R.drawable.baseline_shuffle_24);
+                                if (darkMode) {
+                                    suffle.setImageResource(R.drawable.baseline_shuffle_24_light);
+                                } else {
+                                    suffle.setImageResource(R.drawable.baseline_shuffle_24);
+                                }
                                 checkSuffle = !checkSuffle;
                             }
-                            repeat.setImageResource(R.drawable.baseline_repeat_on_24);
+                            if (darkMode) {
+                                repeat.setImageResource(R.drawable.baseline_repeat_on_24_light);
+                            } else {
+                                repeat.setImageResource(R.drawable.baseline_repeat_on_24);
+                            }
                             checkRepeat = !checkRepeat;
                         }
                     }
@@ -357,6 +398,9 @@ public class VideoPlayActivity extends AppCompatActivity {
                         currentVideoIndex = 0;
                     }
                     vId = searchItems.get(currentVideoIndex).getId().getVideoId();
+                    tv_title.setText(searchItems.get(currentVideoIndex).getSnippet().getTitle());
+                    tv_channel.setText(searchItems.get(currentVideoIndex).getSnippet().getChannelTitle());
+                    itemId = searchItems.get(currentVideoIndex).getId().getVideoId();
                     youTubePlayer.loadVideo(vId, 0);
                 } else if (btnId == skipPrev.getId()) {
                     currentVideoIndex--;
@@ -364,6 +408,9 @@ public class VideoPlayActivity extends AppCompatActivity {
                         currentVideoIndex = searchItems.size() - 1;
                     }
                     vId = searchItems.get(currentVideoIndex).getId().getVideoId();
+                    tv_title.setText(searchItems.get(currentVideoIndex).getSnippet().getTitle());
+                    tv_channel.setText(searchItems.get(currentVideoIndex).getSnippet().getChannelTitle());
+                    itemId = searchItems.get(currentVideoIndex).getId().getVideoId();
                     youTubePlayer.loadVideo(vId, 0);
                 }
             }
@@ -379,6 +426,9 @@ public class VideoPlayActivity extends AppCompatActivity {
                 int randomVideoIndex = random.nextInt(searchItems.size());
                 vId = searchItems.get(randomVideoIndex).getId().getVideoId();
                 Log.i("ran", vId);
+                tv_title.setText(searchItems.get(randomVideoIndex).getSnippet().getTitle());
+                tv_channel.setText(searchItems.get(randomVideoIndex).getSnippet().getChannelTitle());
+                itemId = searchItems.get(randomVideoIndex).getId().getVideoId();
                 youTubePlayer.loadVideo(vId, 0);
             }
         });
@@ -393,7 +443,4 @@ public class VideoPlayActivity extends AppCompatActivity {
         moveTaskToBack(true);
         startActivity(intent);
     }
-
-
-
 }

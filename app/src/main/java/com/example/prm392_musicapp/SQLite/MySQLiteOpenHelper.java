@@ -39,7 +39,13 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper {
 
         String sql2 = "Create Table Playlists" +
                 "(PLid INTEGER PRIMARY KEY, PLName TEXT)";
+        String sql3 = "Create Table PlaylistMusic" +
+                "(PLMid INTEGER PRIMARY KEY, PLid INTEGER, PLMvideoId TEXT, PLMtitle TEXT, PLMthumbnails TEXT, PLMchannelTitle TEXT, FOREIGN KEY(PLid) REFERENCES Playlists(PLid))";
+
+        db.execSQL(sqlLT);
+
         db.execSQL(sql2);
+        db.execSQL(sql3);
     }
 
     @Override
