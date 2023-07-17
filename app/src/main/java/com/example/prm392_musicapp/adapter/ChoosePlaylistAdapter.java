@@ -24,23 +24,6 @@ public class ChoosePlaylistAdapter extends RecyclerView.Adapter<ChoosePlaylistAd
 
     List<Playlist> playlists;
     MySQLiteOpenHelper mySQLiteOpenHelper;
-    private OnItemClickListener mListener;
-    private int position;
-
-
-    public interface OnItemClickListener {
-        void onItemClick(String itemId);
-    }
-
-    public void setOnItemClickListener(OnItemClickListener listener) {
-        mListener = listener;
-    }
-
-    public interface OnClickListener {
-        void onClick(int position, Video model);
-    }
-
-
 
 
     public ChoosePlaylistAdapter(List<Playlist> playlists) {
@@ -67,7 +50,6 @@ public class ChoosePlaylistAdapter extends RecyclerView.Adapter<ChoosePlaylistAd
 
     public class PLaylistHolder extends RecyclerView.ViewHolder {
         TextView tv_playlist_name;
-        private OnClickListener onClickListener;
 
         public PLaylistHolder(@NonNull View itemView) {
             super(itemView);
@@ -91,7 +73,7 @@ public class ChoosePlaylistAdapter extends RecyclerView.Adapter<ChoosePlaylistAd
                         }
                         cursor.close();
                         String sql = "INSERT into PLaylistMus(PLMid,PLid) VALUES (?,?)";
-                        db.execSQL(sql, new String[]{String.valueOf(id), String.valueOf(position+1)});
+                        db.execSQL(sql, new String[]{String.valueOf(id), String.valueOf(position + 1)});
                         db.close();
                     }
                 }
@@ -113,10 +95,6 @@ public class ChoosePlaylistAdapter extends RecyclerView.Adapter<ChoosePlaylistAd
             });
 
 
-        }
-
-        public void setOnClickListener(OnClickListener onClickListener) {
-            this.onClickListener = onClickListener;
         }
 
     }

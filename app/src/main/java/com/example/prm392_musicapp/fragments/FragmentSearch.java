@@ -11,6 +11,8 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -45,6 +47,10 @@ import java.util.List;
  */
 public class FragmentSearch extends Fragment {
     List<SearchItem> searchList;
+    FragmentManager fragmentManager;
+    FragmentTransaction fragmentTransaction;
+    FragmentChoosePlaylist fragmentChoosePlaylist;
+    FragmentHome fragmentHome;
     ProgressBar progressBar;
     TextView startTitleSearch;
     TextView startSubtitleSearch;
@@ -183,37 +189,37 @@ public class FragmentSearch extends Fragment {
                     db.close();
                 }
                 if (position == 0) {
-                    List<Playlist> dataList = new ArrayList<>();
                     openHelper = new MySQLiteOpenHelper(getActivity(), "ProjectDB", null, 1);
                     SQLiteDatabase db = openHelper.getReadableDatabase();
-                    Cursor cursor = db.rawQuery("SELECT * FROM PLaylists", null);
-                    while (cursor.moveToNext()) {
-                        int id = Integer.parseInt(String.valueOf(cursor.getInt(0)));
-                        String name = cursor.getString(1);
-                        Playlist data = new Playlist(id, name);
-                        dataList.add(data);
-                    }
-                    cursor.close();
-                    PopupWindow popupWindow;
-                    LayoutInflater inflater = (LayoutInflater) requireContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                    View popupView = inflater.inflate(R.layout.choose_playlist, null);
-                    popupWindow = new PopupWindow(popupView, WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
-                    popupWindow.setFocusable(true);
-                    // Hiển thị cửa sổ nhỏ tại vị trí mong muốn
-                    popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
-                    RecyclerView recyclerView = popupView.findViewById(R.id.rec_choose_playlist);
-                    PlaylistAdapter adapter = new PlaylistAdapter(dataList);
-                    RecyclerView.LayoutManager linearLayoutManager = new LinearLayoutManager(popupView.getContext());
-                    recyclerView.setLayoutManager(linearLayoutManager);
-                    recyclerView.setAdapter(adapter);
-
-
                     String itemId = music.getId().getVideoId();
                     db = openHelper.getWritableDatabase();
                     db.delete("PlaylistMusic", "PLMvideoId=?", new String[]{itemId});
                     String sql = "insert into PlaylistMusic(PLMvideoId,PLMtitle,PLMthumbnails,PLMchannelTitle) values(?,?,?,?)";
                     db.execSQL(sql, new String[]{itemId, music.getSnippet().getTitle(), music.getSnippet().getThumbnails().getMedium().getUrl(), music.getSnippet().getChannelTitle()});
                     db.close();
+                    Log.d("asdcfvgbnm", itemId);
+                    fragmentManager = getActivity().getSupportFragmentManager();
+                    fragmentChoosePlaylist = FragmentChoosePlaylist.newInstance(null, null);
+                    fragmentTransaction = fragmentManager.beginTransaction();
+                    fragmentTransaction.replace(R.id.fr_container, fragmentChoosePlaylist, "");
+                    fragmentTransaction.commit();
+
+
+//                    cursor.close();
+//                    PopupWindow popupWindow;
+//                    LayoutInflater inflater = (LayoutInflater) requireContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//                    View popupView = inflater.inflate(R.layout.choose_playlist, null);
+//                    popupWindow = new PopupWindow(popupView, WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
+//                    popupWindow.setFocusable(true);
+//                    // Hiển thị cửa sổ nhỏ tại vị trí mong muốn
+//                    popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
+//                    RecyclerView recyclerView = popupView.findViewById(R.id.rec_choose_playlist);
+//                    PlaylistAdapter adapter = new PlaylistAdapter(dataList);
+//                    RecyclerView.LayoutManager linearLayoutManager = new LinearLayoutManager(popupView.getContext());
+//                    recyclerView.setLayoutManager(linearLayoutManager);
+//                    recyclerView.setAdapter(adapter);
+
+
                 }
             }
         });
