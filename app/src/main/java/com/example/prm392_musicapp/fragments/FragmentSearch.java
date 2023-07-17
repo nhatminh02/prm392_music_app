@@ -1,8 +1,10 @@
 package com.example.prm392_musicapp.fragments;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
@@ -15,19 +17,25 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Handler;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.prm392_musicapp.R;
 import com.example.prm392_musicapp.SQLite.MySQLiteOpenHelper;
 import com.example.prm392_musicapp.activities.VideoPlayActivity;
+import com.example.prm392_musicapp.adapter.PlaylistAdapter;
 import com.example.prm392_musicapp.adapter.SearchAdapter;
 import com.example.prm392_musicapp.api.VideoDataUtils;
+import com.example.prm392_musicapp.models.Playlist;
 import com.example.prm392_musicapp.models.SearchItem;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -175,7 +183,37 @@ public class FragmentSearch extends Fragment {
                     db.close();
                 }
                 if (position == 0) {
+                    List<Playlist> dataList = new ArrayList<>();
+                    openHelper = new MySQLiteOpenHelper(getActivity(), "ProjectDB", null, 1);
+                    SQLiteDatabase db = openHelper.getReadableDatabase();
+                    Cursor cursor = db.rawQuery("SELECT * FROM PLaylists", null);
+                    while (cursor.moveToNext()) {
+                        int id = Integer.parseInt(String.valueOf(cursor.getInt(0)));
+                        String name = cursor.getString(1);
+                        Playlist data = new Playlist(id, name);
+                        dataList.add(data);
+                    }
+                    cursor.close();
+                    PopupWindow popupWindow;
+                    LayoutInflater inflater = (LayoutInflater) requireContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                    View popupView = inflater.inflate(R.layout.choose_playlist, null);
+                    popupWindow = new PopupWindow(popupView, WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
+                    popupWindow.setFocusable(true);
+                    // Hiển thị cửa sổ nhỏ tại vị trí mong muốn
+                    popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
+                    RecyclerView recyclerView = popupView.findViewById(R.id.rec_choose_playlist);
+                    PlaylistAdapter adapter = new PlaylistAdapter(dataList);
+                    RecyclerView.LayoutManager linearLayoutManager = new LinearLayoutManager(popupView.getContext());
+                    recyclerView.setLayoutManager(linearLayoutManager);
+                    recyclerView.setAdapter(adapter);
 
+
+                    String itemId = music.getId().getVideoId();
+                    db = openHelper.getWritableDatabase();
+                    db.delete("PlaylistMusic", "PLMvideoId=?", new String[]{itemId});
+                    String sql = "insert into PlaylistMusic(PLMvideoId,PLMtitle,PLMthumbnails,PLMchannelTitle) values(?,?,?,?)";
+                    db.execSQL(sql, new String[]{itemId, music.getSnippet().getTitle(), music.getSnippet().getThumbnails().getMedium().getUrl(), music.getSnippet().getChannelTitle()});
+                    db.close();
                 }
             }
         });
