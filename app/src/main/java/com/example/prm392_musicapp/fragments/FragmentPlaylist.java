@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -124,6 +125,13 @@ public class FragmentPlaylist extends Fragment {
             RecyclerView.LayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
             recyclerView.setLayoutManager(linearLayoutManager);
             recyclerView.setAdapter(adapter);
+
+            adapter.setOnItemClickListener(new PlaylistAdapter.OnClickListener() {
+                @Override
+                public void onClick(int PLid) {
+                    Log.d("dfgh", String.valueOf(PLid));
+                }
+            });
 
             ((ConstraintLayout) view.findViewById(R.id.layout_playlist)).setVisibility(View.VISIBLE);
             ((ConstraintLayout) view.findViewById(R.id.layout_noPlaylist)).setVisibility(View.INVISIBLE);
