@@ -24,6 +24,14 @@ public class ChoosePlaylistAdapter extends RecyclerView.Adapter<ChoosePlaylistAd
 
     List<Playlist> playlists;
     MySQLiteOpenHelper mySQLiteOpenHelper;
+    private SearchAdapter.OnItemClickListener listener;
+
+    public interface OnItemClickListener {
+        void onItemClick(String itemId);
+    }
+    public void setOnItemClickListener(SearchAdapter.OnItemClickListener listener) {
+        this.listener = listener;
+    }
 
 
     public ChoosePlaylistAdapter(List<Playlist> playlists) {
@@ -48,7 +56,7 @@ public class ChoosePlaylistAdapter extends RecyclerView.Adapter<ChoosePlaylistAd
         return playlists.size();
     }
 
-    public class PLaylistHolder extends RecyclerView.ViewHolder {
+    public class PLaylistHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         TextView tv_playlist_name;
 
         public PLaylistHolder(@NonNull View itemView) {
@@ -67,7 +75,7 @@ public class ChoosePlaylistAdapter extends RecyclerView.Adapter<ChoosePlaylistAd
                         mySQLiteOpenHelper = new MySQLiteOpenHelper(itemView.getContext(), "ProjectDB", null, 1);
                         SQLiteDatabase db = mySQLiteOpenHelper.getReadableDatabase();
                         db = mySQLiteOpenHelper.getWritableDatabase();
-                        Cursor cursor = db.rawQuery("SELECT LAST PLMid FROM PlaylistMusic", null);
+                        Cursor cursor = db.rawQuery("SELECT * FROM PLaylistMusic ORDER BY PLMid DESC LIMIT 1", null);
                         while (cursor.moveToNext()) {
                             id = Integer.parseInt(String.valueOf(cursor.getInt(0)));
                         }
@@ -97,5 +105,14 @@ public class ChoosePlaylistAdapter extends RecyclerView.Adapter<ChoosePlaylistAd
 
         }
 
+        @Override
+        public void onClick(View v) {
+            int position = getBindingAdapterPosition();
+            if (position != RecyclerView.NO_POSITION && listener != null) {
+                Playlist playlist = playlists.get(position);
+                int itemId = playlist.getId(); // Retrieve the ID of the clicked item
+                listener.onItemClick(String.valueOf(itemId)); // Callback the listener with the item ID
+            }
+        }
     }
 }

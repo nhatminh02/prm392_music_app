@@ -23,7 +23,6 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.PLayli
 
     List<Playlist> playlists;
     MySQLiteOpenHelper mySQLiteOpenHelper;
-    private OnClickListener mListener;
 
 
     public interface OnClickListener {
@@ -77,9 +76,6 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.PLayli
             });
         }
 
-        public void setOnClickListener(OnClickListener onClickListener) {
-            this.onClickListener = onClickListener;
-        }
 
     }
 }

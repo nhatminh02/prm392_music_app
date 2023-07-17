@@ -205,21 +205,6 @@ public class FragmentSearch extends Fragment {
                     fragmentTransaction.commit();
 
 
-//                    cursor.close();
-//                    PopupWindow popupWindow;
-//                    LayoutInflater inflater = (LayoutInflater) requireContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//                    View popupView = inflater.inflate(R.layout.choose_playlist, null);
-//                    popupWindow = new PopupWindow(popupView, WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
-//                    popupWindow.setFocusable(true);
-//                    // Hiển thị cửa sổ nhỏ tại vị trí mong muốn
-//                    popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
-//                    RecyclerView recyclerView = popupView.findViewById(R.id.rec_choose_playlist);
-//                    PlaylistAdapter adapter = new PlaylistAdapter(dataList);
-//                    RecyclerView.LayoutManager linearLayoutManager = new LinearLayoutManager(popupView.getContext());
-//                    recyclerView.setLayoutManager(linearLayoutManager);
-//                    recyclerView.setAdapter(adapter);
-
-
                 }
             }
         });

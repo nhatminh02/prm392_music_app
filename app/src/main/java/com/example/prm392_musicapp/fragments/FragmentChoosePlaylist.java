@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 
 import com.example.prm392_musicapp.R;
 import com.example.prm392_musicapp.SQLite.MySQLiteOpenHelper;
+import com.example.prm392_musicapp.adapter.ChoosePlaylistAdapter;
 import com.example.prm392_musicapp.adapter.PlaylistAdapter;
 import com.example.prm392_musicapp.models.Playlist;
 
@@ -87,7 +88,7 @@ public class FragmentChoosePlaylist extends Fragment {
         }
         cursor.close();
         RecyclerView recyclerView = view.findViewById(R.id.rec_choose_playlist);
-        PlaylistAdapter adapter = new PlaylistAdapter(dataList);
+        ChoosePlaylistAdapter adapter = new ChoosePlaylistAdapter(dataList);
         RecyclerView.LayoutManager linearLayoutManager = new LinearLayoutManager(this.getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(adapter);
