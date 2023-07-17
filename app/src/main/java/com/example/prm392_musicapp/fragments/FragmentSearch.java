@@ -193,10 +193,15 @@ public class FragmentSearch extends Fragment {
                     SQLiteDatabase db = openHelper.getReadableDatabase();
                     String itemId = music.getId().getVideoId();
                     db = openHelper.getWritableDatabase();
-                    db.delete("PlaylistMusic", "PLMvideoId=?", new String[]{itemId});
-                    String sql = "insert into PlaylistMusic(PLMvideoId,PLMtitle,PLMthumbnails,PLMchannelTitle) values(?,?,?,?)";
-                    db.execSQL(sql, new String[]{itemId, music.getSnippet().getTitle(), music.getSnippet().getThumbnails().getMedium().getUrl(), music.getSnippet().getChannelTitle()});
-                    db.close();
+                    String query = "SELECT * FROM PlaylistMusic WHERE PLMvideoId = ?";
+                    String[] selectionArgs1 = {itemId};
+                    Cursor cursor = db.rawQuery(query, selectionArgs1);
+                    boolean exists = cursor.moveToFirst();
+                    if(!exists){
+                        String sql = "insert into PlaylistMusic(PLMvideoId,PLMtitle,PLMthumbnails,PLMchannelTitle) values(?,?,?,?)";
+                        db.execSQL(sql, new String[]{itemId, music.getSnippet().getTitle(), music.getSnippet().getThumbnails().getMedium().getUrl(), music.getSnippet().getChannelTitle()});
+                        db.close();
+                    }
                     Log.d("asdcfvgbnm", itemId);
                     fragmentManager = getActivity().getSupportFragmentManager();
                     fragmentChoosePlaylist = FragmentChoosePlaylist.newInstance(null, null);

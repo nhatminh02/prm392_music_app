@@ -2,6 +2,7 @@ package com.example.prm392_musicapp.fragments;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -46,6 +47,7 @@ public class FragmentPlaylist extends Fragment {
     FragmentManager fragmentManager;
     FragmentTransaction fragmentTransaction;
     FragmentLikedTracks fragmentLikedTracks;
+    FragmentPlaylistDetail fragmentPlaylistDetail;
     MySQLiteOpenHelper openHelper;
     SQLiteDatabase db;
 
@@ -97,6 +99,8 @@ public class FragmentPlaylist extends Fragment {
         View view = inflater.inflate(R.layout.fragment_playlist, container, false);
         fragmentManager = getActivity().getSupportFragmentManager();
         fragmentLibrary = new FragmentLibrary();
+        SharedPreferences sharedPreferencesPlaylistId = getActivity().getSharedPreferences("PlaylistID", Context.MODE_PRIVATE);
+        SharedPreferences.Editor sharedPreferencesPlaylistIdEdit = sharedPreferencesPlaylistId.edit();
         ((ImageView) view.findViewById(R.id.btn_comeback)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -130,6 +134,13 @@ public class FragmentPlaylist extends Fragment {
                 @Override
                 public void onClick(int PLid) {
                     Log.d("dfgh", String.valueOf(PLid));
+                    sharedPreferencesPlaylistIdEdit.putInt("PLid" ,PLid);
+                    sharedPreferencesPlaylistIdEdit.apply();
+                    fragmentManager = getActivity().getSupportFragmentManager();
+                    fragmentPlaylistDetail = FragmentPlaylistDetail.newInstance(null, null);
+                    fragmentTransaction = fragmentManager.beginTransaction();
+                    fragmentTransaction.replace(R.id.fr_container, fragmentPlaylistDetail, "");
+                    fragmentTransaction.commit();
                 }
             });
 

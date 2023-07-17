@@ -1,6 +1,8 @@
 package com.example.prm392_musicapp.fragments;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -86,14 +88,16 @@ public class FragmentPlaylistDetail extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        SharedPreferences sharedPreferencesPlaylistId = getActivity().getSharedPreferences("PlaylistID", Context.MODE_PRIVATE);
+        int plid = sharedPreferencesPlaylistId.getInt("PLid", 0);
         List<Video> dataList = new ArrayList<>();
         mySQLiteOpenHelper = new MySQLiteOpenHelper(getActivity(), "ProjectDB", null, 1);
         SQLiteDatabase db = mySQLiteOpenHelper.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT music.PLMvideoId, music.PLMtitle, music.PLMchannelTitle, music.PLMthumbnails\n" +
+        Cursor cursor = db.rawQuery("SELECT music.PLMid, music.PLMvideoId, music.PLMtitle, music.PLMchannelTitle, music.PLMthumbnails\n" +
                 "FROM PlaylistMusic AS music\n" +
                 "JOIN PLaylistMus AS PLM ON music.PLMid = PLM.PLMid\n" +
                 "JOIN Playlists AS PL ON PL.PLid = PLM.PLid\n" +
-                "WHERE PL.PLid = 1", null);
+                "WHERE PL.PLid = ?", new String[]{String.valueOf(plid)});
         while (cursor.moveToNext()) {
             id = cursor.getString(cursor.getColumnIndex("PLMid"));
             videoId = cursor.getString(cursor.getColumnIndex("music.PLMvideoId"));
@@ -106,7 +110,7 @@ public class FragmentPlaylistDetail extends Fragment {
         cursor.close();
         View view = inflater.inflate(R.layout.fragment_playlist_detail, container, false);
         RecyclerView recyclerView = view.findViewById(R.id.rec_playlist_detail);
-        PlaylistMusicAdapter adapter = new PlaylistMusicAdapter(dataList);
+        PlaylistMusicAdapter adapter = new PlaylistMusicAdapter(dataList, sharedPreferencesPlaylistId);
         RecyclerView.LayoutManager linearLayoutManager = new LinearLayoutManager(this.getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(adapter);

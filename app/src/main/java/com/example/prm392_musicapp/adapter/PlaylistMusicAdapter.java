@@ -2,7 +2,11 @@ package com.example.prm392_musicapp.adapter;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.prm392_musicapp.R;
 import com.example.prm392_musicapp.SQLite.MySQLiteOpenHelper;
+import com.example.prm392_musicapp.models.Playlist;
 import com.example.prm392_musicapp.models.Video;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -25,10 +30,21 @@ public class PlaylistMusicAdapter extends RecyclerView.Adapter<PlaylistMusicAdap
     private final List<Video> dataList;
     private View.OnClickListener onClickListener;
     MySQLiteOpenHelper mySQLiteOpenHelper;
-    Activity activity;
+    private PlaylistMusicAdapter.OnItemClickListener listener;
 
-    public PlaylistMusicAdapter(List<Video> dataList) {
+    Activity activity;
+    private SharedPreferences sharedPreferences;
+    public interface OnItemClickListener {
+        void onItemClick(String itemId);
+    }
+
+    public void setOnItemClickListener(PlaylistMusicAdapter.OnItemClickListener listener) {
+        this.listener = listener;
+    }
+
+    public PlaylistMusicAdapter(List<Video> dataList, SharedPreferences sharedPreferences) {
         this.dataList = dataList;
+        this.sharedPreferences = sharedPreferences;
     }
     public void setOnClickListener(View.OnClickListener onClickListener) {
         this.onClickListener = onClickListener;
@@ -74,21 +90,39 @@ public class PlaylistMusicAdapter extends RecyclerView.Adapter<PlaylistMusicAdap
             imv_thumb =itemView.findViewById(R.id.imv_thumb);
             tv_musname =itemView.findViewById(R.id.tv_musname);
             tv_singer =itemView.findViewById(R.id.tv_singer);
+            int plid = sharedPreferences.getInt("PLid", 0);
+            itemView.setOnClickListener(this);
+
 
             ((FloatingActionButton)itemView.findViewById(R.id.delete_liked_track)).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     int position = getBindingAdapterPosition();
+                    int id = 0;
+                    String videoId = dataList.get(position).getVideoId();
                     mySQLiteOpenHelper = new MySQLiteOpenHelper(itemView.getContext(), "ProjectDB", null, 1);
                     SQLiteDatabase db = mySQLiteOpenHelper.getReadableDatabase();
+                    Cursor cursor = db.rawQuery("select PLMid from PlaylistMusic where PLMvideoId=?", new String[]{videoId});
+                    while (cursor.moveToNext()) {
+                        id = Integer.parseInt(String.valueOf(cursor.getInt(0)));
+                    }
                     db = mySQLiteOpenHelper.getWritableDatabase();
-                    db.delete("LikedTracks", "title=?", new String[]{tv_musname.getText().toString()});
+                    db.delete("PlaylistMus", "PLMid=? and PLid = ?", new String[]{String.valueOf(id), String.valueOf(plid)});
                     db.close();
 
                     dataList.remove(position);
                     notifyItemRemoved(position);
                 }
             });
+
+        }
+        public void onClick(View v) {
+            int position = getBindingAdapterPosition();
+            if (position != RecyclerView.NO_POSITION && listener != null) {
+                Video video = dataList.get(position);
+                String videoId = video.getVideoId(); // Retrieve the ID of the clicked item
+                listener.onItemClick(videoId); // Callback the listener with the item ID
+            }
         }
     }
 }

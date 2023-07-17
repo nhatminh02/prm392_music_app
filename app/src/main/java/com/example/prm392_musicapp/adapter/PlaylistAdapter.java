@@ -71,6 +71,7 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.PLayli
         public PLaylistHolder(@NonNull View itemView) {
             super(itemView);
             tv_playlist_name = itemView.findViewById(R.id.tv_playlist_name);
+            itemView.setOnClickListener(this);
 
 
             ((FloatingActionButton) itemView.findViewById(R.id.delete_playlist)).setOnClickListener(new View.OnClickListener() {

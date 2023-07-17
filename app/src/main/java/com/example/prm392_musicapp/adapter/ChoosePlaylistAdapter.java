@@ -80,9 +80,15 @@ public class ChoosePlaylistAdapter extends RecyclerView.Adapter<ChoosePlaylistAd
                             id = Integer.parseInt(String.valueOf(cursor.getInt(0)));
                         }
                         cursor.close();
-                        String sql = "INSERT into PLaylistMus(PLMid,PLid) VALUES (?,?)";
-                        db.execSQL(sql, new String[]{String.valueOf(id), String.valueOf(position + 1)});
-                        db.close();
+
+                        Cursor c = db.rawQuery("select * from PlaylistMus where PLMid = ? and PLid = ?", new String[]{String.valueOf(id), String.valueOf(position + 1)});
+                        boolean exist = c.moveToFirst();
+                        if(!exist){
+                            String sql = "INSERT into PLaylistMus(PLMid,PLid) VALUES (?,?)";
+                            db.execSQL(sql, new String[]{String.valueOf(id), String.valueOf(position + 1)});
+                            db.close();
+                        }
+
                     }
                 }
             });
