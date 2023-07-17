@@ -28,12 +28,11 @@ import java.util.List;
 public class PlaylistMusicAdapter extends RecyclerView.Adapter<PlaylistMusicAdapter.MusicHolder> {
 
     private final List<Video> dataList;
-    private View.OnClickListener onClickListener;
     MySQLiteOpenHelper mySQLiteOpenHelper;
     private PlaylistMusicAdapter.OnItemClickListener listener;
-
     Activity activity;
     private SharedPreferences sharedPreferences;
+
     public interface OnItemClickListener {
         void onItemClick(String itemId);
     }
@@ -46,13 +45,6 @@ public class PlaylistMusicAdapter extends RecyclerView.Adapter<PlaylistMusicAdap
         this.dataList = dataList;
         this.sharedPreferences = sharedPreferences;
     }
-    public void setOnClickListener(View.OnClickListener onClickListener) {
-        this.onClickListener = onClickListener;
-    }
-
-    public interface OnClickListener {
-        void onClick(int position, Video video);
-    }
 
     @NonNull
     @Override
@@ -64,7 +56,6 @@ public class PlaylistMusicAdapter extends RecyclerView.Adapter<PlaylistMusicAdap
 
     @Override
     public void onBindViewHolder(@NonNull MusicHolder holder, @SuppressLint("RecyclerView") int position) {
-        Video video = dataList.get(position);
         Glide.with(holder.imv_thumb.getContext())
                 .load(dataList.get(position).getThumbnails())
                 .into(holder.imv_thumb);
@@ -79,7 +70,7 @@ public class PlaylistMusicAdapter extends RecyclerView.Adapter<PlaylistMusicAdap
         return dataList.size();
     }
 
-    public class MusicHolder extends RecyclerView.ViewHolder {
+    public class MusicHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         ImageView imv_thumb;
         TextView tv_musname;
         TextView tv_singer;
@@ -87,12 +78,11 @@ public class PlaylistMusicAdapter extends RecyclerView.Adapter<PlaylistMusicAdap
 
         public MusicHolder(@NonNull View itemView) {
             super(itemView);
+            itemView.setOnClickListener(this);
             imv_thumb =itemView.findViewById(R.id.imv_thumb);
             tv_musname =itemView.findViewById(R.id.tv_musname);
             tv_singer =itemView.findViewById(R.id.tv_singer);
             int plid = sharedPreferences.getInt("PLid", 0);
-            itemView.setOnClickListener(this);
-
 
             ((FloatingActionButton)itemView.findViewById(R.id.delete_liked_track)).setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -116,8 +106,11 @@ public class PlaylistMusicAdapter extends RecyclerView.Adapter<PlaylistMusicAdap
             });
 
         }
+
+        @Override
         public void onClick(View v) {
             int position = getBindingAdapterPosition();
+            Log.i("RecentlyPlayedAdapter", "Item clicked");
             if (position != RecyclerView.NO_POSITION && listener != null) {
                 Video video = dataList.get(position);
                 String videoId = video.getVideoId(); // Retrieve the ID of the clicked item

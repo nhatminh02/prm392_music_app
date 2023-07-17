@@ -2,6 +2,7 @@ package com.example.prm392_musicapp.fragments;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -18,6 +19,7 @@ import android.widget.TextView;
 
 import com.example.prm392_musicapp.R;
 import com.example.prm392_musicapp.SQLite.MySQLiteOpenHelper;
+import com.example.prm392_musicapp.activities.VideoPlayActivity;
 import com.example.prm392_musicapp.adapter.ChoosePlaylistAdapter;
 import com.example.prm392_musicapp.adapter.PlaylistMusicAdapter;
 import com.example.prm392_musicapp.models.Thumbnails;
@@ -111,6 +113,65 @@ public class FragmentPlaylistDetail extends Fragment {
         View view = inflater.inflate(R.layout.fragment_playlist_detail, container, false);
         RecyclerView recyclerView = view.findViewById(R.id.rec_playlist_detail);
         PlaylistMusicAdapter adapter = new PlaylistMusicAdapter(dataList, sharedPreferencesPlaylistId);
+
+        SharedPreferences sharedPreferencesId = getActivity().getSharedPreferences("IdSharePref", Context.MODE_PRIVATE);
+        SharedPreferences.Editor sharedPreferencesIdEdit = sharedPreferencesId.edit();
+        adapter.setOnItemClickListener(new PlaylistMusicAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(String itemId) {
+                Intent intent = new Intent(getActivity(), VideoPlayActivity.class);
+                intent.putExtra("itemId", videoId);
+
+                //lấy giá trị check có phải click vào player bar hay không
+                SharedPreferences sharedPrefPlayerBar = getActivity().getSharedPreferences("PlayerBarSharePref", Context.MODE_PRIVATE);
+                SharedPreferences.Editor sharedPrefPlayerBarEdit = sharedPrefPlayerBar.edit();
+                SharedPreferences sharedPrefSuffle = getActivity().getSharedPreferences("SuffleSharePref", Context.MODE_PRIVATE);
+                SharedPreferences.Editor sharedPrefSuffleEdit = sharedPrefSuffle.edit();
+                SharedPreferences sharedPreferencesSkip = getActivity().getSharedPreferences("SkipSharePref", Context.MODE_PRIVATE);
+                SharedPreferences.Editor sharedPreferencesSkipEdit = sharedPreferencesSkip.edit();
+                sharedPrefPlayerBarEdit.putBoolean("isClicked", false);
+                sharedPrefPlayerBarEdit.apply();
+
+                boolean isSuffle = sharedPrefSuffle.getBoolean("isSuffle", false);
+                boolean isSkip = sharedPreferencesSkip.getBoolean("isSkip", false);
+                //lưu currentId và prevId trên share preferences
+                String currentID = sharedPreferencesId.getString("currentId", null);
+                String prevID = sharedPreferencesId.getString("prevId", null);
+                if (currentID == null) {
+                    sharedPreferencesIdEdit.putString("currentId", videoId);
+                    sharedPreferencesIdEdit.putString("prevId", videoId);
+                } else if (currentID != null && prevID != null) {
+                    if (!currentID.equals(videoId) && !isSuffle) {
+                        sharedPreferencesIdEdit.putString("prevId", currentID);
+                        sharedPreferencesIdEdit.putString("currentId", videoId);
+                    } else if (currentID.equals(videoId) && !isSuffle) {
+                        sharedPreferencesIdEdit.putString("prevId", videoId);
+                    } else if (isSuffle) {
+                        if (!videoId.equals(currentID)) {
+                            sharedPreferencesIdEdit.putString("prevId", currentID);
+                            sharedPreferencesIdEdit.putString("currentId", videoId);
+                            sharedPrefSuffleEdit.putBoolean("isSuffle", false);
+                        } else {
+                            sharedPrefSuffleEdit.putBoolean("isSuffle", false);
+                        }
+                        sharedPrefSuffleEdit.apply();
+
+                    } else if (isSkip) {
+                        if (!videoId.equals(currentID)) {
+                            sharedPreferencesIdEdit.putString("prevId", currentID);
+                            sharedPreferencesIdEdit.putString("currentId", videoId);
+                            sharedPreferencesSkipEdit.putBoolean("isSkip", false);
+                        } else {
+                            sharedPreferencesSkipEdit.putBoolean("isSkip", false);
+                        }
+                        sharedPreferencesSkipEdit.apply();
+                    }
+                }
+                sharedPreferencesIdEdit.apply();
+
+                startActivity(intent);
+            }
+        });
         RecyclerView.LayoutManager linearLayoutManager = new LinearLayoutManager(this.getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(adapter);
