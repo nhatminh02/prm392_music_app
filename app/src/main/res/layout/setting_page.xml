@@ -50,10 +50,10 @@
         app:cornerRadius="0dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_contract_support" />
+        app:layout_constraintTop_toBottomOf="@+id/contactsp" />
 
     <Button
-        android:id="@+id/btn_contract_support"
+        android:id="@+id/contactsp"
         style="@style/text"
         android:layout_width="409dp"
         android:layout_height="wrap_content"
@@ -162,8 +162,8 @@
         android:layout_height="20dp"
         android:layout_marginTop="20dp"
         android:layout_marginEnd="12dp"
-        app:layout_constraintEnd_toEndOf="@+id/btn_contract_support"
-        app:layout_constraintTop_toTopOf="@+id/btn_contract_support"
+        app:layout_constraintEnd_toEndOf="@+id/contactsp"
+        app:layout_constraintTop_toTopOf="@+id/contactsp"
         app:srcCompat="@drawable/right_arrow" />
 
     <ImageView

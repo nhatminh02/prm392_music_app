@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.example.prm392_musicapp.R;
+import com.example.prm392_musicapp.activities.SettingNotificationActivity;
 import com.example.prm392_musicapp.activities.SettingThemeActivity;
 import com.example.prm392_musicapp.activities.Term;
 
@@ -23,6 +24,7 @@ public class FragmentSetting extends Fragment {
 
     Button themeSettingBtn;
     Button legal;
+    Button btn_notification;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -68,6 +70,7 @@ public class FragmentSetting extends Fragment {
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.setting_page, container, false);
+        btn_notification=view.findViewById(R.id.btn_notification);
         legal=view.findViewById(R.id.legal);
         themeSettingBtn = view.findViewById(R.id.btn_theme);
         themeSettingBtn.setOnClickListener(new View.OnClickListener() {
@@ -82,6 +85,14 @@ public class FragmentSetting extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), Term.class);
+                startActivity(intent);
+
+            }
+        });
+        btn_notification.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), SettingNotificationActivity.class);
                 startActivity(intent);
 
             }
