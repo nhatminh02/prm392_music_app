@@ -16,18 +16,23 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class VideoDataUtils {
-    static List<SearchItem> itemsList;
+    //AIzaSyCxnM_yUk7Rw8xAQxwaYoDHan0Rx71FOQY
+    //AIzaSyDca6EiCASpFVwlvWFcbjj_ykdoWCNDevk
+    //AIzaSyBZDg-87in5IzNFeBo9PeRC_kFrcN4jjnE
+    //AIzaSyBWbE-QBqsT8EqX35fyAQ7ZyNc3ZEAVQH4
+    //AIzaSyA_4cHWZn3Su-7x2ct9LWzHEJHCri82Z84
+    //AIzaSyAoBG7VU3ld5d396F9ABk9C99qKUyTnOOI
+    //AIzaSyDL253YU0-HPTsBWDlCHNT1pqxc9OBYsAE
+    //AIzaSyC4_5YZT1NgXspNddbi2LIsK0y0i4AmJJs
+    static final String API_KEY = "AIzaSyBZDg-87in5IzNFeBo9PeRC_kFrcN4jjnE";
 
     public static MutableLiveData<List<SearchItem>> searchVideoData(String searchQuery) {
         MutableLiveData<List<SearchItem>> itemsLiveData = new MutableLiveData<>();
 
         GetVideoDataService dataService = RetrofitInstance.getRetrofit().create(GetVideoDataService.class);
-        //AIzaSyCxnM_yUk7Rw8xAQxwaYoDHan0Rx71FOQY
-        //AIzaSyDca6EiCASpFVwlvWFcbjj_ykdoWCNDevk
-        //AIzaSyBZDg-87in5IzNFeBo9PeRC_kFrcN4jjnE
-        //AIzaSyBWbE-QBqsT8EqX35fyAQ7ZyNc3ZEAVQH4
+
         Call<SearchItemDetails> videoDetailsRequest = dataService
-                .getSearchVideoData("snippet", searchQuery, "AIzaSyBWbE-QBqsT8EqX35fyAQ7ZyNc3ZEAVQH4", "100", "VN","video","/m/04rlf");
+                .getSearchVideoData("snippet", searchQuery, API_KEY, "100", "VN", "video", "/m/04rlf");
         videoDetailsRequest.enqueue(new Callback<SearchItemDetails>() {
             @Override
             public void onResponse(Call<SearchItemDetails> call, Response<SearchItemDetails> response) {
@@ -56,7 +61,7 @@ public class VideoDataUtils {
         //AIzaSyDca6EiCASpFVwlvWFcbjj_ykdoWCNDevk
         //AIzaSyBZDg-87in5IzNFeBo9PeRC_kFrcN4jjnE
         Call<SearchItemDetails> videoDetailsRequest = dataService
-                .getSearchRelatedVideoData("snippet", "AIzaSyBWbE-QBqsT8EqX35fyAQ7ZyNc3ZEAVQH4", "100", "VN","video",videoId);
+                .getSearchRelatedVideoData("snippet", API_KEY, "100", "VN", "video", videoId);
         videoDetailsRequest.enqueue(new Callback<SearchItemDetails>() {
             @Override
             public void onResponse(Call<SearchItemDetails> call, Response<SearchItemDetails> response) {
@@ -85,7 +90,7 @@ public class VideoDataUtils {
         //AIzaSyDca6EiCASpFVwlvWFcbjj_ykdoWCNDevk
         //AIzaSyBZDg-87in5IzNFeBo9PeRC_kFrcN4jjnE
         Call<SingleItemDetail> videoDetailsRequest = dataService
-                .getVideoById("snippet", id, "AIzaSyBWbE-QBqsT8EqX35fyAQ7ZyNc3ZEAVQH4");
+                .getVideoById("snippet", id, API_KEY);
         videoDetailsRequest.enqueue(new Callback<SingleItemDetail>() {
             @Override
             public void onResponse(Call<SingleItemDetail> call, Response<SingleItemDetail> response) {

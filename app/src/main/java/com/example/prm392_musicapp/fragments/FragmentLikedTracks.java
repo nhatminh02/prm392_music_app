@@ -1,7 +1,9 @@
 package com.example.prm392_musicapp.fragments;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -118,27 +120,74 @@ public class FragmentLikedTracks extends Fragment {
         mySQLiteOpenHelper = new MySQLiteOpenHelper(getActivity(), "ProjectDB", null, 1);
         SQLiteDatabase db = mySQLiteOpenHelper.getReadableDatabase();
         Cursor cursor = db.rawQuery("SELECT * FROM LikedTracks", null);
-            while (cursor.moveToNext()) {
-                id = cursor.getString(cursor.getColumnIndex("LTid"));
-                videoId = cursor.getString(cursor.getColumnIndex("videoId"));
-                title = cursor.getString(cursor.getColumnIndex("title"));
-                thumbnail = cursor.getString(cursor.getColumnIndex("thumbnails"));
-                channelTitle = cursor.getString(cursor.getColumnIndex("channelTitle"));
-                Video data = new Video(videoId, title, thumbnail, channelTitle);
-                dataList.add(data);
-            }
+        while (cursor.moveToNext()) {
+            id = cursor.getString(cursor.getColumnIndex("LTid"));
+            videoId = cursor.getString(cursor.getColumnIndex("videoId"));
+            title = cursor.getString(cursor.getColumnIndex("title"));
+            thumbnail = cursor.getString(cursor.getColumnIndex("thumbnails"));
+            channelTitle = cursor.getString(cursor.getColumnIndex("channelTitle"));
+            Video data = new Video(videoId, title, thumbnail, channelTitle);
+            dataList.add(data);
+        }
         cursor.close();
+        SharedPreferences sharedPreferencesId = getActivity().getSharedPreferences("IdSharePref", Context.MODE_PRIVATE);
+        SharedPreferences.Editor sharedPreferencesIdEdit = sharedPreferencesId.edit();
         if (dataList.size() > 0) {
             // Hiển thị dữ liệu trong RecyclerView
             RecyclerView recyclerView = view.findViewById(R.id.rec_liked_track);
             LikedMusicAdapter adapter = new LikedMusicAdapter(dataList);
             //click de phat
-            adapter.setOnItemClickListener(new LikedMusicAdapter.OnItemClickListener(){
+            adapter.setOnItemClickListener(new LikedMusicAdapter.OnItemClickListener() {
                 @Override
                 public void onItemClick(String videoId) {
                     Log.i("run1", "onItemClick" + videoId);
                     Intent intent = new Intent(getActivity(), VideoPlayActivity.class);
                     intent.putExtra("itemId", videoId);
+                    //lấy giá trị check có phải click vào player bar hay không
+                    SharedPreferences sharedPrefPlayerBar = getActivity().getSharedPreferences("PlayerBarSharePref", Context.MODE_PRIVATE);
+                    SharedPreferences.Editor sharedPrefPlayerBarEdit = sharedPrefPlayerBar.edit();
+                    SharedPreferences sharedPrefSuffle = getActivity().getSharedPreferences("SuffleSharePref", Context.MODE_PRIVATE);
+                    SharedPreferences.Editor sharedPrefSuffleEdit = sharedPrefSuffle.edit();
+                    SharedPreferences sharedPreferencesSkip = getActivity().getSharedPreferences("SkipSharePref", Context.MODE_PRIVATE);
+                    SharedPreferences.Editor sharedPreferencesSkipEdit = sharedPreferencesSkip.edit();
+                    sharedPrefPlayerBarEdit.putBoolean("isClicked", false);
+                    sharedPrefPlayerBarEdit.apply();
+
+                    boolean isSuffle = sharedPrefSuffle.getBoolean("isSuffle", false);
+                    boolean isSkip = sharedPreferencesSkip.getBoolean("isSkip", false);
+                    //lưu currentId và prevId trên share preferences
+                    String currentID = sharedPreferencesId.getString("currentId", null);
+                    String prevID = sharedPreferencesId.getString("prevId", null);
+                    if (currentID == null) {
+                        sharedPreferencesIdEdit.putString("currentId", videoId);
+                        sharedPreferencesIdEdit.putString("prevId", videoId);
+                    } else if (currentID != null && prevID != null) {
+                        if (!currentID.equals(videoId) && !isSuffle) {
+                            sharedPreferencesIdEdit.putString("prevId", currentID);
+                            sharedPreferencesIdEdit.putString("currentId", videoId);
+                        } else if (currentID.equals(videoId) && !isSuffle) {
+                            sharedPreferencesIdEdit.putString("prevId", videoId);
+                        } else if (isSuffle) {
+                            if (!videoId.equals(currentID)) {
+                                sharedPreferencesIdEdit.putString("prevId", currentID);
+                                sharedPreferencesIdEdit.putString("currentId", videoId);
+                                sharedPrefSuffleEdit.putBoolean("isSuffle", false);
+                            } else {
+                                sharedPrefSuffleEdit.putBoolean("isSuffle", false);
+                            }
+                            sharedPrefSuffleEdit.apply();
+                        } else if (isSkip) {
+                            if (!videoId.equals(currentID)) {
+                                sharedPreferencesIdEdit.putString("prevId", currentID);
+                                sharedPreferencesIdEdit.putString("currentId", videoId);
+                                sharedPreferencesSkipEdit.putBoolean("isSkip", false);
+                            } else {
+                                sharedPreferencesSkipEdit.putBoolean("isSkip", false);
+                            }
+                            sharedPreferencesSkipEdit.apply();
+                        }
+                    }
+                    sharedPreferencesIdEdit.apply();
                     startActivity(intent);
                 }
             });

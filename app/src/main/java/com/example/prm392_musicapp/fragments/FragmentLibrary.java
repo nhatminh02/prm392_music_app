@@ -1,6 +1,8 @@
 package com.example.prm392_musicapp.fragments;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -91,14 +93,17 @@ public class FragmentLibrary extends Fragment {
         //lay ra list recently
         String sql = "select * from Recently order by recId desc";
         List<Video> recently = new ArrayList<>();
-        Cursor c = db.rawQuery(sql,null);
-        while(c.moveToNext()){
+        Cursor c = db.rawQuery(sql, null);
+        while (c.moveToNext()) {
             String videoId = c.getString(1);
             String title = c.getString(2);
             String thumbnails = c.getString(3);
             String channelTitle = c.getString(4);
-            recently.add(new Video(videoId,title,thumbnails,channelTitle));
+            recently.add(new Video(videoId, title, thumbnails, channelTitle));
         }
+
+        SharedPreferences sharedPreferencesId = getActivity().getSharedPreferences("IdSharePref", Context.MODE_PRIVATE);
+        SharedPreferences.Editor sharedPreferencesIdEdit = sharedPreferencesId.edit();
         RecentlyPlayedAdapter adapterRecently = new RecentlyPlayedAdapter(recently, getActivity());
         //click de phat
         adapterRecently.setOnItemClickListener(new RecentlyPlayedAdapter.OnItemClickListener() {
@@ -107,6 +112,52 @@ public class FragmentLibrary extends Fragment {
                 Log.i("run1", "onItemClick" + videoId);
                 Intent intent = new Intent(getActivity(), VideoPlayActivity.class);
                 intent.putExtra("itemId", videoId);
+                //lấy giá trị check có phải click vào player bar hay không
+                SharedPreferences sharedPrefPlayerBar = getActivity().getSharedPreferences("PlayerBarSharePref", Context.MODE_PRIVATE);
+                SharedPreferences.Editor sharedPrefPlayerBarEdit = sharedPrefPlayerBar.edit();
+                SharedPreferences sharedPrefSuffle = getActivity().getSharedPreferences("SuffleSharePref", Context.MODE_PRIVATE);
+                SharedPreferences.Editor sharedPrefSuffleEdit = sharedPrefSuffle.edit();
+                SharedPreferences sharedPreferencesSkip = getActivity().getSharedPreferences("SkipSharePref", Context.MODE_PRIVATE);
+                SharedPreferences.Editor sharedPreferencesSkipEdit = sharedPreferencesSkip.edit();
+                sharedPrefPlayerBarEdit.putBoolean("isClicked", false);
+                sharedPrefPlayerBarEdit.apply();
+
+                boolean isSuffle = sharedPrefSuffle.getBoolean("isSuffle", false);
+                boolean isSkip = sharedPreferencesSkip.getBoolean("isSkip", false);
+                //lưu currentId và prevId trên share preferences
+                String currentID = sharedPreferencesId.getString("currentId", null);
+                String prevID = sharedPreferencesId.getString("prevId", null);
+                if (currentID == null) {
+                    sharedPreferencesIdEdit.putString("currentId", videoId);
+                    sharedPreferencesIdEdit.putString("prevId", videoId);
+                } else if (currentID != null && prevID != null) {
+                    if (!currentID.equals(videoId) && !isSuffle) {
+                        sharedPreferencesIdEdit.putString("prevId", currentID);
+                        sharedPreferencesIdEdit.putString("currentId", videoId);
+                    } else if (currentID.equals(videoId) && !isSuffle) {
+                        sharedPreferencesIdEdit.putString("prevId", videoId);
+                    } else if (isSuffle) {
+                        if (!videoId.equals(currentID)) {
+                            sharedPreferencesIdEdit.putString("prevId", currentID);
+                            sharedPreferencesIdEdit.putString("currentId", videoId);
+                            sharedPrefSuffleEdit.putBoolean("isSuffle", false);
+                        } else {
+                            sharedPrefSuffleEdit.putBoolean("isSuffle", false);
+                        }
+                        sharedPrefSuffleEdit.apply();
+                    } else if (isSkip) {
+                        if (!videoId.equals(currentID)) {
+                            sharedPreferencesIdEdit.putString("prevId", currentID);
+                            sharedPreferencesIdEdit.putString("currentId", videoId);
+                            sharedPreferencesSkipEdit.putBoolean("isSkip", false);
+                        } else {
+                            sharedPreferencesSkipEdit.putBoolean("isSkip", false);
+                        }
+                        sharedPreferencesSkipEdit.apply();
+                    }
+                }
+                sharedPreferencesIdEdit.apply();
+
                 startActivity(intent);
             }
         });
@@ -131,7 +182,7 @@ public class FragmentLibrary extends Fragment {
             }
         });
 
-        ((Button)view.findViewById(R.id.btn_playlist)).setOnClickListener(new View.OnClickListener() {
+        ((Button) view.findViewById(R.id.btn_playlist)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Define behavior for when the button is clicked
@@ -142,10 +193,9 @@ public class FragmentLibrary extends Fragment {
                 fragmentTransaction.commit();
             }
         });
-      
+
         return view;
     }
-
 
 
 }

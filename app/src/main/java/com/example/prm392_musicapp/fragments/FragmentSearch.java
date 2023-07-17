@@ -111,19 +111,48 @@ public class FragmentSearch extends Fragment {
                 Log.i("itemId", itemId);
                 Intent intent = new Intent(getActivity(), VideoPlayActivity.class);
                 intent.putExtra("itemId", itemId);
+                //lấy giá trị check có phải click vào player bar hay không
+                SharedPreferences sharedPrefPlayerBar = getActivity().getSharedPreferences("PlayerBarSharePref", Context.MODE_PRIVATE);
+                SharedPreferences.Editor sharedPrefPlayerBarEdit = sharedPrefPlayerBar.edit();
+                SharedPreferences sharedPrefSuffle = getActivity().getSharedPreferences("SuffleSharePref", Context.MODE_PRIVATE);
+                SharedPreferences.Editor sharedPrefSuffleEdit = sharedPrefSuffle.edit();
+                SharedPreferences sharedPreferencesSkip = getActivity().getSharedPreferences("SkipSharePref", Context.MODE_PRIVATE);
+                SharedPreferences.Editor sharedPreferencesSkipEdit = sharedPreferencesSkip.edit();
+                sharedPrefPlayerBarEdit.putBoolean("isClicked", false);
+                sharedPrefPlayerBarEdit.apply();
+
+                boolean isSuffle = sharedPrefSuffle.getBoolean("isSuffle", false);
+                boolean isSkip = sharedPreferencesSkip.getBoolean("isSkip", false);
                 //lưu currentId và prevId trên share preferences
                 String currentID = sharedPreferencesId.getString("currentId", null);
                 String prevID = sharedPreferencesId.getString("prevId", null);
-                if(currentID == null){
+                if (currentID == null) {
                     sharedPreferencesIdEdit.putString("currentId", itemId);
                     sharedPreferencesIdEdit.putString("prevId", itemId);
-                } else if (currentID != null && prevID != null){
-                    if(!currentID.equals(itemId)){
+                } else if (currentID != null && prevID != null) {
+                    if (!currentID.equals(itemId) && !isSuffle) {
                         sharedPreferencesIdEdit.putString("prevId", currentID);
                         sharedPreferencesIdEdit.putString("currentId", itemId);
-                    }else{
+                    } else if (currentID.equals(itemId) && !isSuffle) {
                         sharedPreferencesIdEdit.putString("prevId", itemId);
-//                        sharedPreferencesIdEdit.putString("currentId", itemId);
+                    } else if (isSuffle) {
+                        if (!itemId.equals(currentID)) {
+                            sharedPreferencesIdEdit.putString("prevId", currentID);
+                            sharedPreferencesIdEdit.putString("currentId", itemId);
+                            sharedPrefSuffleEdit.putBoolean("isSuffle", false);
+                        } else {
+                            sharedPrefSuffleEdit.putBoolean("isSuffle", false);
+                        }
+                        sharedPrefSuffleEdit.apply();
+                    } else if (isSkip) {
+                        if (!itemId.equals(currentID)) {
+                            sharedPreferencesIdEdit.putString("prevId", currentID);
+                            sharedPreferencesIdEdit.putString("currentId", itemId);
+                            sharedPreferencesSkipEdit.putBoolean("isSkip", false);
+                        } else {
+                            sharedPreferencesSkipEdit.putBoolean("isSkip", false);
+                        }
+                        sharedPreferencesSkipEdit.apply();
                     }
                 }
                 sharedPreferencesIdEdit.apply();
@@ -133,7 +162,7 @@ public class FragmentSearch extends Fragment {
 
         searchAdapter.setOnOptionClickListener(new SearchAdapter.OnOptionClickListener() {
             @Override
-            public void onOptionClick(int position,SearchItem music) {
+            public void onOptionClick(int position, SearchItem music) {
                 // Xử lý sự kiện khi người dùng nhấn vào một tùy chọn
                 // Sử dụng position để định danh cho item được chọn trong mListMusic
                 if (position == 1) {
@@ -219,7 +248,6 @@ public class FragmentSearch extends Fragment {
         RecyclerView.LayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         revMusic.setLayoutManager(linearLayoutManager);
         revMusic.setAdapter(searchAdapter);
-
 
 
         return view;

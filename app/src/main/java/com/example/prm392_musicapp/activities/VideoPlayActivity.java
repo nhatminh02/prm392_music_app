@@ -69,14 +69,18 @@ public class VideoPlayActivity extends AppCompatActivity {
     private SharedPreferences sharedPreferences;
     private MySQLiteOpenHelper openHelper;
     private SQLiteDatabase db;
-    private String itemId,title,thumbnail,channel;
+    private String itemId, title, thumbnail, channel;
     private int currentVideoIndex = 0;
-
+    private String currentId;
+    private String prevId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.video_play_page);
+
+        SharedPreferences sharedPreferencesVideoDetail = getSharedPreferences("VideoDetailSharePref", Context.MODE_PRIVATE);
+        SharedPreferences.Editor sharedPrefVideoDetailEdit = sharedPreferencesVideoDetail.edit();
 
         tv_title = findViewById(R.id.tv_title);
         tv_channel = findViewById(R.id.tv_channel);
@@ -141,6 +145,10 @@ public class VideoPlayActivity extends AppCompatActivity {
                 tv_title.setText(singleItems.get(0).getSnippet().getTitle());
                 tv_channel.setText(singleItems.get(0).getSnippet().getChannelTitle());
                 thumbnails = singleItems.get(0).getSnippet().getThumbnails().getMedium().getUrl();
+
+                sharedPrefVideoDetailEdit.putString("title", singleItems.get(0).getSnippet().getTitle());
+                sharedPrefVideoDetailEdit.putString("channelTitle", singleItems.get(0).getSnippet().getChannelTitle());
+                sharedPrefVideoDetailEdit.apply();
             }
         });
 
@@ -200,7 +208,7 @@ public class VideoPlayActivity extends AppCompatActivity {
                 db = openHelper.getWritableDatabase();
                 db.delete("Recommends", "videoId=?", new String[]{recommendId});
                 String sql = "insert into Recommends(videoId,title,thumbnails,channelTitle) values(?,?,?,?)";
-                db.execSQL(sql, new String[]{recommendId, title,thumbnail, channel});
+                db.execSQL(sql, new String[]{recommendId, title, thumbnail, channel});
                 sql = "SELECT COUNT(*) FROM Recommends";
                 Cursor c = db.rawQuery(sql, null);
                 int count = 0;
@@ -303,14 +311,22 @@ public class VideoPlayActivity extends AppCompatActivity {
                 skipPrev.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        controlSkip(itemId, v.getId(), youTubePlayer);
+                        if (currentId != null) {
+                            controlSkip(currentId, v.getId(), youTubePlayer);
+                        } else {
+                            controlSkip(itemId, v.getId(), youTubePlayer);
+                        }
                     }
                 });
 
                 skipNext.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        controlSkip(itemId, v.getId(), youTubePlayer);
+                        if (currentId != null) {
+                            controlSkip(currentId, v.getId(), youTubePlayer);
+                        } else {
+                            controlSkip(itemId, v.getId(), youTubePlayer);
+                        }
                     }
                 });
 
@@ -386,12 +402,20 @@ public class VideoPlayActivity extends AppCompatActivity {
             @Override
             public void onStateChange(@NonNull YouTubePlayer youTubePlayer, @NonNull PlayerConstants.PlayerState state) {
                 super.onStateChange(youTubePlayer, state);
-
+                Log.i("state", state + "");
                 //xử lý chức năng repeat
                 if (state.equals(PlayerConstants.PlayerState.ENDED) && checkRepeat) {
-                    youTubePlayer.loadVideo(itemId, 0);
+                    if (currentId != null) {
+                        youTubePlayer.loadVideo(currentId, 0);
+                    } else {
+                        youTubePlayer.loadVideo(itemId, 0);
+                    }
                 } else if (state.equals(PlayerConstants.PlayerState.ENDED) && checkSuffle) {
-                    controlSuffle(itemId, youTubePlayer);
+                    if (currentId != null) {
+                        controlSuffle(currentId, youTubePlayer);
+                    } else {
+                        controlSuffle(itemId, youTubePlayer);
+                    }
                 }
             }
         };
@@ -404,8 +428,59 @@ public class VideoPlayActivity extends AppCompatActivity {
     protected void onRestart() {
         super.onRestart();
         SharedPreferences sharedPreferencesId = getSharedPreferences("IdSharePref", Context.MODE_PRIVATE);
-        String currentId = sharedPreferencesId.getString("currentId", null);
-        String prevId = sharedPreferencesId.getString("prevId", null);
+        SharedPreferences sharedPreferencesVideoDetail = getSharedPreferences("VideoDetailSharePref", Context.MODE_PRIVATE);
+        SharedPreferences sharedPrefPlayerBar = getSharedPreferences("PlayerBarSharePref", Context.MODE_PRIVATE);
+        SharedPreferences.Editor sharedPrefVideoDetailEdit = sharedPreferencesVideoDetail.edit();
+        currentId = sharedPreferencesId.getString("currentId", null);
+        prevId = sharedPreferencesId.getString("prevId", null);
+        boolean isPlayerBarClicked = sharedPrefPlayerBar.getBoolean("isClicked", false);
+
+
+        Log.i("id1", itemId + " itemId");
+        Log.i("id1", currentId + " currentId");
+        Log.i("id1", prevId + " prevId");
+
+        //add liked track
+        heart = findViewById(R.id.imv_heart_icon);
+        emptyHeart = (AnimatedVectorDrawable) getDrawable(R.drawable.avd_heart_empty); //empty heart clip
+        fillHeart = (AnimatedVectorDrawable) getDrawable(R.drawable.avd_heart_fill); //fill heart clip
+        openHelper = new MySQLiteOpenHelper(this, "ProjectDB", null, 1);
+        db = openHelper.getReadableDatabase();
+        String sql = "select * from LikedTracks where videoId = ?";
+        String[] selectionArgs = {currentId};
+        Cursor c = db.rawQuery(sql, selectionArgs);
+        boolean likedVideo = c.moveToFirst();
+        Log.d("likedVideo", String.valueOf(likedVideo));
+        c.close();
+        if (likedVideo) {
+            heart.setImageDrawable(fillHeart);
+            fillHeart.start();
+            full = true;
+        } else {
+            heart.setImageDrawable(emptyHeart);
+            emptyHeart.start();
+            full = false;
+        }
+        heart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AnimatedVectorDrawable drawable = full ? emptyHeart : fillHeart;
+                if (drawable == emptyHeart) {
+                    db = openHelper.getWritableDatabase();
+                    db.delete("LikedTracks", "videoId=?", new String[]{currentId});
+                    db.close();
+                } else {
+                    db = openHelper.getWritableDatabase();
+                    String sql = "insert into LikedTracks(videoId,title,thumbnails,channelTitle) values(?,?,?,?)";
+                    db.execSQL(sql, new String[]{currentId, tv_title.getText().toString(), thumbnails, tv_channel.getText().toString()});
+                    db.close();
+                }
+                heart.setImageDrawable(drawable);
+                drawable.start();
+                full = !full;
+            }
+        });
+
 
         VideoDataUtils.getVideoById(currentId).observe(this, new Observer<List<SingleItem>>() {
             @Override
@@ -414,20 +489,93 @@ public class VideoPlayActivity extends AppCompatActivity {
                 tv_channel.setText(singleItems.get(0).getSnippet().getChannelTitle());
                 thumbnails = singleItems.get(0).getSnippet().getThumbnails().getMedium().getUrl();
 
-                if (!(currentId.equals(prevId))) {
-                    player.loadVideo(currentId, 0);
+                if (!isPlayerBarClicked) {
+                    if (!(currentId.equals(prevId))) {
+                        player.loadVideo(currentId, 0);
+                    }
                 }
+
+                sharedPrefVideoDetailEdit.putString("title", singleItems.get(0).getSnippet().getTitle());
+                sharedPrefVideoDetailEdit.putString("channelTitle", singleItems.get(0).getSnippet().getChannelTitle());
+                sharedPrefVideoDetailEdit.apply();
+
+                //them vao recently list
+                db = openHelper.getWritableDatabase();
+                db.delete("Recently", "videoId=?", new String[]{currentId});
+                String sql = "insert into Recently(videoId,title,thumbnails,channelTitle) values(?,?,?,?)";
+                db.execSQL(sql, new String[]{currentId, tv_title.getText().toString(), thumbnails, tv_channel.getText().toString()});
+                sql = "SELECT COUNT(*) FROM Recently";
+                Cursor c = db.rawQuery(sql, null);
+                int count = 0;
+                if (c != null && c.moveToFirst()) {
+                    count = c.getInt(0);
+                    c.close();
+                }
+                if (count > 10) {
+                    String tableName = "Recently";
+                    String whereClause = "recId = (SELECT MIN(recId) FROM " + tableName + ")";
+                    db.delete(tableName, whereClause, null);
+                }
+                db.close();
+
+
             }
         });
+        VideoDataUtils.getRelatedVideoData(currentId).observe(this, new Observer<List<SearchItem>>() {
+            @Override
+            public void onChanged(List<SearchItem> searchItems) {
+                String recommendId;
+                Random random = new Random();
+                int randomVideoIndex = random.nextInt(searchItems.size()) / 10;
+                recommendId = searchItems.get(randomVideoIndex).getId().getVideoId();
+                title = searchItems.get(randomVideoIndex).getSnippet().getTitle();
+                thumbnail = searchItems.get(randomVideoIndex).getSnippet().getThumbnails().getMedium().getUrl();
+                channel = searchItems.get(randomVideoIndex).getSnippet().getChannelTitle();
+                db = openHelper.getWritableDatabase();
+                db.delete("Recommends", "videoId=?", new String[]{recommendId});
+                String sql = "insert into Recommends(videoId,title,thumbnails,channelTitle) values(?,?,?,?)";
+                db.execSQL(sql, new String[]{recommendId, title, thumbnail, channel});
+                sql = "SELECT COUNT(*) FROM Recommends";
+                Cursor c = db.rawQuery(sql, null);
+                int count = 0;
+                if (c != null && c.moveToFirst()) {
+                    count = c.getInt(0);
+                    c.close();
+                }
+                if (count > 10) {
+                    String tableName = "Recommends";
+                    String whereClause = "recommendId = (SELECT MIN(recommendId) FROM " + tableName + ")";
+                    db.delete(tableName, whereClause, null);
+                }
+                db.close();
+            }
+        });
+    }
 
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        SharedPreferences sharedPreferencesVideoDetail = getSharedPreferences("VideoDetailSharePref", Context.MODE_PRIVATE);
+        SharedPreferences.Editor sharedPrefVideoDetailEdit = sharedPreferencesVideoDetail.edit();
+        sharedPrefVideoDetailEdit.clear();
+        sharedPrefVideoDetailEdit.apply();
     }
 
     public void controlSkip(String videoId, int btnId, YouTubePlayer youTubePlayer) {
+        SharedPreferences sharedPreferencesVideoDetail = getSharedPreferences("VideoDetailSharePref", Context.MODE_PRIVATE);
+        SharedPreferences.Editor sharedPrefVideoDetailEdit = sharedPreferencesVideoDetail.edit();
+        SharedPreferences sharedPreferencesSkip = getSharedPreferences("SkipSharePref", Context.MODE_PRIVATE);
+        SharedPreferences.Editor sharedPreferencesSkipEdit = sharedPreferencesSkip.edit();
+        SharedPreferences sharedPreferencesId = getSharedPreferences("IdSharePref", Context.MODE_PRIVATE);
+        SharedPreferences.Editor sharedPreferencesIdEdit = sharedPreferencesId.edit();
+
+
         VideoDataUtils.getRelatedVideoData(videoId).observe(this, new Observer<List<SearchItem>>() {
             @Override
             public void onChanged(List<SearchItem> searchItems) {
                 String vId;
+                sharedPreferencesSkipEdit.putBoolean("isSkip", true);
+                sharedPreferencesSkipEdit.apply();
                 if (btnId == skipNext.getId()) {
                     currentVideoIndex++;
                     if (currentVideoIndex >= searchItems.size()) {
@@ -437,6 +585,17 @@ public class VideoPlayActivity extends AppCompatActivity {
                     tv_title.setText(searchItems.get(currentVideoIndex).getSnippet().getTitle());
                     tv_channel.setText(searchItems.get(currentVideoIndex).getSnippet().getChannelTitle());
                     itemId = searchItems.get(currentVideoIndex).getId().getVideoId();
+
+                    String title = searchItems.get(currentVideoIndex).getSnippet().getTitle();
+                    String channelTitle = searchItems.get(currentVideoIndex).getSnippet().getChannelTitle();
+                    String thumbnail = searchItems.get(currentVideoIndex).getSnippet().getThumbnails().getMedium().getUrl();
+                    addLikeTrack(vId, thumbnail, title, channelTitle);
+
+                    sharedPreferencesIdEdit.putString("currentId", vId);
+                    sharedPreferencesIdEdit.putString("prevId", vId);
+                    sharedPrefVideoDetailEdit.putString("title", searchItems.get(currentVideoIndex).getSnippet().getTitle());
+                    sharedPrefVideoDetailEdit.putString("channelTitle", searchItems.get(currentVideoIndex).getSnippet().getChannelTitle());
+                    sharedPrefVideoDetailEdit.apply();
                     youTubePlayer.loadVideo(vId, 0);
                 } else if (btnId == skipPrev.getId()) {
                     currentVideoIndex--;
@@ -447,25 +606,50 @@ public class VideoPlayActivity extends AppCompatActivity {
                     tv_title.setText(searchItems.get(currentVideoIndex).getSnippet().getTitle());
                     tv_channel.setText(searchItems.get(currentVideoIndex).getSnippet().getChannelTitle());
                     itemId = searchItems.get(currentVideoIndex).getId().getVideoId();
+
+                    String title = searchItems.get(currentVideoIndex).getSnippet().getTitle();
+                    String channelTitle = searchItems.get(currentVideoIndex).getSnippet().getChannelTitle();
+                    String thumbnail = searchItems.get(currentVideoIndex).getSnippet().getThumbnails().getMedium().getUrl();
+                    addLikeTrack(vId, thumbnail, title, channelTitle);
+
+                    sharedPreferencesIdEdit.putString("currentId", vId);
+                    sharedPreferencesIdEdit.putString("prevId", vId);
+                    sharedPrefVideoDetailEdit.putString("title", searchItems.get(currentVideoIndex).getSnippet().getTitle());
+                    sharedPrefVideoDetailEdit.putString("channelTitle", searchItems.get(currentVideoIndex).getSnippet().getChannelTitle());
+                    sharedPrefVideoDetailEdit.apply();
                     youTubePlayer.loadVideo(vId, 0);
                 }
+                sharedPreferencesIdEdit.apply();
             }
         });
     }
 
     public void controlSuffle(String videoId, YouTubePlayer youTubePlayer) {
+        SharedPreferences sharedPreferencesVideoDetail = getSharedPreferences("VideoDetailSharePref", Context.MODE_PRIVATE);
+        SharedPreferences.Editor sharedPrefVideoDetailEdit = sharedPreferencesVideoDetail.edit();
+        SharedPreferences sharedPreferencesId = getSharedPreferences("IdSharePref", Context.MODE_PRIVATE);
+        SharedPreferences.Editor sharedPreferencesIdEdit = sharedPreferencesId.edit();
+        SharedPreferences sharedPrefSuffle = getSharedPreferences("SuffleSharePref", Context.MODE_PRIVATE);
+        SharedPreferences.Editor sharedPrefSuffleEdit = sharedPrefSuffle.edit();
         VideoDataUtils.getRelatedVideoData(videoId).observe(this, new Observer<List<SearchItem>>() {
             @Override
             public void onChanged(List<SearchItem> searchItems) {
                 Random random = new Random();
                 String vId;
                 int randomVideoIndex = random.nextInt(searchItems.size()) / 10;
-                Log.i("random1", randomVideoIndex + "");
                 vId = searchItems.get(randomVideoIndex).getId().getVideoId();
-                Log.i("ran", vId);
+                sharedPrefSuffleEdit.putBoolean("isSuffle", true);
+                sharedPrefSuffleEdit.apply();
+                sharedPreferencesIdEdit.putString("currentId", vId);
+                sharedPreferencesIdEdit.putString("prevId", vId);
+                sharedPreferencesIdEdit.apply();
                 tv_title.setText(searchItems.get(randomVideoIndex).getSnippet().getTitle());
                 tv_channel.setText(searchItems.get(randomVideoIndex).getSnippet().getChannelTitle());
                 itemId = searchItems.get(randomVideoIndex).getId().getVideoId();
+                sharedPrefVideoDetailEdit.putString("title", searchItems.get(randomVideoIndex).getSnippet().getTitle());
+                sharedPrefVideoDetailEdit.putString("channelTitle", searchItems.get(randomVideoIndex).getSnippet().getChannelTitle());
+                sharedPrefVideoDetailEdit.apply();
+
                 youTubePlayer.loadVideo(vId, 0);
             }
         });
@@ -479,5 +663,48 @@ public class VideoPlayActivity extends AppCompatActivity {
         videoPage.startAnimation(slideDown);
         moveTaskToBack(true);
         startActivity(intent);
+    }
+
+    public void addLikeTrack(String videoId, String thumbnail, String title, String channelTitle) {
+        //add liked track
+        heart = findViewById(R.id.imv_heart_icon);
+        emptyHeart = (AnimatedVectorDrawable) getDrawable(R.drawable.avd_heart_empty); //empty heart clip
+        fillHeart = (AnimatedVectorDrawable) getDrawable(R.drawable.avd_heart_fill); //fill heart clip
+        openHelper = new MySQLiteOpenHelper(this, "ProjectDB", null, 1);
+        db = openHelper.getReadableDatabase();
+        String sql = "select * from LikedTracks where videoId = ?";
+        String[] selectionArgs = {videoId};
+        Cursor c = db.rawQuery(sql, selectionArgs);
+        boolean likedVideo = c.moveToFirst();
+        Log.d("likedVideo", String.valueOf(likedVideo));
+        c.close();
+        if (likedVideo) {
+            heart.setImageDrawable(fillHeart);
+            fillHeart.start();
+            full = true;
+        } else {
+            heart.setImageDrawable(emptyHeart);
+            emptyHeart.start();
+            full = false;
+        }
+        heart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AnimatedVectorDrawable drawable = full ? emptyHeart : fillHeart;
+                if (drawable == emptyHeart) {
+                    db = openHelper.getWritableDatabase();
+                    db.delete("LikedTracks", "videoId=?", new String[]{videoId});
+                    db.close();
+                } else {
+                    db = openHelper.getWritableDatabase();
+                    String sql = "insert into LikedTracks(videoId,title,thumbnails,channelTitle) values(?,?,?,?)";
+                    db.execSQL(sql, new String[]{videoId, title, thumbnail, channelTitle});
+                    db.close();
+                }
+                heart.setImageDrawable(drawable);
+                drawable.start();
+                full = !full;
+            }
+        });
     }
 }

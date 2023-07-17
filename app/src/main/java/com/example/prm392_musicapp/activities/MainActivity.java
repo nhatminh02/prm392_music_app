@@ -21,6 +21,7 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.example.prm392_musicapp.R;
 import com.example.prm392_musicapp.fragments.FragmentHome;
@@ -41,8 +42,13 @@ public class MainActivity extends AppCompatActivity {
     FragmentLikedTracks fragmentLikedTracks;
     BottomNavigationView bottomNavigationView;
     ConstraintLayout miniBarPlayer, homePage;
+    TextView titleView;
+    TextView channleTitleView;
     boolean darkMode;
     SharedPreferences sharedPreferences;
+    SharedPreferences sharedPreferencesVideoDetail;
+    SharedPreferences sharedPrefPlayerBar;
+    SharedPreferences.Editor sharedPrefPlayerBarEdit;
 
 
     @Override
@@ -56,6 +62,11 @@ public class MainActivity extends AppCompatActivity {
         fragmentSetting = FragmentSetting.newInstance(null, null);
         fragmentSearch = FragmentSearch.newInstance(null, null);
         fragmentLikedTracks = FragmentLikedTracks.newInstance(null, null);
+
+        miniBarPlayer = findViewById(R.id.mini_player_bar);
+        homePage = findViewById(R.id.homePage);
+        titleView = findViewById(R.id.song_name);
+        channleTitleView = findViewById(R.id.song_author);
 
         bottomNavigationView = findViewById(R.id.bottom_nav);
         handleSwitchTheme();
@@ -77,8 +88,7 @@ public class MainActivity extends AppCompatActivity {
         });
         //add homepage fragment khi app chạy
         transactionFragment(R.id.fr_container, fragmentHome, "", "ADD");
-        miniBarPlayer = findViewById(R.id.mini_player_bar);
-        homePage = findViewById(R.id.homePage);
+
     }
 
     public void handleSwitchTheme() {
@@ -102,6 +112,11 @@ public class MainActivity extends AppCompatActivity {
                 .makeSceneTransitionAnimation(MainActivity.this, miniBarPlayer, ViewCompat.getTransitionName(miniBarPlayer));
         Animation slideDown = AnimationUtils.loadAnimation(this, R.anim.slide_down);
         Animation slideUp = AnimationUtils.loadAnimation(this, R.anim.slide_up);
+
+        sharedPrefPlayerBar = getSharedPreferences("PlayerBarSharePref", Context.MODE_PRIVATE);
+        sharedPrefPlayerBarEdit = sharedPrefPlayerBar.edit();
+        sharedPrefPlayerBarEdit.putBoolean("isClicked", true);
+        sharedPrefPlayerBarEdit.apply();
 
         // Apply the animation to the parent layout
         homePage.startAnimation(slideUp);
@@ -129,4 +144,33 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Log.i("state", "onRestart");
+        sharedPreferencesVideoDetail = getSharedPreferences("VideoDetailSharePref", Context.MODE_PRIVATE);
+        String title = sharedPreferencesVideoDetail.getString("title", null);
+        String channelTitle = sharedPreferencesVideoDetail.getString("channelTitle", null);
+        Log.i("infor", (title != null) + "");
+        if (title != null && channelTitle != null) {
+            miniBarPlayer.setVisibility(View.VISIBLE);
+            titleView.setText(title);
+            channleTitleView.setText(channelTitle);
+        } else {
+            miniBarPlayer.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.i("state", "onStop");
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.i("state", "onDestroy");
+    }
 }
