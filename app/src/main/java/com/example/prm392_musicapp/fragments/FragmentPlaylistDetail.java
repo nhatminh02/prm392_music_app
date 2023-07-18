@@ -9,12 +9,15 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.prm392_musicapp.R;
@@ -36,14 +39,20 @@ import java.util.List;
 public class FragmentPlaylistDetail extends Fragment {
     MySQLiteOpenHelper mySQLiteOpenHelper;
     SQLiteDatabase db;
+    FragmentManager fragmentManager;
+    FragmentTransaction fragmentTransaction;
+    FragmentPlaylist fragmentPlayList;
     String id;
     String videoId;
     String title;
     String channelTitle;
+    String playlistName;
     String thumbnail;
+    ImageView btnBack;
     private TextView tv_title;
     private Thumbnails thumbnails;
     private TextView tv_channel;
+    TextView tv_playlistName;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -110,9 +119,41 @@ public class FragmentPlaylistDetail extends Fragment {
             dataList.add(data);
         }
         cursor.close();
+
+
         View view = inflater.inflate(R.layout.fragment_playlist_detail, container, false);
         RecyclerView recyclerView = view.findViewById(R.id.rec_playlist_detail);
         PlaylistMusicAdapter adapter = new PlaylistMusicAdapter(dataList, sharedPreferencesPlaylistId);
+
+        fragmentManager = getActivity().getSupportFragmentManager();
+        fragmentPlayList = new FragmentPlaylist();
+        btnBack = view.findViewById(R.id.playlist_detail_back_btn);
+        btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.fr_container, fragmentPlayList, "");
+                fragmentTransaction.commit();
+            }
+        });
+
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("mode", Context.MODE_PRIVATE);
+        boolean darkMode = sharedPreferences.getBoolean("dark", false);
+        if (darkMode) {
+            btnBack.setImageResource(R.drawable.baseline_keyboard_arrow_left_24_light);
+        } else {
+            btnBack.setImageResource(R.drawable.baseline_keyboard_arrow_left_24_dark);
+        }
+
+        //lấy tên của playlist đang vào
+        db = mySQLiteOpenHelper.getReadableDatabase();
+        Cursor c = db.rawQuery("SELECT * FROM Playlists WHERE PLid = ?", new String[]{String.valueOf(plid)});
+        while (c.moveToNext()) {
+            playlistName = c.getString(c.getColumnIndex("PLName"));
+        }
+        c.close();
+        tv_playlistName = view.findViewById(R.id.playlist_name);
+        tv_playlistName.setText(playlistName);
 
         SharedPreferences sharedPreferencesId = getActivity().getSharedPreferences("IdSharePref", Context.MODE_PRIVATE);
         SharedPreferences.Editor sharedPreferencesIdEdit = sharedPreferencesId.edit();

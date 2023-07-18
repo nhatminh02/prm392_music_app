@@ -6,7 +6,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -29,6 +31,7 @@ public class ChoosePlaylistAdapter extends RecyclerView.Adapter<ChoosePlaylistAd
     public interface OnItemClickListener {
         void onItemClick(String itemId);
     }
+
     public void setOnItemClickListener(SearchAdapter.OnItemClickListener listener) {
         this.listener = listener;
     }
@@ -56,7 +59,7 @@ public class ChoosePlaylistAdapter extends RecyclerView.Adapter<ChoosePlaylistAd
         return playlists.size();
     }
 
-    public class PLaylistHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public class PLaylistHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView tv_playlist_name;
 
         public PLaylistHolder(@NonNull View itemView) {
@@ -83,17 +86,19 @@ public class ChoosePlaylistAdapter extends RecyclerView.Adapter<ChoosePlaylistAd
 
                         Cursor c = db.rawQuery("select * from PlaylistMus where PLMid = ? and PLid = ?", new String[]{String.valueOf(id), String.valueOf(position + 1)});
                         boolean exist = c.moveToFirst();
-                        if(!exist){
+                        if (!exist) {
+                            Toast.makeText(itemView.getContext(), "Added to playlist", Toast.LENGTH_SHORT).show();
                             String sql = "INSERT into PLaylistMus(PLMid,PLid) VALUES (?,?)";
                             db.execSQL(sql, new String[]{String.valueOf(id), String.valueOf(position + 1)});
                             db.close();
                         }
+                        Toast.makeText(itemView.getContext(), "This song already add to this playlist", Toast.LENGTH_SHORT).show();
 
                     }
                 }
             });
 
-            ((FloatingActionButton) itemView.findViewById(R.id.delete_playlist)).setOnClickListener(new View.OnClickListener() {
+            ((ImageView) itemView.findViewById(R.id.delete_playlist)).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     int position = getBindingAdapterPosition();

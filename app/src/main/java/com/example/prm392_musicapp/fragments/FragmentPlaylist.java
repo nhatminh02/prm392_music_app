@@ -52,6 +52,7 @@ public class FragmentPlaylist extends Fragment {
     SQLiteDatabase db;
 
     FragmentLibrary fragmentLibrary;
+    ImageView btnBack;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -154,6 +155,14 @@ public class FragmentPlaylist extends Fragment {
         ((Button) view.findViewById(R.id.btn_ctrPlaylist)).setOnClickListener(this::onClicked);
         ((Button) view.findViewById(R.id.btn_add)).setOnClickListener(this::onClicked);
 
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("mode", Context.MODE_PRIVATE);
+        boolean darkMode = sharedPreferences.getBoolean("dark", false);
+        btnBack = view.findViewById(R.id.btn_comeback);
+        if (darkMode) {
+            btnBack.setImageResource(R.drawable.baseline_keyboard_arrow_left_24_light);
+        } else {
+            btnBack.setImageResource(R.drawable.baseline_keyboard_arrow_left_24_dark);
+        }
 
         return view;
     }

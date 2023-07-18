@@ -27,6 +27,7 @@ import android.view.WindowManager;
 import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.prm392_musicapp.R;
 import com.example.prm392_musicapp.SQLite.MySQLiteOpenHelper;
@@ -187,6 +188,8 @@ public class FragmentSearch extends Fragment {
                     String sql = "insert into LikedTracks(videoId,title,thumbnails,channelTitle) values(?,?,?,?)";
                     db.execSQL(sql, new String[]{itemId, music.getSnippet().getTitle(), music.getSnippet().getThumbnails().getMedium().getUrl(), music.getSnippet().getChannelTitle()});
                     db.close();
+                    Toast.makeText(getContext(), "Added to like tracks successfully", Toast.LENGTH_SHORT).show();
+
                 }
                 if (position == 0) {
                     openHelper = new MySQLiteOpenHelper(getActivity(), "ProjectDB", null, 1);

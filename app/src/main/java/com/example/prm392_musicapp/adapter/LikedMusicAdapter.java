@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -74,7 +75,7 @@ public class LikedMusicAdapter extends RecyclerView.Adapter<LikedMusicAdapter.Mu
             imv_thumb = itemView.findViewById(R.id.imv_thumb);
             tv_musname = itemView.findViewById(R.id.tv_musname);
             tv_singer = itemView.findViewById(R.id.tv_singer);
-            ((FloatingActionButton)itemView.findViewById(R.id.delete_liked_track)).setOnClickListener(new View.OnClickListener() {
+            ((ImageView)itemView.findViewById(R.id.delete_liked_track)).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     int position = getBindingAdapterPosition();
@@ -83,6 +84,7 @@ public class LikedMusicAdapter extends RecyclerView.Adapter<LikedMusicAdapter.Mu
                     db = mySQLiteOpenHelper.getWritableDatabase();
                     db.delete("LikedTracks", "title=?", new String[]{tv_musname.getText().toString()});
                     db.close();
+                    Toast.makeText(itemView.getContext(), "Deleted successfully", Toast.LENGTH_SHORT).show();
 
                     dataList.remove(position);
                     notifyItemRemoved(position);

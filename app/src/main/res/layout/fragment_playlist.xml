@@ -10,13 +10,14 @@
 
     <Button
         android:id="@+id/btn_add"
-        android:layout_width="68dp"
+        style="@style/backGroundBtn"
+        android:layout_width="60dp"
         android:layout_height="0dp"
-        android:layout_marginTop="11dp"
-        android:layout_marginEnd="18dp"
-        android:background="#0B0A0A"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="12dp"
         android:onClick="onClicked"
         android:text="+"
+        android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -35,12 +36,12 @@
 
     <ImageView
         android:id="@+id/btn_comeback"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:background="#A39C9C"
-        android:src="@android:drawable/ic_menu_revert"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="8dp"
+        android:clickable="true"
+        android:foreground="?attr/selectableItemBackground"
+        android:src="@drawable/baseline_keyboard_arrow_left_24_dark"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -86,22 +87,25 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_playlist"
-        android:layout_width="411dp"
-        android:layout_height="661dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="30dp"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView5">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rec_playlist"
             android:layout_width="match_parent"
-            android:layout_height="500dp"
+            android:layout_height="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

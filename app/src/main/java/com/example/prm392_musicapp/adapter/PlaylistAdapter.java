@@ -2,10 +2,13 @@ package com.example.prm392_musicapp.adapter;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -74,15 +77,18 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.PLayli
             itemView.setOnClickListener(this);
 
 
-            ((FloatingActionButton) itemView.findViewById(R.id.delete_playlist)).setOnClickListener(new View.OnClickListener() {
+            ((ImageView) itemView.findViewById(R.id.delete_playlist)).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     int position = getBindingAdapterPosition();
                     mySQLiteOpenHelper = new MySQLiteOpenHelper(itemView.getContext(), "ProjectDB", null, 1);
                     SQLiteDatabase db = mySQLiteOpenHelper.getReadableDatabase();
                     db = mySQLiteOpenHelper.getWritableDatabase();
-                    db.delete("Playlists", "PLName=?", new String[]{tv_playlist_name.getText().toString()});
+                    Log.i("plid", playlists.get(position).getId() + "");
+                    db.delete("PLaylistMus", "PLid=?", new String[]{String.valueOf(playlists.get(position).getId())});
+                    db.delete("Playlists", "PLid=?", new String[]{String.valueOf(playlists.get(position).getId())});
                     db.close();
+                    Toast.makeText(itemView.getContext(), "Deleted playlist successfully", Toast.LENGTH_SHORT).show();
 
                     playlists.remove(position);
                     notifyItemRemoved(position);

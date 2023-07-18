@@ -1,16 +1,21 @@
 package com.example.prm392_musicapp.fragments;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.example.prm392_musicapp.R;
 import com.example.prm392_musicapp.SQLite.MySQLiteOpenHelper;
@@ -29,6 +34,10 @@ import java.util.List;
 public class FragmentChoosePlaylist extends Fragment {
     MySQLiteOpenHelper openHelper;
     SQLiteDatabase db;
+    FragmentManager fragmentManager;
+    FragmentTransaction fragmentTransaction;
+    FragmentSearch fragmentSearch;
+    ImageView btnBack;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -78,6 +87,26 @@ public class FragmentChoosePlaylist extends Fragment {
         openHelper = new MySQLiteOpenHelper(getActivity(), "ProjectDB", null, 1);
         SQLiteDatabase db = openHelper.getReadableDatabase();
         List<Playlist> dataList = new ArrayList<>();
+
+        fragmentManager = getActivity().getSupportFragmentManager();
+        fragmentSearch = new FragmentSearch();
+        btnBack = view.findViewById(R.id.choose_playlist_back_btn);
+        btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.fr_container, fragmentSearch, "");
+                fragmentTransaction.commit();
+            }
+        });
+
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("mode", Context.MODE_PRIVATE);
+        boolean darkMode = sharedPreferences.getBoolean("dark", false);
+        if (darkMode) {
+            btnBack.setImageResource(R.drawable.baseline_keyboard_arrow_left_24_light);
+        } else {
+            btnBack.setImageResource(R.drawable.baseline_keyboard_arrow_left_24_dark);
+        }
 
         Cursor cursor = db.rawQuery("SELECT * FROM PLaylists", null);
         while (cursor.moveToNext()) {
