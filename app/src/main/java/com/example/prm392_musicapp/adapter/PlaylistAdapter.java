@@ -9,11 +9,16 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.prm392_musicapp.R;
 import com.example.prm392_musicapp.SQLite.MySQLiteOpenHelper;
+import com.example.prm392_musicapp.fragments.FragmentChoosePlaylist;
+import com.example.prm392_musicapp.fragments.FragmentPlaylistDetail;
 import com.example.prm392_musicapp.models.Playlist;
+import com.example.prm392_musicapp.models.SearchItem;
 import com.example.prm392_musicapp.models.Video;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -23,11 +28,17 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.PLayli
 
     List<Playlist> playlists;
     MySQLiteOpenHelper mySQLiteOpenHelper;
-    private OnClickListener mListener;
+    FragmentManager fragmentManager;
+    FragmentTransaction fragmentTransaction;
+    FragmentPlaylistDetail fragmentPlaylistDetail;
+    private OnClickListener onClickListener;
 
 
     public interface OnClickListener {
-        void onClick(int position, Video model);
+        void onClick(int position);
+    }
+    public void setOnItemClickListener(PlaylistAdapter.OnClickListener listener) {
+        this.onClickListener = listener;
     }
 
 
@@ -53,13 +64,15 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.PLayli
         return playlists.size();
     }
 
-    public class PLaylistHolder extends RecyclerView.ViewHolder {
+    public class PLaylistHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView tv_playlist_name;
-        private OnClickListener onClickListener;
+
 
         public PLaylistHolder(@NonNull View itemView) {
             super(itemView);
             tv_playlist_name = itemView.findViewById(R.id.tv_playlist_name);
+            itemView.setOnClickListener(this);
+
 
             ((FloatingActionButton) itemView.findViewById(R.id.delete_playlist)).setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -77,9 +90,15 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.PLayli
             });
         }
 
-        public void setOnClickListener(OnClickListener onClickListener) {
-            this.onClickListener = onClickListener;
-        }
 
+        @Override
+        public void onClick(View v) {
+            int position = getAdapterPosition();
+            if (position != RecyclerView.NO_POSITION && onClickListener != null) {
+                Playlist playlist = playlists.get(position);
+                int itemId = playlist.getId(); // Retrieve the ID of the clicked item
+                onClickListener.onClick(itemId); // Callback the listener with the item ID
+            }
+        }
     }
 }
