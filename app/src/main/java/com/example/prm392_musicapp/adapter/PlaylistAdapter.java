@@ -84,7 +84,6 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.PLayli
                     mySQLiteOpenHelper = new MySQLiteOpenHelper(itemView.getContext(), "ProjectDB", null, 1);
                     SQLiteDatabase db = mySQLiteOpenHelper.getReadableDatabase();
                     db = mySQLiteOpenHelper.getWritableDatabase();
-                    Log.i("plid", playlists.get(position).getId() + "");
                     db.delete("PLaylistMus", "PLid=?", new String[]{String.valueOf(playlists.get(position).getId())});
                     db.delete("Playlists", "PLid=?", new String[]{String.valueOf(playlists.get(position).getId())});
                     db.close();

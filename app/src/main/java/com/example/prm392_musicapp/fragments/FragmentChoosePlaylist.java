@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -38,6 +39,7 @@ public class FragmentChoosePlaylist extends Fragment {
     FragmentTransaction fragmentTransaction;
     FragmentSearch fragmentSearch;
     ImageView btnBack;
+    ConstraintLayout noPlayList;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -90,6 +92,7 @@ public class FragmentChoosePlaylist extends Fragment {
 
         fragmentManager = getActivity().getSupportFragmentManager();
         fragmentSearch = new FragmentSearch();
+        noPlayList = view.findViewById(R.id.layout_noPlaylist2);
         btnBack = view.findViewById(R.id.choose_playlist_back_btn);
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -116,6 +119,11 @@ public class FragmentChoosePlaylist extends Fragment {
             dataList.add(data);
         }
         cursor.close();
+        if(dataList.size() == 0){
+            noPlayList.setVisibility(View.VISIBLE);
+        }else{
+            noPlayList.setVisibility(View.GONE);
+        }
         RecyclerView recyclerView = view.findViewById(R.id.rec_choose_playlist);
         ChoosePlaylistAdapter adapter = new ChoosePlaylistAdapter(dataList);
         RecyclerView.LayoutManager linearLayoutManager = new LinearLayoutManager(this.getContext());

@@ -105,8 +105,10 @@ public class ChoosePlaylistAdapter extends RecyclerView.Adapter<ChoosePlaylistAd
                     mySQLiteOpenHelper = new MySQLiteOpenHelper(itemView.getContext(), "ProjectDB", null, 1);
                     SQLiteDatabase db = mySQLiteOpenHelper.getReadableDatabase();
                     db = mySQLiteOpenHelper.getWritableDatabase();
-                    db.delete("Playlists", "PLName=?", new String[]{tv_playlist_name.getText().toString()});
+                    db.delete("PLaylistMus", "PLid=?", new String[]{String.valueOf(playlists.get(position).getId())});
+                    db.delete("Playlists", "PLid=?", new String[]{String.valueOf(playlists.get(position).getId())});
                     db.close();
+                    Toast.makeText(itemView.getContext(), "Deleted playlist successfully", Toast.LENGTH_SHORT).show();
 
                     playlists.remove(position);
                     notifyItemRemoved(position);
