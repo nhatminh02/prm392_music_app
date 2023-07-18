@@ -23,7 +23,7 @@
     <Button
         android:id="@+id/btn_theme"
         style="@style/text"
-        android:layout_width="409dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:height="60dp"
         android:backgroundTint="@color/transparent"
@@ -39,7 +39,7 @@
     <Button
         android:id="@+id/legal"
         style="@style/text"
-        android:layout_width="409dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:height="60dp"
         android:backgroundTint="@color/transparent"
@@ -50,12 +50,12 @@
         app:cornerRadius="0dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_contract_support" />
+        app:layout_constraintTop_toBottomOf="@+id/contactsp" />
 
     <Button
-        android:id="@+id/btn_contract_support"
+        android:id="@+id/contactsp"
         style="@style/text"
-        android:layout_width="409dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:height="60dp"
         android:backgroundTint="@color/transparent"
@@ -66,44 +66,12 @@
         app:cornerRadius="0dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/advert" />
-
-    <Button
-        android:id="@+id/advert"
-        style="@style/text"
-        android:layout_width="409dp"
-        android:layout_height="wrap_content"
-        android:height="60dp"
-        android:backgroundTint="@color/transparent"
-        android:clickable="true"
-        android:foreground="?attr/selectableItemBackground"
-        android:text="Advertising"
-        android:textAlignment="viewStart"
-        app:cornerRadius="0dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tellaf" />
-
-    <Button
-        android:id="@+id/tellaf"
-        style="@style/text"
-        android:layout_width="409dp"
-        android:layout_height="wrap_content"
-        android:height="60dp"
-        android:backgroundTint="@color/transparent"
-        android:clickable="true"
-        android:foreground="?attr/selectableItemBackground"
-        android:text="Tell a Friend"
-        android:textAlignment="viewStart"
-        app:cornerRadius="0dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btn_notification" />
 
     <Button
         android:id="@+id/btn_notification"
         style="@style/text"
-        android:layout_width="409dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:height="60dp"
         android:backgroundTint="@color/transparent"
@@ -137,33 +105,13 @@
         app:srcCompat="@drawable/right_arrow" />
 
     <ImageView
-        android:id="@+id/imageView5"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="12dp"
-        app:layout_constraintEnd_toEndOf="@+id/tellaf"
-        app:layout_constraintTop_toBottomOf="@+id/btn_notification"
-        app:srcCompat="@drawable/right_arrow" />
-
-    <ImageView
-        android:id="@+id/imageView7"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="12dp"
-        app:layout_constraintEnd_toEndOf="@+id/advert"
-        app:layout_constraintTop_toTopOf="@+id/advert"
-        app:srcCompat="@drawable/right_arrow" />
-
-    <ImageView
         android:id="@+id/imageView8"
         android:layout_width="20dp"
         android:layout_height="20dp"
         android:layout_marginTop="20dp"
         android:layout_marginEnd="12dp"
-        app:layout_constraintEnd_toEndOf="@+id/btn_contract_support"
-        app:layout_constraintTop_toTopOf="@+id/btn_contract_support"
+        app:layout_constraintEnd_toEndOf="@+id/contactsp"
+        app:layout_constraintTop_toTopOf="@+id/contactsp"
         app:srcCompat="@drawable/right_arrow" />
 
     <ImageView
