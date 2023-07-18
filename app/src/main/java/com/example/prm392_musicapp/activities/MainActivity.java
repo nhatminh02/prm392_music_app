@@ -154,8 +154,19 @@ public class MainActivity extends AppCompatActivity {
         Log.i("infor", (title != null) + "");
         if (title != null && channelTitle != null) {
             miniBarPlayer.setVisibility(View.VISIBLE);
-            titleView.setText(title);
-            channleTitleView.setText(channelTitle);
+            if (title.trim().length() > 47) {
+                title = title.substring(0, 44) + "...";
+                titleView.setText(title);
+            } else {
+                titleView.setText(title);
+            }
+
+            if (title.trim().length() > 47) {
+                channelTitle = channelTitle.substring(0, 44) + "...";
+                channleTitleView.setText(channelTitle);
+            } else {
+                channleTitleView.setText(channelTitle);
+            }
         } else {
             miniBarPlayer.setVisibility(View.GONE);
         }

@@ -49,6 +49,8 @@ public class VideoPlayActivity extends AppCompatActivity {
     private String thumbnails;
     private TextView tv_channel;
     private ImageView heart;
+    private ImageView volumeUp;
+    private ImageView volumeDown;
     private ImageView videoControl;
     private ImageView skipNext;
     private ImageView skipPrev;
@@ -90,6 +92,8 @@ public class VideoPlayActivity extends AppCompatActivity {
         repeat = findViewById(R.id.imv_repeat);
         suffle = findViewById(R.id.imv_suffle);
         backBtn = findViewById(R.id.imv_back);
+        volumeUp = findViewById(R.id.volume_up);
+        volumeDown = findViewById(R.id.volume_down);
 
         sharedPreferences = getSharedPreferences("mode", Context.MODE_PRIVATE);
         darkMode = sharedPreferences.getBoolean("dark", false);
@@ -100,6 +104,8 @@ public class VideoPlayActivity extends AppCompatActivity {
             repeat.setImageResource(R.drawable.baseline_repeat_24_light);
             suffle.setImageResource(R.drawable.baseline_shuffle_24_light);
             backBtn.setImageResource(R.drawable.baseline_keyboard_arrow_left_24_light);
+            volumeUp.setImageResource(R.drawable.baseline_volume_up_24_light);
+            volumeDown.setImageResource(R.drawable.baseline_volume_down_24_light);
         } else {
             skipNext.setImageResource(R.drawable.baseline_skip_next_24_dark);
             skipPrev.setImageResource(R.drawable.baseline_skip_previous_24_dark);
@@ -107,6 +113,8 @@ public class VideoPlayActivity extends AppCompatActivity {
             repeat.setImageResource(R.drawable.baseline_repeat_24);
             suffle.setImageResource(R.drawable.baseline_shuffle_24);
             backBtn.setImageResource(R.drawable.baseline_keyboard_arrow_left_24_dark);
+            volumeUp.setImageResource(R.drawable.baseline_volume_up_24);
+            volumeDown.setImageResource(R.drawable.baseline_volume_down_24);
         }
 
 

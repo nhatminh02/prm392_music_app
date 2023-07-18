@@ -1,33 +1,43 @@
 package com.example.prm392_musicapp.fragments;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Handler;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.prm392_musicapp.R;
 import com.example.prm392_musicapp.SQLite.MySQLiteOpenHelper;
 import com.example.prm392_musicapp.activities.VideoPlayActivity;
+import com.example.prm392_musicapp.adapter.PlaylistAdapter;
 import com.example.prm392_musicapp.adapter.SearchAdapter;
 import com.example.prm392_musicapp.api.VideoDataUtils;
+import com.example.prm392_musicapp.models.Playlist;
 import com.example.prm392_musicapp.models.SearchItem;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -37,6 +47,10 @@ import java.util.List;
  */
 public class FragmentSearch extends Fragment {
     List<SearchItem> searchList;
+    FragmentManager fragmentManager;
+    FragmentTransaction fragmentTransaction;
+    FragmentChoosePlaylist fragmentChoosePlaylist;
+    FragmentHome fragmentHome;
     ProgressBar progressBar;
     TextView startTitleSearch;
     TextView startSubtitleSearch;
@@ -175,6 +189,26 @@ public class FragmentSearch extends Fragment {
                     db.close();
                 }
                 if (position == 0) {
+                    openHelper = new MySQLiteOpenHelper(getActivity(), "ProjectDB", null, 1);
+                    SQLiteDatabase db = openHelper.getReadableDatabase();
+                    String itemId = music.getId().getVideoId();
+                    db = openHelper.getWritableDatabase();
+                    String query = "SELECT * FROM PlaylistMusic WHERE PLMvideoId = ?";
+                    String[] selectionArgs1 = {itemId};
+                    Cursor cursor = db.rawQuery(query, selectionArgs1);
+                    boolean exists = cursor.moveToFirst();
+                    if(!exists){
+                        String sql = "insert into PlaylistMusic(PLMvideoId,PLMtitle,PLMthumbnails,PLMchannelTitle) values(?,?,?,?)";
+                        db.execSQL(sql, new String[]{itemId, music.getSnippet().getTitle(), music.getSnippet().getThumbnails().getMedium().getUrl(), music.getSnippet().getChannelTitle()});
+                        db.close();
+                    }
+                    Log.d("asdcfvgbnm", itemId);
+                    fragmentManager = getActivity().getSupportFragmentManager();
+                    fragmentChoosePlaylist = FragmentChoosePlaylist.newInstance(null, null);
+                    fragmentTransaction = fragmentManager.beginTransaction();
+                    fragmentTransaction.replace(R.id.fr_container, fragmentChoosePlaylist, "");
+                    fragmentTransaction.commit();
+
 
                 }
             }

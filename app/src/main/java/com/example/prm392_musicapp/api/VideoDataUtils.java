@@ -24,7 +24,10 @@ public class VideoDataUtils {
     //AIzaSyAoBG7VU3ld5d396F9ABk9C99qKUyTnOOI
     //AIzaSyDL253YU0-HPTsBWDlCHNT1pqxc9OBYsAE
     //AIzaSyC4_5YZT1NgXspNddbi2LIsK0y0i4AmJJs
-    static final String API_KEY = "AIzaSyC4_5YZT1NgXspNddbi2LIsK0y0i4AmJJs";
+    //AIzaSyCiuyZB5-GKZKvl7M794FR0muHRWhKbEuk
+    //AIzaSyAZvITp9rwQrx6tAvCJkGLBh_kFHYM-GIM
+    //AIzaSyBLiuwl92mppYkVVkBr6oASU9MWmQJMjQs
+    static final String API_KEY = "AIzaSyBLiuwl92mppYkVVkBr6oASU9MWmQJMjQs";
 
     public static MutableLiveData<List<SearchItem>> searchVideoData(String searchQuery) {
         MutableLiveData<List<SearchItem>> itemsLiveData = new MutableLiveData<>();

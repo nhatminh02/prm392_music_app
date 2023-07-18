@@ -56,6 +56,7 @@ public class FragmentLikedTracks extends Fragment {
     String title;
     String channelTitle;
     String thumbnail;
+    ImageView btnBack;
 
     FragmentLibrary fragmentLibrary;
     MySQLiteOpenHelper mySQLiteOpenHelper;
@@ -199,6 +200,15 @@ public class FragmentLikedTracks extends Fragment {
         } else {
             ((ConstraintLayout) view.findViewById(R.id.layout_liked_track)).setVisibility(View.INVISIBLE);
             ((ConstraintLayout) view.findViewById(R.id.layout_noLikeTrack)).setVisibility(View.VISIBLE);
+        }
+
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("mode", Context.MODE_PRIVATE);
+        boolean darkMode = sharedPreferences.getBoolean("dark", false);
+        btnBack = view.findViewById(R.id.btn_back);
+        if (darkMode) {
+            btnBack.setImageResource(R.drawable.baseline_keyboard_arrow_left_24_light);
+        } else {
+            btnBack.setImageResource(R.drawable.baseline_keyboard_arrow_left_24_dark);
         }
         return view;
     }

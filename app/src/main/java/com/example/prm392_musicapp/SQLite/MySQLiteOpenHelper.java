@@ -34,11 +34,14 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper {
         String sql2 = "Create Table Playlists" +
                 "(PLid INTEGER PRIMARY KEY, PLName TEXT)";
         String sql3 = "Create Table PlaylistMusic" +
-                "(PLMid INTEGER PRIMARY KEY, PLid INTEGER, PLMvideoId TEXT, PLMtitle TEXT, PLMthumbnails TEXT, PLMchannelTitle TEXT, FOREIGN KEY(PLid) REFERENCES Playlists(PLid))";
+                "(PLMid INTEGER PRIMARY KEY, PLMvideoId TEXT, PLMtitle TEXT, PLMthumbnails TEXT, PLMchannelTitle TEXT)";
+        String sql4 = "Create Table PLaylistMus" +
+                "(PLid INTEGER, PLMid INTEGER, FOREIGN KEY(PLid) REFERENCES Playlists(PLid), FOREIGN KEY(PLMid) REFERENCES PlaylistMusic(PLMid))";
         db.execSQL(sqlLT);
         db.execSQL(sqlRec);
         db.execSQL(sql2);
         db.execSQL(sql3);
+        db.execSQL(sql4);
         db.execSQL(sqlRecommend);
     }
 
@@ -49,6 +52,7 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper {
             db.execSQL("Drop table if exists Recently");
             db.execSQL("Drop table if exists Reccomends");
             db.execSQL("Drop table if exists Playlists");
+            db.execSQL("Drop table if exists PlaylistMusic");
             onCreate(db);
         }
     }
